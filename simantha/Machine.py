@@ -245,6 +245,7 @@ class Machine(Asset):
 
     def fail(self):
         self.failed = True
+        self.has_part = False
         self.downtime_start = self.env.now
 
         if not self.in_queue:
