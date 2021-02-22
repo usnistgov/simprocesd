@@ -80,7 +80,7 @@ class System:
 
         self.maintainer.env = self.env
         self.maintainer.system = self
-        self.maintainer.utilization = 0
+        self.maintainer.initialize()
 
         self.warm_up_time = warm_up_time
         self.simulation_time = simulation_time
