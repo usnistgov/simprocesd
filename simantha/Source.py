@@ -1,5 +1,7 @@
 import random
 
+from . import Part
+
 class Source:
     def __init__(
         self,
@@ -23,6 +25,8 @@ class Source:
         # schedule inital get events for each downstream machine
         # currently it's assumed that no machine pulling from a source is starved
         self.reserved_content = 0
+
+        self.part_id = 1
 
         for receiver in self.downstream:
             if receiver.can_receive():

@@ -16,6 +16,7 @@ class Buffer:
         
         self.reserved_content = 0
         self.reserved_vacancy = 0
+        self.contents = []
 
         if self.env.collect_data:
             self.level_data = {'time': [0], 'level': [self.initial_level]}

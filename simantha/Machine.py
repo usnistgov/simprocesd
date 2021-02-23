@@ -101,6 +101,7 @@ class Machine(Asset):
 
         self.reserved_content = 0
         self.reserved_vacancy = 0
+        self.contents = []
 
         self.blocked = False
         self.starved = True
