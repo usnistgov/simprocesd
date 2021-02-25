@@ -58,7 +58,7 @@ class Machine(Asset):
         # check if planned failures and degradation are specified (may cause errors)
         if planned_failure is not None and degradation_matrix[0][0] != 1:
             warnings.warn(
-                'Specifying planned failures along with degradtion is untested and may cause errors.'
+                'Specifying planned failures along with degradation is untested and may cause errors.'
             )
         
         # Routing
