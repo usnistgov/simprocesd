@@ -36,16 +36,21 @@ class Buffer:
                 self.level_data['time'].append(self.env.now)
                 self.level_data['level'].append(self.level)
 
+            return self.contents.pop(0)
+
         else:
             raise RuntimeError('Attempting to take more parts than available.')
 
     def reserve_vacancy(self, quantity=1):
         self.reserved_vacancy += 1
             
-    def put(self, quantity=1):
+    def put(self, part, quantity=1):
         if not self.is_full():
             self.level += quantity
             self.reserved_vacancy -= 1
+
+            self.contents.append(part)
+            part.routing_history.append(self.name)
 
             if self.env.collect_data:
                 self.level_data['time'].append(self.env.now)

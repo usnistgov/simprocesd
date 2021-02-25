@@ -139,7 +139,10 @@ class Machine(Asset):
     def get_part(self):
         # Choose a random upstream container from which to take a part.
         assert self.target_giver is not None, f'No giver identified for {self.name}'
-        self.target_giver.get(1)
+        
+        current_part = self.target_giver.get(1)
+        self.contents.append(current_part)
+        current_part.routing_history.append(self.name)
 
         self.has_part = True
 
@@ -175,7 +178,11 @@ class Machine(Asset):
     def put_part(self):
         assert self.target_receiver is not None, f'No receiver identified for {self.name}'
 
-        self.target_receiver.put(1)
+        finished_part = self.contents.pop(0)
+
+        self.output_addon_process(finished_part)
+
+        self.target_receiver.put(finished_part, 1)
 
         if self.env.now > self.env.warm_up_time:
             self.parts_made += 1
@@ -196,6 +203,9 @@ class Machine(Asset):
                 self.env.schedule_event(self.env.now, asset.name, asset.request_part, source)
         
         self.target_receiver = None
+
+    def output_addon_process(self, part):
+        pass
 
     def request_part(self):
         candidate_givers = [obj for obj in self.upstream if obj.can_give()]
