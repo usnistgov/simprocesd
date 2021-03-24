@@ -7,9 +7,7 @@ from .simulation import *
 
 class Machine(Asset):
     """
-    Machine for producing parts.
-
-    ...
+    Machine that processes parts with optional periodic degradation and failure.
 
     Parameters
     ----------
