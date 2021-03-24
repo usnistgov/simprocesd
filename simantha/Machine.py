@@ -6,6 +6,25 @@ from .Asset import Asset
 from .simulation import *
 
 class Machine(Asset):
+    """
+    Machine for producing parts.
+
+    ...
+
+    Parameters
+    ----------
+    name : str
+        Name of this machine.
+    cycle_time: int
+        Cycle time in time units for each part processed by this machine. 
+
+
+    Methods
+    -------
+    initialize_addon_process()
+        Called during the initialization step of a new simulation run.
+
+    """
     def __init__(
         self,
         name=None,
