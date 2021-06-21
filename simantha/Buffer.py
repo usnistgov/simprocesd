@@ -45,6 +45,7 @@ class Buffer:
         self.reserved_vacancy += 1
             
     def put(self, part, quantity=1):
+        # Buffer receives a part from a machine
         if not self.is_full():
             self.level += quantity
             self.reserved_vacancy -= 1
@@ -55,6 +56,12 @@ class Buffer:
             if self.env.collect_data:
                 self.level_data['time'].append(self.env.now)
                 self.level_data['level'].append(self.level)
+
+            # Check if reception of this part fed a downstream machine
+            for asset in self.downstream:
+                if self.can_give() and asset.can_receive() and not asset.has_content_request():
+                    source = f'{self.name}.put_part at {self.env.now}'
+                    self.env.schedule_event(self.env.now, asset.name, asset.request_part, source)
 
         else:
             raise RuntimeError('Attempting to put part in full buffer.')

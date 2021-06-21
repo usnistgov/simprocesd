@@ -1,5 +1,6 @@
 import random
 
+from .Machine import Machine
 from .Part import Part
 
 class Source:
@@ -31,8 +32,9 @@ class Source:
 
         self.part_id = 1
 
+        # Schedule part request for each downstream machine
         for receiver in self.downstream:
-            if receiver.can_receive():
+            if isinstance(receiver, Machine) and receiver.can_receive():
                 receiver.starved = False
                 self.env.schedule_event(
                     self.env.now, 

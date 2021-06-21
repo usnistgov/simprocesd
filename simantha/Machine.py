@@ -13,14 +13,8 @@ class Machine(Asset):
     ----------
     name : str
         Name of this machine.
-    cycle_time: int
+    cycle_time : int
         Cycle time in time units for each part processed by this machine. 
-
-
-    Methods
-    -------
-    initialize_addon_process()
-        Called during the initialization step of a new simulation run.
 
     """
     def __init__(
@@ -148,6 +142,9 @@ class Machine(Asset):
         self.initialize_addon_processes()
 
     def initialize_addon_processes(self):
+        """
+        Initialize addon process.
+        """
         pass
     
     def reserve_vacancy(self, quantity=1):
@@ -213,11 +210,11 @@ class Machine(Asset):
         source = f'{self.name}.put_part at {self.env.now}'
         self.env.schedule_event(self.env.now, self.name, self.request_part, source)
 
-        # check if this event fed another machine
-        for asset in self.target_receiver.downstream:
-            if self.target_receiver.can_give() and asset.can_receive() and not asset.has_content_request():
-                source = f'{self.name}.put_part at {self.env.now}'
-                self.env.schedule_event(self.env.now, asset.name, asset.request_part, source)
+        # Check if this event fed another machine
+        # for asset in self.target_receiver.downstream:
+        #     if self.target_receiver.can_give() and asset.can_receive() and not asset.has_content_request():
+        #         source = f'{self.name}.put_part at {self.env.now}'
+        #         self.env.schedule_event(self.env.now, asset.name, asset.request_part, source)
         
         self.target_receiver = None
 
@@ -234,6 +231,19 @@ class Machine(Asset):
             self.env.schedule_event(self.env.now, self, self.get_part, source)
         else:
             self.starved = True
+
+    def put(self, part, quantity=1):
+        self.contents.append(part)
+        part.routing_history.append(self.name)
+
+        self.has_part = True
+
+        self.env.schedule_event(
+            self.env.now+self.get_cycle_time(),
+            self.name, 
+            self.request_space, 
+            f'{self.name}.get_part at {self.env.now}'
+        )
 
     def degrade(self):
         source = f'{self.name}.degrade at {self.env.now}'
@@ -376,6 +386,9 @@ class Machine(Asset):
         self.repair_addon_processes()
 
     def repair_addon_processes(self):
+        """
+        Repair addon process.
+        """
         pass
     
     def requesting_maintenance(self):
@@ -434,16 +447,16 @@ class Machine(Asset):
             if event.location == self.name:
                 event.canceled = True
 
-    def get_candidate_givers(self, only_free=False, blocked=False):
+    def get_candidate_givers(self, blocked=False):
         if blocked:
-            # get only candidate givers that can give a part
+            # Get only candidate givers that can give a part
             return [obj for obj in self.get_candidate_givers() if obj.blocked]
         else:
             return [obj for obj in self.upstream if obj.can_give()]
 
-    def get_candidate_receivers(self, only_free=False, starved=False):
+    def get_candidate_receivers(self, starved=False):
         if starved:
             return [obj for obj in self.get_candidate_receivers() if obj.starved]
         else:
-            # get only candidate receivers that can accept a part
+            # Get only candidate receivers that can accept a part
             return [obj for obj in self.downstream if obj.can_receive()]
