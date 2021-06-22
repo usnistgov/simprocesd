@@ -1,4 +1,44 @@
 class Buffer:
+    """
+    Buffers store parts that are waiting for processing at a downstream machine.
+
+    
+    Parameters
+    ---------
+    name : str
+        Name of the buffer.
+    capacity : int
+        Maximum number of parts that the buffer can hold.
+
+
+    Methods
+    -------
+    define_routing(upstream=[], downstream=[])
+        Specifies the upstream and downstream objects of the buffer. 
+
+
+    The following attributes are used to indicate the state of a buffer.
+
+    
+    Attributes
+    ----------
+    level : int
+        Number of parts in the buffer.
+    contents : list
+        List of part objects in the buffer.
+
+
+    During simulation, buffers collect the following data that are available as 
+    attributes of a ``Buffer`` instance.
+    
+
+    Attributes
+    ----------
+    level_data : dict
+        A dictionary with keys ``'time'`` for the simulation times at which the level of
+        the buffer changes and ``'level'`` for the corresponding buffer level. 
+
+    """
     def __init__(self, name='Buffer', capacity=float('inf'), initial_level=0):
         self.name = name
         self.capacity = capacity

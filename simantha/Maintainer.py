@@ -3,8 +3,44 @@ import random
 from .simulation import *
 
 class Maintainer:
-    # Basic maintainer, follows FIFO by default
-    def __init__(self, name='repairman', capacity=float('inf'), machines=None):
+    """
+    A maintainer is responsible for repairing machines that request maintenance 
+    according to some preventive maintenance policy or upon the occurrence of failure. 
+
+
+    Parameters
+    ----------
+    name : str
+        Name of the maintainer.
+    capacity : int
+        The maximum number of machines that the maintainer may repair simultaneously.
+    machines : list or ``None``
+        A list of machine objects that the maintainer is able to repair. If ``None``, 
+        the maintainer may repair any machine in the system.
+
+    
+    The following attributes are used to indicate the state of the maintainer.
+
+
+    Attributes
+    ----------
+    utilization : int
+        The number of machines currently being repaired by the maintainer.
+
+
+    The following methods may be overridden by extensions of the ``Maintainer`` class.
+
+
+    Methods
+    -------
+    choose_maintenance_action(queue)
+        Accepts a ``queue`` as a list of machines with unfufilled maintenance requests. 
+        Should return a single machine from the queue to repair next. By default, the
+        maintainer will choose the machine with the earliest request for maintenance
+        (equivalent to a first-in, first-out policy).
+
+    """
+    def __init__(self, name='maintainer', capacity=float('inf'), machines=None):
         self.name = name
         self.capacity = capacity
 

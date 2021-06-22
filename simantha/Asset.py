@@ -1,5 +1,3 @@
-import random
-
 class Asset:
     """Parent class for assets in the system. All objects should extend this class.
 
