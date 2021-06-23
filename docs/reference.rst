@@ -60,6 +60,7 @@ simantha.System class
 A ``System`` object contains the configured manufacturing objects.
 
 .. autoclass:: simantha.System
+   :members: simulate, iterate_simulation
 
 
 Simulation
@@ -69,7 +70,7 @@ simantha.simulation module
 --------------------------
 
 .. automodule:: simantha.simulation
-   :members:
+   :members: Distribution
 
 
 Utilities

@@ -13,6 +13,20 @@ from .Buffer import Buffer
 from .Maintainer import Maintainer
 
 class System:
+    """
+    A ``System`` object contains configured manufacturing objects and is used to run the
+    simulation.
+
+
+    Parameters
+    ----------
+    objects : list
+        A list of configured manufacturing objects including sources, machines, buffers,
+        and sinks. 
+    maintainer : ``None`` or ``simantha.Maintainer``
+        A user-defined maintainer or, by default, a maintainer with infinite capacity.
+
+    """
     def __init__(
         self,
         objects=[],
@@ -72,6 +86,24 @@ class System:
         trace=False,
         collect_data=True
     ):
+        """
+        The primary method for simulating a system.
+
+
+        Parameters
+        ----------
+        warm_up_time : int
+            The duration of the simulation warm up time. No data is collected during the
+            warm up period.
+        simulation_time : int
+            The duration of the simulation.
+        verbose : bool
+            If ``True``, prints a summary upon completion of the simulation run.
+        collect_data : bool
+            If ``True``, objects in the system will collect their respective production
+            and maintenance data. If ``False``, this data will not be stored which may
+            be useful for very long simulations where memory becomes an issue.
+        """
         start = time.time()
         for machine in self.machines:
             machine.maintainer = self.maintainer
@@ -113,16 +145,33 @@ class System:
         jobs=1,
         seedseed=0
     ):
-        """Replicate multiple simulation runs for a specified system. Statistics for
-        each run will gathered after the "warm_up_time" has elapsed. Currently the
-        following statistics are gathered:
-        - Machine
-            - Production (units)
-            - Availability (proportion of time not failed or under maintenance)
-        - Sink
-            - Level (units): completed parts that have exited the system
+        """
+        Conduct several simulation replications of the system with the option to do so 
+        in parallel.
 
-        A nested dictionary is returned with "replications" samples of each statistic.
+
+        Parameters
+        ----------
+        replications : int
+            The number of simulation replications.
+        warm_up_time : int
+            The simulation warm up time for each replication.
+        simulation_time : int
+            The simulation duration for each replication.
+        store_system_state : bool
+            If ``True``, each replication will return a copy of the ``simantha.System``
+            object at the end of its simulation run.
+        verbose : bool
+            If ``True``, prints a summary of the simulation replications.
+        jobs : int
+            The number of jobs to run in parallel.
+
+        
+        Returns
+        -------
+        list
+            A list of tuples containing the results of each replication.
+
         """
         start = time.time()      
         with multiprocessing.Pool(jobs) as p:
