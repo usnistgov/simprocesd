@@ -1,4 +1,28 @@
+"""
+The ``utils`` module provides convenient utility functions and useful constants. 
+Although the constants are given in minutes, a single simulation time unit can 
+theoretically represent any duration of time. 
+"""
+
 def generate_degradation_matrix(p, h_max):
+    """
+    Generate an upper triangular degradation transition matrix.
+
+
+    Parameters
+    ----------
+    p : float
+        The probability of degrading by one unit at each time step.
+    h_max : int
+        The index of the failed state.
+
+
+    Returns
+    -------
+    list of lists
+        A ``(h_max + 1)`` :math:`\\times` ``(h_max + 1)`` degradation transition matrix.
+
+    """
     # Returns an upper bidiagonal degradation matrix with probability p of degrading at
     # each time step.
     degradation_matrix = []
@@ -12,6 +36,21 @@ def generate_degradation_matrix(p, h_max):
 
 # Time constants (in minutes)
 DAY = 24 * 60
+"""
+One day in minutes.
+"""
+
 WEEK = 7 * DAY
+"""
+One week in minutes.
+"""
+
 MONTH = 30 * DAY
+"""
+Thirty days in minutes. 
+"""
+
 YEAR = 365 * DAY
+"""
+One year in minutes.
+"""

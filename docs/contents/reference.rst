@@ -66,11 +66,14 @@ A ``System`` object contains the configured manufacturing objects.
 Simulation
 ----------
 
+The ``simulation`` module provides the discrete event simulation logic and random number
+generation for Simantha.
+
 simantha.simulation module
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: simantha.simulation
-   :members: Distribution
+   :members: Event, Distribution
 
 
 Utilities

@@ -6,6 +6,33 @@ import time
 import warnings
 
 class Event:
+    """
+    Simulation event class. Should be extended when implementing custom simulation
+    events. 
+
+
+    Parameters
+    ----------
+    time : int 
+        Simulation time at which the event is to be executed. 
+    location 
+        The object at which the event is to take place. 
+    action 
+        The object method to be called upon execution of the event. 
+    source : str 
+        A description of the event or object that scheduled this event. 
+    priority : float 
+        The event execution priority.
+
+
+    Methods
+    -------
+    get_action_priority() 
+        Should return a priority value that correctly places this event in the event
+        priority order. 
+
+
+    """
     action_priority = [
         # Events at the end of the last time step
         'generate_arrival',          # Priority: 0 (highest priority)
@@ -190,11 +217,25 @@ def rng(dist):
 
 class Distribution:
     """
-    A class for random number generation in Simantha. Several built-in distributions are
-    available, but any class that returns a single integer value via a `sample` method
-    can be used. The built-in distributions are discrete uniform, specified by passing
-    {'uniform': [a, b]} to the distribution object, and geometric, specified via
-    {'geometric': p}. Constant integer values are also permitted. 
+    A class for representing random probability distributions. Should return an integer
+    value when sampled. 
+
+
+    Parameters
+    ----------
+    distribution : int or dict
+        If an ``int`` is passed, the distribution will return a constant value when
+        sampled. Otherwise, the built-in distributions are discrete uniform, specified 
+        by passing ``{'uniform': [a, b]}`` to the distribution object, and geometric, 
+        specified via ``{'geometric': p}``.
+
+
+    Methods
+    -------
+    sample()
+        Returns a single integer value from the specified distribution. This method 
+        should be overridden by children of the ``Distribution`` class. 
+
     """
     def __init__(self, distribution):
         if type(distribution) == int:
@@ -223,7 +264,6 @@ class Distribution:
             self.mean = None
 
     def sample(self):
-        """Returns a single sample from the specified distribution."""
         if self.distribution_type == 'constant':
             return self.distribution_parameters
 
@@ -239,10 +279,3 @@ class Distribution:
             while random.random() > p:
                 s += 1
             return s
-
-class ContinuousDistribution:
-    def __init__(self, distribution):
-        warnings.warn('Continuous distributions are not thoroughly tested.')
-        for distribution_type, distribution_parameters in distribution.items():
-            self.distribution_type = distribution_type
-            self.distribution_parameters = distribution_parameters
