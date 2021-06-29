@@ -55,4 +55,4 @@ system.simulate(simulation_time=100)
 # Parts produced: 99
 ```
 
-For additional examples, see [simantha\examples](simantha\examples\\).
+For additional examples, see [simantha/examples](/simantha/examples).
