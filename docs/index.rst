@@ -25,7 +25,7 @@ Quickstart
 ----------
 The following is an example of the creation and simulation of a simple two-machine one-buffer line.
 
-.. image:: images/two_machine_one_buffer.png
+.. image:: content/images/two_machine_one_buffer.png
    :align: center
 
 ::
@@ -63,6 +63,7 @@ Contents
 .. toctree::
    :maxdepth: 3
 
-   contents/reference
-   contents/examples
-   contents/use_cases
+   content/model
+   content/reference
+   content/examples
+   content/use_cases
