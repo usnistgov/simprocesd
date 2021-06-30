@@ -54,8 +54,6 @@ class Source:
         self.env = None
 
     def initialize(self):
-        # schedule inital get events for each downstream machine
-        # currently it's assumed that no machine pulling from a source is starved
         self.reserved_content = 0
 
         self.part_id = 1
@@ -104,15 +102,15 @@ class Source:
         self.downstream = downstream
 
     def can_give(self):
-        # TODO: this assumes receivers are never starved
+        # TODO: this assumes receivers of this source are never starved
         return True
 
-    def get_candidate_givers(self, only_free=False, blocked=False):
+    def get_candidate_givers(self):
         return self.upstream
 
-    def get_candidate_receivers(self, only_free=False, starved=False):
+    def get_candidate_receivers(self, only_free=False):
         if only_free:
-            # get only candidate receivers that can accept a part
+            # Get only candidate receivers that can accept a part
             return [obj for obj in self.get_candidate_receivers() if obj.can_receive()]
         else:
             return [obj for obj in self.downstream if obj.can_receive()]

@@ -1,5 +1,4 @@
 import random
-import time
 import warnings
 
 from .Asset import Asset
@@ -103,7 +102,8 @@ class Machine(Asset):
 
         degradation_matrix=[[1,0],[0,1]], # By default, never degrade
         cbm_threshold=None,
-        planned_failure=None, # Optional planned failure, in the form of (time, duration)
+        planned_failure=None, # Optional planned failure, in the form of
+                              # (time, duration)
 
         pm_distribution=5,
         cm_distribution=10,
@@ -130,7 +130,7 @@ class Machine(Asset):
         self.health = initial_health
         self.degradation_matrix = degradation_matrix
         self.failed_health = len(degradation_matrix) - 1
-        self.cbm_threshold = cbm_threshold or self.failed_health # if not specified, CM is used
+        self.cbm_threshold = cbm_threshold or self.failed_health # If not specified, CM is used
         if self.health == self.failed_health:
             self.failed = True
         else:
@@ -144,7 +144,7 @@ class Machine(Asset):
 
         self.planned_failure = planned_failure
 
-        # check if planned failures and degradation are specified (may cause errors)
+        # Check if planned failures and degradation are specified (may cause errors)
         if planned_failure is not None and degradation_matrix[0][0] != 1:
             warnings.warn(
                 'Specifying planned failures along with degradation is untested and may cause errors.'
@@ -221,23 +221,30 @@ class Machine(Asset):
 
     def initialize_addon_process(self):
         """
-        Initialize addon process.
+        Called when the machine is initialized at the beginning of each simulation run.
         """
         pass
     
-    def reserve_vacancy(self, quantity=1):
-        self.reserved_vacancy += 1
+    def reserve_vacancy(self, quantity=1.):
+        """
+        Reserve available space at this machine. 
+        """
+        self.reserved_vacancy += quantity
 
     def get_part(self):
-        # Choose a random upstream container from which to take a part.
+        """
+        Choose a random upstream container from which to take a part.
+        """
         assert self.target_giver is not None, f'No giver identified for {self.name}'
         
+        # Get part from selected giver
         current_part = self.target_giver.get(1)
         self.contents.append(current_part)
         current_part.routing_history.append(self.name)
 
         self.has_part = True
 
+        # Schedule a future request for space 
         self.env.schedule_event(
             self.env.now+self.get_cycle_time(),
             self.name, 
@@ -245,7 +252,7 @@ class Machine(Asset):
             f'{self.name}.get_part at {self.env.now}'
         )
 
-        # check if this event unblocked another machine
+        # Check if this event unblocked another machine
         for asset in self.target_giver.upstream:
             if asset.can_give() and self.target_giver.can_receive():
                 source = f'{self.name}.get_part at {self.env.now}'
@@ -256,7 +263,9 @@ class Machine(Asset):
         self.target_giver = None
 
     def request_space(self):
-        #request_space_start = time.time()
+        """
+        Find available space for a finished part, request that space if found.
+        """
         self.has_finished_part = True
         candidate_receivers = [obj for obj in self.downstream if obj.can_receive()]
         if len(candidate_receivers) > 0:
@@ -268,6 +277,9 @@ class Machine(Asset):
             self.blocked = True
             
     def put_part(self):
+        """
+        Place a finished part in available downstream vacancy. 
+        """
         assert self.target_receiver is not None, f'No receiver identified for {self.name}'
 
         finished_part = self.contents.pop(0)
@@ -275,6 +287,8 @@ class Machine(Asset):
         self.output_addon_process(finished_part)
 
         self.target_receiver.put(finished_part, 1)
+
+        self.blocked = False
 
         if self.env.now > self.env.warm_up_time:
             self.parts_made += 1
@@ -287,19 +301,19 @@ class Machine(Asset):
 
         source = f'{self.name}.put_part at {self.env.now}'
         self.env.schedule_event(self.env.now, self.name, self.request_part, source)
-
-        # Check if this event fed another machine
-        # for asset in self.target_receiver.downstream:
-        #     if self.target_receiver.can_give() and asset.can_receive() and not asset.has_content_request():
-        #         source = f'{self.name}.put_part at {self.env.now}'
-        #         self.env.schedule_event(self.env.now, asset.name, asset.request_part, source)
         
         self.target_receiver = None
 
     def output_addon_process(self, part):
+        """
+        Called before the part is transfered downstream. 
+        """
         pass
 
     def request_part(self):
+        """
+        Search for available parts upstream, request part if found. 
+        """
         candidate_givers = [obj for obj in self.upstream if obj.can_give()]
         if len(candidate_givers) > 0:
             self.starved = False
@@ -310,7 +324,10 @@ class Machine(Asset):
         else:
             self.starved = True
 
-    def put(self, part, quantity=1):
+    def put(self, part, quantity=1.):
+        """
+        Put a part into available space at this machine. 
+        """
         self.contents.append(part)
         part.routing_history.append(self.name)
 
@@ -324,6 +341,9 @@ class Machine(Asset):
         )
 
     def degrade(self):
+        """
+        Degrade by one unit and schedule a future degradation event. 
+        """
         source = f'{self.name}.degrade at {self.env.now}'
         self.health += 1
 
@@ -333,8 +353,10 @@ class Machine(Asset):
 
         time_to_degrade = self.get_time_to_degrade()
         if self.health == self.failed_health:
+            # Machine has reached its failure state, schedule failure event. 
             self.env.schedule_event(self.env.now, self, self.fail, source)
         elif self.health == self.cbm_threshold:
+            # Machine has reached its maintenance threshold and requests maintenance. 
             self.env.schedule_event(self.env.now, self, self.enter_queue, source)
             self.env.schedule_event(
                 self.env.now+time_to_degrade, self, self.degrade, source
@@ -345,6 +367,9 @@ class Machine(Asset):
             )
 
     def enter_queue(self):
+        """
+        Generate a request for maintenance by entering the maintenance queue.
+        """
         if not self.in_queue:
             if self.env.collect_data:
                 self.maintenance_data['time'].append(self.env.now)
@@ -354,12 +379,16 @@ class Machine(Asset):
             self.in_queue = True
 
         if not self.failed and self.maintainer.is_available():
+            # Schedule an inspection event if maintainer capacity is available. 
             source = f'{self.name}.enter_queue at {self.env.now}'
             self.env.schedule_event(
                 self.env.now, self.maintainer, self.maintainer.inspect, source
             )
 
     def fail(self):
+        """
+        Machine failure event. 
+        """
         self.failed = True
         self.has_part = False
         self.downtime_start = self.env.now
@@ -380,10 +409,18 @@ class Machine(Asset):
             )
 
     def get_cycle_time(self):
+        """
+        Sample the cycle time of the machine. Should return an integer. 
+        """
         return self.cycle_time.sample() 
 
     def get_time_to_degrade(self):
+        """
+        Sample a time until the next degradation event according to the specified 
+        degradation transition matrix. Should return an integer. 
+        """
         if 1 in self.degradation_matrix[self.health]:
+            # Machine has no probability of degrading in its current state. 
             return float('inf')
 
         ttd = 0
@@ -398,6 +435,9 @@ class Machine(Asset):
         return ttd
     
     def maintain(self):
+        """
+        Conduct a repair on the machine.
+        """
         if not self.failed:
             self.downtime_start = self.env.now
         self.has_part = False
@@ -411,8 +451,10 @@ class Machine(Asset):
         self.in_queue = False 
         time_to_repair = self.get_time_to_repair()
         
+        # Cancel all pending simulation events on this machine. 
         self.cancel_all_events()
         
+        # Schedule a future restoration event on this machine.
         source = f'{self.name}.maintain at {self.env.now}'
         self.env.schedule_event(self.env.now+time_to_repair, self, self.restore, source)
 
@@ -434,6 +476,9 @@ class Machine(Asset):
         )
 
     def restore(self):
+        """
+        Restore a machine to perfect health after undergoing maintenance.
+        """
         self.health = 0
         self.under_repair = False
         self.failed = False
@@ -456,7 +501,7 @@ class Machine(Asset):
             self.env.now+time_to_degrade, self, self.degrade, source
         )
         
-        # Repairman to scan queue once released
+        # Schedule a maintainer inspection event once released from this job.
         self.env.schedule_event(
             self.env.now, self.maintainer, self.maintainer.inspect, source
         )
@@ -465,7 +510,7 @@ class Machine(Asset):
 
     def repair_addon_process(self):
         """
-        Repair addon process.
+        Called once the machine is restored after maintenance. 
         """
         pass
     
@@ -504,7 +549,7 @@ class Machine(Asset):
         )
 
     def has_content_request(self):
-        # check if a machine has an existing request for a part
+        # Check if a machine has an existing request for a part
         for event in self.env.events:
             if (
                 ((event.location is self.name) and (event.action.__name__ == 'request_part'))
@@ -520,7 +565,9 @@ class Machine(Asset):
         return False
 
     def cancel_all_events(self):
-        # cancel all events scheduled on this machine
+        """
+        Cancel all simulation events scheduled on this machine.
+        """
         for event in self.env.events:
             if event.location == self.name:
                 event.canceled = True

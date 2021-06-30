@@ -49,8 +49,6 @@ class Buffer:
 
         self.level_data = {'time': [0], 'level': [initial_level]}
 
-        self.pending_requests = []
-
     def initialize(self):
         self.level = self.initial_level
         
@@ -64,8 +62,8 @@ class Buffer:
     def can_get_part(self):
         return self.level + self.reserved_vacancy < self.capacity
 
-    def reserve_content(self, quantity=1):
-        self.reserved_content += 1
+    def reserve_content(self, quantity=1.):
+        self.reserved_content += quantity
         
     def get(self, quantity=1):
         if not self.is_empty():
@@ -81,14 +79,14 @@ class Buffer:
         else:
             raise RuntimeError('Attempting to take more parts than available.')
 
-    def reserve_vacancy(self, quantity=1):
-        self.reserved_vacancy += 1
+    def reserve_vacancy(self, quantity=1.):
+        self.reserved_vacancy += quantity
             
-    def put(self, part, quantity=1):
+    def put(self, part, quantity=1.):
         # Buffer receives a part from a machine
         if not self.is_full():
             self.level += quantity
-            self.reserved_vacancy -= 1
+            self.reserved_vacancy -= quantity
 
             self.contents.append(part)
             part.routing_history.append(self.name)
@@ -107,11 +105,9 @@ class Buffer:
             raise RuntimeError('Attempting to put part in full buffer.')
     
     def is_empty(self):
-        #return self.level - self.reserved_content == 0
         return self.level == 0
     
     def is_full(self):
-        #return self.level + self.reserved_vacancy == self.capacity
         return self.level == self.capacity
 
     def can_give(self):
@@ -119,28 +115,22 @@ class Buffer:
 
     def can_receive(self):
         return self.level + self.reserved_vacancy < self.capacity
-
-    # def get_available_space(self):
-    #     return self.capacity - self.level
-    
-    # def get_available_parts(self):
-    #     return self.level
     
     def define_routing(self, upstream=[], downstream=[]):
         self.upstream = upstream
         self.downstream = downstream
 
-    def get_candidate_givers(self, only_free=False, blocked=False):
+    def get_candidate_givers(self, blocked=False):
         if blocked:
-            # get only candidate givers that can give a part
+            # Get only candidate givers that can give a part
             return [obj for obj in self.get_candidate_givers() if obj.blocked]
         else:
             return [obj for obj in self.upstream if obj.can_give()]
 
-    def get_candidate_receivers(self, only_free=False, starved=False):
+    def get_candidate_receivers(self, starved=False):
         if starved:
             return [obj for obj in self.get_candidate_receivers() if obj.starved]
         else:
-            # get only candidate receivers that can accept a part
+            # Get only candidate receivers that can accept a part
             return [obj for obj in self.downstream if obj.can_receive()]
         

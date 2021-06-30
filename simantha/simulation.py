@@ -2,8 +2,6 @@ import bisect
 import pickle
 import random
 import sys
-import time
-import warnings
 
 class Event:
     """
@@ -103,10 +101,11 @@ class Event:
         )
 
 class Environment:
-    """The main simulation environment for Simantha. This is designed to be an
-    enviroment specifically for use with Simantha objects and is not intended to be a
-    general simulation engine. In general, users of Simantha should not need to
-    instantiate an Environment object.
+    """
+    The main simulation environment for Simantha. This is designed to be an enviroment 
+    specifically for use with Simantha objects and is not intended to be a general 
+    simulation engine. In general, users of Simantha should not need to instantiate an 
+    Environment object.
     """
     def __init__(self, name='environment', trace=False, collect_data=True):
         self.events = []
@@ -130,7 +129,8 @@ class Environment:
         self.collect_data = collect_data
 
     def run(self, warm_up_time=0, simulation_time=0):
-        """Simulate the system for the specified run time or until no simulation events
+        """
+        Simulate the system for the specified run time or until no simulation events
         remain. 
         """
         self.now = 0
@@ -150,7 +150,8 @@ class Environment:
             self.export_trace()
 
     def step(self):
-        """Find and execute the next earliest simulation event. Simultaneous events are
+        """
+        Find and execute the next earliest simulation event. Simultaneous events are
         executed in order according to their event type priority, then their
         user-assigned priority. If these values are equal then ties are broken randomly. 
         """
@@ -174,6 +175,10 @@ class Environment:
     def schedule_event(
         self, time, location, action, source='', priority=0, event_type=Event
     ):
+        """
+        Schedule a new simulation event by inserting it in its proper location
+        within the simulation events list. 
+        """
         if (type(location) != str) and (location is not None):
             location = location.name
         new_event = Event(time, location, action, source, priority)
@@ -200,20 +205,6 @@ class Environment:
             trace_file = open(f'{self.name}_trace.pkl', 'wb')
             pickle.dump(self.event_trace, trace_file)
             trace_file.close()
-
-
-def rng(dist):
-    if 'constant' in dist.keys():
-        # return deterministic value
-        return dist['constant']
-    elif 'uniform' in dist.keys():
-        # uniform distribution, specifed as 
-        # {'unifom':[a, b]}
-        # returns a number between a and b, inclusive
-        a, b = dist['uniform']
-        return random.randrange(a, b+1)
-    else:
-        raise NotImplementedError(f'Invalid distribution specified: {dist}')
 
 class Distribution:
     """

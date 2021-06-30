@@ -23,8 +23,6 @@ def generate_degradation_matrix(p, h_max):
         A ``(h_max + 1)`` :math:`\\times` ``(h_max + 1)`` degradation transition matrix.
 
     """
-    # Returns an upper bidiagonal degradation matrix with probability p of degrading at
-    # each time step.
     degradation_matrix = []
     for h in range(h_max):
         transitions = [0] * (h_max + 1)

@@ -40,7 +40,6 @@ class System:
         for obj in objects:
             if type(obj) == Source:
                 self.sources.append(obj)
-            #elif type(obj) == Machine:
             elif isinstance(obj, Machine):
                 self.machines.append(obj)
             elif type(obj) == Buffer:
@@ -110,12 +109,10 @@ class System:
 
         self.env = Environment(trace=trace, collect_data=collect_data)
         for obj in self.objects:
-            # should initialize machines first
             obj.env = self.env
             obj.initialize()
 
         self.maintainer.env = self.env
-        #self.maintainer.system = self
         if self.maintainer.machines is None:
             self.maintainer.machines = self.machines
         self.maintainer.initialize()
@@ -125,7 +122,7 @@ class System:
 
         self.env.run(warm_up_time, simulation_time)
 
-        # clean up data here
+        # Clean up simulation data
         for machine in self.machines:
             if machine.under_repair or machine.failed:
                 machine.downtime += (self.env.now - machine.downtime_start)

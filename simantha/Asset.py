@@ -11,7 +11,8 @@ class Asset:
     """
     def __init__(self, name, selection_priority=1.0):
         self.name = name
-        # assets with higher priority will be selected over those with lower priority
+        
+        # Assets with higher priority will be selected over those with lower priority
         # when competing for resources or space. 
         self.selection_priority = selection_priority
 

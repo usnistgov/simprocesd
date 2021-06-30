@@ -47,7 +47,6 @@ class Maintainer:
         self.utilization = 0
 
         self.env = None
-        #self.system = None
 
         self.machines = machines
 
@@ -58,10 +57,10 @@ class Maintainer:
         return self.utilization < self.capacity
 
     def inspect(self):
-        # if available, check for machines requesting repair
+        # If available, check for machines requesting repair
         current_queue = self.get_queue()
         if (not self.is_available()) or (len(current_queue) == 0):
-            # No available capacity and/or empty queue
+            # No available capacity or empty queue
             return
         else:
             machine = self.choose_maintenance_action(current_queue)
@@ -72,11 +71,18 @@ class Maintainer:
             self.env.schedule_event(self.env.now, machine, machine.maintain, source)
 
     def choose_maintenance_action(self, queue):
-        # default fifo policy, break ties randomly
+        """
+        Choose a machine to repair from among those in the queue. Uses a first-in, 
+        first-out (FIFO) rule by default with ties broken by random selection. This
+        method should be overridden by maintainers that implement alternative
+        maintenance scheduling rules. 
+        """
         earliest_request = min(m.time_entered_queue for m in queue)
         candidates = [m for m in queue if m.time_entered_queue == earliest_request]
         return random.choice(candidates)
 
     def get_queue(self):
-        #return [machine for machine in self.system.machines if machine.in_queue]
+        """
+        Get a list of machines currently awaiting maintenance.
+        """
         return [machine for machine in self.machines if machine.in_queue]
