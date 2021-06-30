@@ -21,7 +21,7 @@ project = 'Simantha'
 copyright = '2021, Michael Hoffman'
 author = 'Michael Hoffman'
 
-release = '0.0.1'
+release = '0.1.0'
 
 
 # -- General configuration ---------------------------------------------------

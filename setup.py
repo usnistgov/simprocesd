@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='simantha',
-    version='0.0.1',
+    version='0.1.0',
     author='Michael Hoffman',
     author_email='hoffman@psu.edu',
     description='Simulation of Manufacturing Systems',
