@@ -1,5 +1,5 @@
-Welcome to Simantha's documentation!
-====================================
+Simantha: Discrete Event Simulation for Manufacturing Systems
+=============================================================
 
 Simantha is a package for simulating discrete manufacturing systems. It is designed to model asynchronous production systems with finite buffers. 
 
@@ -25,6 +25,9 @@ Quickstart
 ----------
 The following is an example of the creation and simulation of a simple two-machine one-buffer line.
 
+.. image:: content/images/two_machine_one_buffer.png
+   :align: center
+
 ::
 
    from simantha import Source, Machine, Buffer, Sink, System
@@ -49,12 +52,9 @@ The following is an example of the creation and simulation of a simple two-machi
    # Simulate
    system.simulate(simulation_time=100)
 
-Which produces the output:
-
-:: 
-
-   Simulation finished in 0.00s
-   Parts produced: 99
+   # Output
+   # Simulation finished in 0.00s
+   # Parts produced: 99   
 
 
 Contents
@@ -62,14 +62,3 @@ Contents
 
 .. toctree::
    :maxdepth: 3
-
-   reference
-   examples
-   use_cases
-
-
-Indices
-=======
-
-* :ref:`genindex`
-* :ref:`modindex`

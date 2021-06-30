@@ -5,13 +5,13 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='simantha',
-    version='0.0.1',
+    version='0.1.0',
     author='Michael Hoffman',
-    author_email='hoffman@psu.edu',
+    author_email='m.hoff4@gmail.com',
     description='Simulation of Manufacturing Systems',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/m-hoff/maintsim',
+    url='https://github.com/m-hoff/simantha',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
