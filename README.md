@@ -24,7 +24,7 @@ pip install simantha
 The following is an example of the creation and simulation of a simple two-machine one-buffer line.
 
 <p align="center">
-  <img src=docs/content/images/two_machine_one_buffer.png>
+  <img src=docs/images/two_machine_one_buffer.png>
 </p>
 
 ```python
