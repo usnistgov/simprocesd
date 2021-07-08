@@ -263,12 +263,9 @@ class Machine(Asset):
         self.target_giver = None
 
     def request_space(self):
-<<<<<<< HEAD
-=======
         """
         Find available space for a finished part, request that space if found.
         """
->>>>>>> dev
         self.has_finished_part = True
         candidate_receivers = [obj for obj in self.downstream if obj.can_receive()]
         if len(candidate_receivers) > 0:
@@ -303,17 +300,7 @@ class Machine(Asset):
             self.production_data['production'].append(self.parts_made)        
 
         source = f'{self.name}.put_part at {self.env.now}'
-<<<<<<< HEAD
-        self.env.schedule_event(self.env.now, self, self.request_part, source)
-
-        # Check if this event fed another machine
-        for asset in self.target_receiver.downstream:
-            if self.target_receiver.can_give() and asset.can_receive() and not asset.has_content_request():
-                source = f'{self.name}.put_part at {self.env.now}'
-                self.env.schedule_event(self.env.now, asset, asset.request_part, source)
-=======
         self.env.schedule_event(self.env.now, self.name, self.request_part, source)
->>>>>>> dev
         
         self.target_receiver = None
 
@@ -578,13 +565,9 @@ class Machine(Asset):
         return False
 
     def cancel_all_events(self):
-<<<<<<< HEAD
-        # Cancel all events scheduled on this machine
-=======
         """
         Cancel all simulation events scheduled on this machine.
         """
->>>>>>> dev
         for event in self.env.events:
             if event.location == self.name:
                 event.canceled = True
