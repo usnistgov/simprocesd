@@ -9,7 +9,24 @@ The package provides classes for the following core manufacturing objects that a
 * **Sink**: Collects finished parts that exit the system. 
 * **Maintainer**: Repairs degrading machines according to the specified maintenance policy. 
 
-For the complete Simantha documentation, see https://simantha.readthedocs.io/en/latest/.
+## Purpose
+
+Simantha is a discrete-event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines with finite buffers. It also provides functionality for modeling the degradation and maintenance of machines in these systems. Classes for five basic manufacturing objects are included: source, machine, buffer, sink, and maintainer. These objects can be defined by the user and configured in different ways to model various real-world manufacturing systems. The object classes are also designed to be extensible so that they can be used to model more complex processes. 
+
+In addition to modeling the behavior of existing systems, Simantha is also intended for use with simulation-based optimization and planning applications. For instance, users may be interested in evaluating alternative maintenance policies for a particular system. Estimating the expected system performance under each candidate policy will require a large number of simulation replications when the system is subject to a high degree of stochasticity. Simantha therefore supports parallel simulation replications to make this procedure more efficient. 
+
+The software is available for public use through a publicly available Github repository. Any user with a Github account may create a fork (copy) of the repository to freely experiment (e.g., object class extensions to model complex processes) with the code without affecting the original source code.
+
+
+## Quick Links
+For the complete Simantha documentation, see https://simantha.readthedocs.io/en/latest/ . Here, you will find:
+- Reference for all the objects in Simantha
+- Examples of discrete manufacturing system models
+- Use cases that extend Simantha for such things as condition-based maintenance
+
+
+Simantha and all of it's associated projects are in the public domain (see License). For more information and to provide feedback, please open an issue, submit a pull-request, or email the point of contact (below).
+
 
 ## Installation
 
@@ -19,7 +36,11 @@ Simantha can be installed via `pip` using:
 pip install simantha
 ```
 
-## Quickstart
+### Installation Requirements
+Using Simantha requires Python ≥ 3.6 and, optionally, SciPy ≥ 1.5.2 for running the included tests. 
+
+
+### Quickstart
 
 The following is an example of the creation and simulation of a simple two-machine one-buffer line.
 
@@ -56,3 +77,10 @@ system.simulate(simulation_time=100)
 ```
 
 For additional examples, see [simantha/examples](/simantha/examples).
+
+
+## Who We Are
+This tool is part of the Smart Manufacturing Operations Management (SMOM) project in the Smart Connected Systems Division (Communications Tech Laboratory) at NIST.
+Simantha has been developed by Michael Hoffman as a software package for the Python 3 programming language, and is being maintained and extended by Mehdi Dadfarnia:
+
+- [Mehdi Dadfarnia](https://www.nist.gov/people/mehdi-dadfarnia), Maintenance & Development
