@@ -1,7 +1,7 @@
 import random
 
-from .Machine import Machine
-from .Part import Part
+from .machine import Machine
+from .part import Part
 
 class Source:
     """

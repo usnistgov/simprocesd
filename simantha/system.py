@@ -6,11 +6,11 @@ import time
 import warnings
 
 from .simulation import Environment
-from .Source import Source
-from .Sink import Sink
-from .Machine import Machine
-from .Buffer import Buffer
-from .Maintainer import Maintainer
+from .source import Source
+from .sink import Sink
+from .machine import Machine
+from .buffer import Buffer
+from .maintainer import Maintainer
 
 class System:
     """

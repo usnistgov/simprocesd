@@ -1,6 +1,7 @@
 **/.idea/
 **/__pycache__/
 **/.ipynb_checkpoints
+*.vscode/
 validation/
 logs/
 simenv/
@@ -13,8 +14,10 @@ setup.py
 *.pkl
 *.pyc
 *.txt
-*.vscode/
-*.xlsx 
+*.xlsx
+*.bak
+*.project
+*.pydevproject
 
 !requirements.txt
 !LICENSE.txt
