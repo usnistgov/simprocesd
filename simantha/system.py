@@ -5,12 +5,12 @@ import sys
 import time
 import warnings
 
-from .simulation import Environment
-from .source import Source
-from .sink import Sink
-from .machine import Machine
-from .buffer import Buffer
+from .components.source import Source
+from .components.sink import Sink
+from .components.machine import Machine
+from .components.buffer import Buffer
 from .maintainer import Maintainer
+from .simulation import Environment
 
 
 class System:

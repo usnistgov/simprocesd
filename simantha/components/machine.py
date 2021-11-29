@@ -2,7 +2,7 @@ import random
 import warnings
 
 from .asset import Asset
-from .simulation import *
+from ..simulation import *
 
 
 class Machine(Asset):

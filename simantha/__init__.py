@@ -1,9 +1,10 @@
-from .system import System
-from .part import Part
-from .source import Source
-from .machine import Machine
-from .buffer import Buffer
-from .sink import Sink
+from .components.part import Part
+from .components.source import Source
+from .components.machine import Machine
+from .components.buffer import Buffer
+from .components.sink import Sink
+
 from .maintainer import Maintainer
 from .simulation import Event, Environment, Distribution
+from .system import System
 from .utils import *
