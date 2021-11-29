@@ -12,21 +12,13 @@ from .machine import Machine
 from .buffer import Buffer
 from .maintainer import Maintainer
 
+
 class System:
     """
     A ``System`` object contains configured manufacturing objects and is used to run the
     simulation.
-
-
-    Parameters
-    ----------
-    objects : list
-        A list of configured manufacturing objects including sources, machines, buffers,
-        and sinks. 
-    maintainer : ``None`` or ``simantha.Maintainer``
-        A user-defined maintainer or, by default, a maintainer with infinite capacity.
-
     """
+    
     def __init__(
         self,
         objects=[],

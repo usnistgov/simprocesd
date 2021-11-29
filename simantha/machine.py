@@ -4,101 +4,14 @@ import warnings
 from .asset import Asset
 from .simulation import *
 
+
 class Machine(Asset):
-    """
-    Machine that processes parts with optional periodic degradation and failure.
-
-    Parameters
-    ----------
-    name : str
-        Name of the machine.
-    cycle_time : int or simantha.Distribution
-        Cycle time in time units for each part processed by this machine.
-    degradation_matrix : square array
-        Markovian degradation transition matrix.
-    cbm_threshold : int
-        Threshold for condition-based preventive maintenance. 
-    pm_distribution : int or simantha.Distribution
-        Time to repair distribution for preventive maintenance.
-    cm_distribution : int or simantha.Distribution
-        Time to repair distribution for corrective maintenance.
-
+    """Machine that processes parts with optional periodic degradation and failure."""
     
-    Methods
-    -------
-    define_routing(upstream=[], downstream=[])
-        Specifies the upstream and downstream objects of the machine. The ``upstream`` 
-        and ``downstream`` arguments should be lists containing source, buffer, or sink
-        objects. 
-
-
-    .. warning:: 
-        Machines should be adjacent to sources, buffers, or sinks. Behavior of adjacent
-        machines with no intermediate buffer is not tested and may result in errors or
-        unexpected results.
-
-
-    The following methods may be overridden by extensions of the ``Machine`` class.
-
-
-    Methods
-    -------
-    initialize_addon_process()
-        Called when the machine is initialized at the beginning of each simulation run.
-    output_addon_process(part)
-        Called before the processed part is transfered to a downstream buffer or sink.
-    repair_addon_process()
-        Called once a machine is restored after preventive or corrective maintenance.
-
-
-    The following attributes are used to indicate the state of a machine.
-
-    Attributes
-    ----------
-    has_part : bool
-        ``True`` if the machine is holding a part, ``False`` otherwise. Simantha uses 
-        the *block after service* convention wherein a machine will hold a part after
-        processing until space for the processed part is available.
-    under_repair : bool
-        ``True`` if the machine is undergoing maintenance, ``False`` otherwise. 
-    in_queue : bool
-        ``True`` if the machine has requested unfulfilled (preventive or 
-        corrective) maintenance, ``False`` otherwise. 
-
-
-    During simulation, machines collect the following data that are available as 
-    attributes of a ``Machine`` instance.
-
-
-    Attributes
-    ----------
-    parts_made : int
-        The number of parts successfully processed and relinquished by the machine.
-    downtime : int
-        The number of time units the machine was either under maintenance or failed. 
-    production_data : dict
-        Production information of the machine. ``production_data['time']`` stores the 
-        time at which each part exited the machine while 
-        ``production_data['production']`` stores the cumulative number of parts produced 
-        by the machine at the corresponding time. 
-    health_data : dict
-        A dictionary storing the health infomation of the machine with keys ``time`` and
-        ``health`` and values corresponding to the time of each health state transition
-        and the resulting health of the machine. Machines that are not subject to 
-        degradation do not undergo health state transitions and remain in perfect health
-        for the duration of the simulation. 
-    maintenance_data : dict
-        Serves as a maintenance log for the machine. Key ``'event'`` gives a list of 
-        maintenance events which can include ``'enter queue'``, ``'failure'``, 
-        ``'begin maintenance'``, or ``'restore'``, while key ``'time'`` gives the
-        simulation time of each event. 
-
-    """
     def __init__(
         self,
         name=None,
         cycle_time=1,
-        selection_priority=1,
 
         degradation_matrix=[[1,0],[0,1]], # By default, never degrade
         cbm_threshold=None,
@@ -122,7 +35,6 @@ class Machine(Asset):
         else:
             self.initial_remaining_process = self.get_cycle_time()
         self.remaining_process_time = self.initial_remaining_process
-        self.selection_priority = selection_priority
         
         # Initial machine state
         self.has_finished_part = False

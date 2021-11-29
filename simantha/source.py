@@ -3,35 +3,13 @@ import random
 from .machine import Machine
 from .part import Part
 
+
 class Source:
     """
     Introduces unprocessed parts to the system. By default, machines downstream of a 
     source are never starved. 
-
-
-    Parameters
-    ----------
-    name : str
-        Name of the source. 
-    interarrival_time : ``None`` or ``simantha.simulation.Distribution``
-        Time between arriving parts. If ``None``, there is no delay between arrivals.
-    part_type : ``simantha.Part``
-        Class of part objects produced by the source. A part class that inherits 
-        ``simantha.Part`` can be used to modify part atrributes and behavior. 
-
-
-    Methods
-    -------
-    define_routing(downstream=[])
-        Specifies objects downstream of the source. The ``downstream`` argument should 
-        be a list of machines that retrieve parts from the source. 
-
-
-    .. warning:: 
-        It is currently assumed that machines downstream of a source object are never 
-        starved. Intermittent part arrivals have not been thoroughly tested.
-
     """
+    
     def __init__(
         self,
         name='Source',

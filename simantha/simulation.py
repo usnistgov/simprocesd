@@ -3,34 +3,13 @@ import pickle
 import random
 import sys
 
+
 class Event:
     """
     Simulation event class. Should be extended when implementing custom simulation
     events. 
-
-
-    Parameters
-    ----------
-    time : int 
-        Simulation time at which the event is to be executed. 
-    location 
-        The object at which the event is to take place. 
-    action 
-        The object method to be called upon execution of the event. 
-    source : str 
-        A description of the event or object that scheduled this event. 
-    priority : float 
-        The event execution priority.
-
-
-    Methods
-    -------
-    get_action_priority() 
-        Should return a priority value that correctly places this event in the event
-        priority order. 
-
-
     """
+
     action_priority = [
         # Events at the end of the last time step
         'generate_arrival',          # Priority: 0 (highest priority)
@@ -107,6 +86,7 @@ class Environment:
     simulation engine. In general, users of Simantha should not need to instantiate an 
     Environment object.
     """
+    
     def __init__(self, name='environment', trace=False, collect_data=True):
         self.events = []
         self.name = name

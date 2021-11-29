@@ -1,30 +1,6 @@
 class Sink:
-    """
-    Sinks collect finished parts as they exit the system.
-
-
-    Parameters
-    ----------
-    name : str
-        Name of the sink.
-    collect_parts : bool
-        If ``True``, the sink will maintain a list of the part objects it collects.
-
-
-    Methods
-    -------
-    define_routing(upstream=[])
-        Specifies the machines upstream of a sink. 
-
-
-    Attributes
-    ----------
-    level : int
-        The number of parts collected by the sink. 
-    contents : list
-        If ``collect_parts = True``, a list of collected part objects.
-
-    """
+    """Sinks collect finished parts as they exit the system."""
+        
     def __init__(self, name='Sink', initial_level=0, collect_parts=False):
         self.name = name
         self.capacity = float('inf')
@@ -32,8 +8,6 @@ class Sink:
         self.level = initial_level
         self.contents = []
         self.collect_parts = collect_parts
-
-        self.selection_priority = 1 
 
         self.env = None
 
