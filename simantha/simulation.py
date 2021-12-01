@@ -2,6 +2,7 @@ import bisect
 import pickle
 import random
 import sys
+import traceback
 
 
 class Event:
@@ -12,37 +13,32 @@ class Event:
 
     action_priority = [
         # Events at the end of the last time step
-        'generate_arrival',          # Priority: 0 (highest priority)
-        'request_space',             # 1 
-        'put_part',                  # 2
-        'restore',                   # 3
+        'generate_arrival',  # Priority: 0 (highest priority)
+        'request_space',  # 1
+        'put_part',  # 2
+        'restore',  # 3
 
         # Events at the start of the current time step
         'maintain_planned_failure',  # 4
-        'degrade',                   # 5
-        'enter_queue',               # 6
-        'fail',                      # 7
-        'inspect',                   # 8
-        'maintain',                  # 9
-        'request_part',              # 10
-        'get_part',                  # 11
+        'degrade',  # 5
+        'enter_queue',  # 6
+        'fail',  # 7
+        'inspect',  # 8
+        'maintain',  # 9
+        'request_part',  # 10
+        'get_part',  # 11
 
         # Simulation runtime events
-        'terminate'                  # 12 (lowest priority)
+        'terminate'  # 12 (lowest priority)
     ]
 
     action_priority = {
         action: priority for priority, action in enumerate(action_priority)
     }
 
-    def __init__(self, time, location, action, source='', priority=0, status=''):
+    def __init__(self, time, asset_id, action, source = '', priority = 0, status = ''):
         self.time = time
-        if type(location) == str:
-            self.location = location
-        elif location is None:
-            self.location = ''
-        else:
-            self.location = location.name
+        self.asset_id = asset_id
         self.action = action
         self.source = source
         self.priority = priority
@@ -52,7 +48,7 @@ class Event:
 
         self.canceled = False
         self.executed = False
-    
+
     def get_action_priority(self):
         if self.action.__name__ in self.action_priority.keys():
             return self.action_priority[self.action.__name__]
@@ -61,23 +57,24 @@ class Event:
 
     def execute(self):
         if not self.canceled:
-            self.action() 
+            self.action()
         else:
             self.status = 'canceled'
         self.executed = True
 
     def __lt__(self, other):
         return (
-            self.time, 
+            self.time,
             self.get_action_priority(),
-            self.priority, 
+            self.priority,
             self.tiebreak
         ) < (
-            other.time, 
+            other.time,
             other.get_action_priority(),
-            other.priority, 
+            other.priority,
             other.tiebreak
         )
+
 
 class Environment:
     """
@@ -86,8 +83,8 @@ class Environment:
     simulation engine. In general, users of Simantha should not need to instantiate an 
     Environment object.
     """
-    
-    def __init__(self, name='environment', trace=False, collect_data=True):
+
+    def __init__(self, name = 'environment', trace = False, collect_data = True):
         self.events = []
         self.name = name
         self.now = 0
@@ -98,7 +95,7 @@ class Environment:
         if self.trace:
             self.event_trace = {
                 'time': [],
-                'location': [],
+                'asset_id': [],
                 'action': [],
                 'source': [],
                 'priority': [],
@@ -108,7 +105,7 @@ class Environment:
 
         self.collect_data = collect_data
 
-    def run(self, warm_up_time=0, simulation_time=0):
+    def run(self, warm_up_time = 0, simulation_time = 0):
         """
         Simulate the system for the specified run time or until no simulation events
         remain. 
@@ -117,7 +114,7 @@ class Environment:
         self.warm_up_time = warm_up_time
         self.simulation_time = simulation_time
         self.terminated = False
-        self.events.append(Event(warm_up_time+simulation_time, self, self.terminate))
+        self.events.append(Event(warm_up_time + simulation_time, self, self.terminate))
         self.event_index = 0
 
         self.events.sort()
@@ -126,8 +123,7 @@ class Environment:
             self.step()
             self.event_index += 1
 
-        if self.trace:
-            self.export_trace()
+        self.export_trace()
 
     def step(self):
         """
@@ -143,25 +139,25 @@ class Environment:
             if self.trace:
                 self.trace_event(next_event)
             next_event.execute()
-        except:
+        except Exception:
             self.export_trace()
             print('Failed event:')
             print(f'  time:     {next_event.time}')
-            print(f'  location: {next_event.location}')
+            print(f'  asset_id: {next_event.asset_id}')
             print(f'  action:   {next_event.action.__name__}')
             print(f'  priority: {next_event.priority}')
+            print(traceback.format_exc())
             sys.exit()
 
     def schedule_event(
-        self, time, location, action, source='', priority=0, event_type=Event
+        self, time, asset_id, action, source = '', priority = 0, event_type = Event
     ):
         """
-        Schedule a new simulation event by inserting it in its proper location
+        Schedule a new simulation event by inserting it in its proper asset_id
         within the simulation events list. 
         """
-        if (type(location) != str) and (location is not None):
-            location = location.name
-        new_event = Event(time, location, action, source, priority)
+        # print(f'Scheduling: {time}, {asset_id}, {action} at {self.now}')
+        new_event = Event(time, asset_id, action, source, priority)
         bisect.insort(self.events, new_event)
 
     def terminate(self):
@@ -170,7 +166,7 @@ class Environment:
     def trace_event(self, event):
         if self.trace:
             self.event_trace['time'].append(self.now)
-            self.event_trace['location'].append(event.location)
+            self.event_trace['asset_id'].append(event.asset_id)
             self.event_trace['action'].append(event.action.__name__)
             self.event_trace['source'].append(event.source)
             self.event_trace['priority'].append(event.priority)
@@ -185,6 +181,19 @@ class Environment:
             trace_file = open(f'{self.name}_trace.pkl', 'wb')
             pickle.dump(self.event_trace, trace_file)
             trace_file.close()
+
+    def cancel_matching_events(self, asset_id = None, action = None):
+        if asset_id == None and action == None: return  # No parameters were set
+
+        events_to_cancel = self.events
+        if location != None:
+            events_to_cancel = [x for x in events_to_cancel if x.asset_id == asset_id]
+        if action != None:
+            events_to_cancel = [x for x in events_to_cancel if x.action == action]
+
+        for event in events_to_cancel:
+            event.canceled = True
+
 
 class Distribution:
     """
@@ -208,6 +217,7 @@ class Distribution:
         should be overridden by children of the ``Distribution`` class. 
 
     """
+
     def __init__(self, distribution):
         if type(distribution) == int:
             self.distribution_type = 'constant'

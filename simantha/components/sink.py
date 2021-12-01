@@ -1,40 +1,31 @@
-class Sink:
-    """Sinks collect finished parts as they exit the system."""
-        
-    def __init__(self, name='Sink', initial_level=0, collect_parts=False):
-        self.name = name
-        self.capacity = float('inf')
-        self.initial_level = initial_level
-        self.level = initial_level
-        self.contents = []
-        self.collect_parts = collect_parts
+from .machine_asset import MachineAsset
 
-        self.env = None
 
-        self.level_data = {'time': [0], 'level': [initial_level]}
+class Sink(MachineAsset):
 
-    def initialize(self):
-        self.level = self.initial_level
-        self.contents = []
+    def __init__(
+        self, name = None,
+        upstream = [],
+        time_to_receive_part = 0,
+        collect_parts = False
+    ):
+        super().__init__(name, upstream, cycle_time = time_to_receive_part)
 
-    def reserve_vacancy(self, quantity=1):
-        return
+        self._collect_parts = collect_parts
+        self.collected_parts = []
+        self._received_parts_count = 0
 
-    def put(self, part, quantity=1):
-        if self.env.now > self.env.warm_up_time:
-            self.level += quantity
-            if self.collect_parts:
-                self.contents.append(part)
+    @property
+    def received_parts_count(self):
+        return self._received_parts_count
 
-        self.level_data['time'].append(self.env.now)
-        self.level_data['level'].append(self.level)
+    def _get_part_from_upstream(self):
+        super()._get_part_from_upstream()
+        if self._part != None:
+            self._received_parts_count += 1
+            if self._collect_parts:
+                self.collected_parts.append(self._part)
 
-    def define_routing(self, upstream=[], downstream=[]):
-        self.upstream = upstream
-        self.downstream = downstream
-
-    def can_give(self):
-        return False
-
-    def can_receive(self):
-        return True
+    def _finish_processing_part(self):
+        super()._finish_processing_part()
+        self._output_part = None

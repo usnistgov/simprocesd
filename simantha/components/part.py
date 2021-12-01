@@ -1,12 +1,15 @@
-class Part:
-    """
-    A part object created by a source to be processed by the system. Stored the name of
-    each source, machine, buffer, and sink visited by the part. 
-    """
-    
-    def __init__(self, id_):
-        self.id_ = id_
-        self.routing_history = []
+from .asset import Asset
 
-    def initialize(self):
-        pass
+
+class Part(Asset):
+
+    def __init__(self, name = None, value = 0.0, quality = 1.0):
+        super().__init__(name, value)
+
+        self._counter = 0
+        self.quality = quality
+
+    def copy(self):
+        self._counter += 1
+        new_part = Part(f'{self.name}_{self._counter}', self.value, self.quality)
+        return new_part

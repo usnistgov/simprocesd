@@ -5,10 +5,10 @@ import sys
 import time
 import warnings
 
-from .components.source import Source
-from .components.sink import Sink
-from .components.machine import Machine
-from .components.buffer import Buffer
+# from .components.source import Source
+# from .components.sink import Sink
+# from .components.machine import Machine
+# from .components.buffer import Buffer
 from .maintainer import Maintainer
 from .simulation import Environment
 
@@ -18,14 +18,14 @@ class System:
     A ``System`` object contains configured manufacturing objects and is used to run the
     simulation.
     """
-    
+
     def __init__(
         self,
-        objects=[],
-        maintainer=None
+        objects = [],
+        maintainer = None
     ):
         self.objects = objects
-        self.sources = []
+        '''self.sources = []
         self.machines = []
         self.buffers = []
         self.sinks = []
@@ -37,7 +37,7 @@ class System:
             elif type(obj) == Buffer:
                 self.buffers.append(obj)
             elif type(obj) == Sink:
-                self.sinks.append(obj)
+                self.sinks.append(obj)'''
 
         if maintainer is None:
             self.maintainer = Maintainer()
@@ -45,25 +45,12 @@ class System:
             self.maintainer = maintainer
 
         # Put machines at the front as they should be initialized first
-        self.objects.sort(key=lambda obj: not isinstance(obj, Machine))
-    
+        # self.objects.sort(key=lambda obj: not isinstance(obj, Machine))
+
     def initialize(self):
-        for machine in self.machines:
-            machine.remaining_process_time = machine.initial_remaining_process
-            machine.parts_made = 0
-            machine.health = machine.initial_health
-
-            if len(machine.upstream) > 1 or len(machine.downstream) > 1:
-                warnings.warn(
-                    'System configuration includes machines with more than one asset '
-                    + 'upstream or downstream, which may result in unexepcted behavior. '
-                    + 'It is recommended that the system be rearranged such that each '
-                    + 'machine gives and takes from only one buffer.'
-                )
-
         for buffer in self.buffers:
             buffer.level = buffer.initial_level
-        
+
         for sink in self.sinks:
             sink.level = sink.initial_level
 
@@ -71,11 +58,11 @@ class System:
 
     def simulate(
         self,
-        warm_up_time=0,
-        simulation_time=0,
-        verbose=True,
-        trace=False,
-        collect_data=True
+        warm_up_time = 0,
+        simulation_time = 0,
+        verbose = True,
+        trace = False,
+        collect_data = True
     ):
         """
         The primary method for simulating a system.
@@ -96,17 +83,16 @@ class System:
             be useful for very long simulations where memory becomes an issue.
         """
         start = time.time()
-        for machine in self.machines:
-            machine.maintainer = self.maintainer
+        # for machine in self.machines:
+        #    machine.maintainer = self.maintainer
 
-        self.env = Environment(trace=trace, collect_data=collect_data)
+        self.env = Environment(trace = trace, collect_data = collect_data)
         for obj in self.objects:
-            obj.env = self.env
-            obj.initialize()
+            obj.initialize(self.env)
 
         self.maintainer.env = self.env
-        if self.maintainer.machines is None:
-            self.maintainer.machines = self.machines
+        # if self.maintainer.machines is None:
+        #    self.maintainer.machines = self.machines
         self.maintainer.initialize()
 
         self.warm_up_time = warm_up_time
@@ -115,24 +101,24 @@ class System:
         self.env.run(warm_up_time, simulation_time)
 
         # Clean up simulation data
-        for machine in self.machines:
-            if machine.under_repair or machine.failed:
-                machine.downtime += (self.env.now - machine.downtime_start)
+        # for machine in self.machines:
+        #    if machine.under_repair or machine.failed:
+        #        machine.downtime += (self.env.now - machine.downtime_start)
 
         stop = time.time()
         if verbose:
             print(f'Simulation finished in {stop-start:.2f}s')
-            print(f'Parts produced: {sum([sink.level for sink in self.sinks])}')
+        #    print(f'Parts produced: {sum([sink.level for sink in self.sinks])}')
 
     def iterate_simulation(
-        self, 
-        replications, 
-        warm_up_time=0, 
-        simulation_time=0,
-        store_system_state=False,
-        verbose=True,
-        jobs=1,
-        seedseed=0
+        self,
+        replications,
+        warm_up_time = 0,
+        simulation_time = 0,
+        store_system_state = False,
+        verbose = True,
+        jobs = 1,
+        seedseed = 0
     ):
         """
         Conduct several simulation replications of the system with the option to do so 
@@ -162,20 +148,21 @@ class System:
             A list of tuples containing the results of each replication.
 
         """
-        start = time.time()      
+        start = time.time()
         with multiprocessing.Pool(jobs) as p:
             args = [
                 (seed, warm_up_time, simulation_time, store_system_state)
-                for seed in range(seedseed, seedseed+replications)
+                for seed in range(seedseed, seedseed + replications)
             ]
             samples = p.starmap(self.simulate_in_parallel, args)
         stop = time.time()
 
         if verbose:
             print(f'Finished {replications} replications in {stop-start:.2f}s')
-        
+
         return samples
 
+'''
     def simulate_in_parallel(
         self, 
         seed, 
@@ -216,3 +203,4 @@ class System:
         
         except:
             return sys.exc_info()[0]
+'''

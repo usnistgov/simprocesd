@@ -1,18 +1,17 @@
-from simantha import Source, Machine, Sink, System
+from .. import Source, Machine, Sink, System, Part
+
 
 def main():
-    source = Source()
-    M1 = Machine(name='M1', cycle_time=1)
-    sink = Sink()
+    part = Part()
+    source = Source(part)
+    M1 = Machine(name = 'M1', upstream = [source], cycle_time = 1)
+    sink = Sink(upstream = [M1])
 
-    source.define_routing(downstream=[M1])
-    M1.define_routing(upstream=[source], downstream=[sink])
-    sink.define_routing(upstream=[M1])
+    system = System(objects = [source, M1, sink])
 
-    system = System(objects=[source, M1, sink])
+    system.simulate(simulation_time = 100)
+    print(f'Sink received {sink.received_parts_count} parts.')
 
-    system.simulate(simulation_time=100)
 
 if __name__ == '__main__':
     main()
-    

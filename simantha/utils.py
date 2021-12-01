@@ -52,3 +52,7 @@ YEAR = 365 * DAY
 """
 One year in minutes.
 """
+
+def assert_is_instance(obj, type):
+    if not isinstance(obj, type):
+        raise TypeError(f"Object, {type(obj)}, is not and does not implement {type}")

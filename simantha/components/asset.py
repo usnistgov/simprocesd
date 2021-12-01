@@ -1,24 +1,32 @@
+from ..system import Environment
+from ..utils import assert_is_instance
+
+
 class Asset:
-    """Parent class for assets in the system. All objects should extend this class."""
-    
-    def __init__(self, name):
-        self.name = name
+    '''Base class for all assets in the system. All components should extend this class.'''
 
-        self.upstream = []
-        self.downstream = []
+    _id_counter = 0
 
-    def initialize(self):
-        pass
+    def __init__(self, name = None, value = 0):
+        Asset._id_counter += 1
+        self._id = Asset._id_counter
 
-    def get_candidate_givers(self, blocked=False):
-        """
-        Returns a list of assets that can give a part to this asset from among the
-        upstream assets. 
+        if name == None:
+            self._name = f'{type(self)}_{self._id}'
+        else:
+            self._name = name
 
-        If 'blocked=True' then only return assets that are currently blocked. 
-        """
-        candidates = []
-        for candidate in self.upstream:
-            if blocked:
-                if candidate.blocked:
-                    candidates.append(candidate)
+        self.value = value
+        self._env = None
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def id(self):
+        return self._id
+
+    def initialize(self, env):
+        assert_is_instance(env, Environment)
+        self._env = env
