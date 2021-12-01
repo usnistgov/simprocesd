@@ -4,6 +4,26 @@ import random
 import sys
 import traceback
 
+from enum import IntEnum, unique, auto
+
+
+@unique
+class EventType(IntEnum):
+    '''Events in the order of highest to lowest priority.'''
+    OTHER_HIGH = auto()
+    RESTORE = auto()
+
+    # Order of the next 3 events is required for correct machine throughput.
+    FINISH_PROCESSING = auto()
+    GET_PART = auto()
+    START_PROCESSING = auto()
+
+    FAIL = auto()
+    SENSOR = auto()
+    OTHER_LOW = auto()
+
+    TERMINATE = auto()
+
 
 class Event:
     """
@@ -11,49 +31,16 @@ class Event:
     events. 
     """
 
-    action_priority = [
-        # Events at the end of the last time step
-        'generate_arrival',  # Priority: 0 (highest priority)
-        'request_space',  # 1
-        'put_part',  # 2
-        'restore',  # 3
-
-        # Events at the start of the current time step
-        'maintain_planned_failure',  # 4
-        'degrade',  # 5
-        'enter_queue',  # 6
-        'fail',  # 7
-        'inspect',  # 8
-        'maintain',  # 9
-        'request_part',  # 10
-        'get_part',  # 11
-
-        # Simulation runtime events
-        'terminate'  # 12 (lowest priority)
-    ]
-
-    action_priority = {
-        action: priority for priority, action in enumerate(action_priority)
-    }
-
-    def __init__(self, time, asset_id, action, source = '', priority = 0, status = ''):
+    def __init__(self, time, asset_id, action, event_type, source = '', status = ''):
         self.time = time
         self.asset_id = asset_id
         self.action = action
         self.source = source
-        self.priority = priority
+        self.event_type = event_type
         self.status = status
-
-        self.tiebreak = random.random()
 
         self.canceled = False
         self.executed = False
-
-    def get_action_priority(self):
-        if self.action.__name__ in self.action_priority.keys():
-            return self.action_priority[self.action.__name__]
-        else:
-            return float('inf')
 
     def execute(self):
         if not self.canceled:
@@ -65,20 +52,18 @@ class Event:
     def __lt__(self, other):
         return (
             self.time,
-            self.get_action_priority(),
-            self.priority,
-            self.tiebreak
+            self.event_type,
+            self.asset_id  # IDs are unique and can be used as a tie-breaker.
         ) < (
             other.time,
-            other.get_action_priority(),
-            other.priority,
-            other.tiebreak
+            other.event_type,
+            other.asset_id
         )
 
 
 class Environment:
     """
-    The main simulation environment for Simantha. This is designed to be an enviroment 
+    The main simulation environment for Simantha. This is designed to be an environment
     specifically for use with Simantha objects and is not intended to be a general 
     simulation engine. In general, users of Simantha should not need to instantiate an 
     Environment object.
@@ -114,7 +99,8 @@ class Environment:
         self.warm_up_time = warm_up_time
         self.simulation_time = simulation_time
         self.terminated = False
-        self.events.append(Event(warm_up_time + simulation_time, self, self.terminate))
+        self.events.append(Event(warm_up_time + simulation_time, self, self.terminate,
+                                 EventType.TERMINATE))
         self.event_index = 0
 
         self.events.sort()

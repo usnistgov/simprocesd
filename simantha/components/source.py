@@ -40,5 +40,5 @@ class Source(MachineAsset):
     def _get_part_from_upstream(self):
         if not self._is_operational: return
         self._part = self._sample_part.copy()
-        self._schedule_process_part()
+        self._schedule_start_processing_part()
 

@@ -1,6 +1,6 @@
 from .asset import Asset
 from .machine_status import MachineStatus
-from ..system import Environment
+from ..simulation import Environment, EventType
 from ..utils import assert_is_instance
 
 
@@ -61,8 +61,8 @@ class MachineAsset(Asset):
 
     def _schedule_get_part_from_upstream(self, time = None):
         self._waiting_for_part_availability = False
-        self._env.schedule_event(time if time != None else self._env.now,
-                                 self.id, self._get_part_from_upstream)
+        self._env.schedule_event(time if time != None else self._env.now, self.id,
+                                 self._get_part_from_upstream, EventType.GET_PART)
 
     def _get_part_from_upstream(self):
         if not self._is_operational: return
@@ -72,16 +72,16 @@ class MachineAsset(Asset):
         for ups in self._upstream:
             self._part = ups._take_part()
             if self._part != None:
-                self._schedule_process_part()
+                self._schedule_start_processing_part()
                 return
         self._waiting_for_part_availability = True
 
-    def _schedule_process_part(self, time = None):
+    def _schedule_start_processing_part(self, time = None):
         self._waiting_for_output_availability = False
-        self._env.schedule_event(time if time != None else self._env.now,
-                                 self.id, self._process_part)
+        self._env.schedule_event(time if time != None else self._env.now, self.id,
+                                 self._start_processing_part, EventType.START_PROCESSING)
 
-    def _process_part(self):
+    def _start_processing_part(self):
         if not self._is_operational: return
         assert self._part != None, "Bad state, part should be available."
 
@@ -92,8 +92,12 @@ class MachineAsset(Asset):
             self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self, time = None):
-        self._env.schedule_event(time if time != None else self._env.now + self._cycle_time,
-                                 self.id, self._finish_processing_part)
+        self._env.schedule_event(
+            time if time != None else self._env.now + self._cycle_time,
+            self.id,
+            self._finish_processing_part,
+            EventType.FINISH_PROCESSING
+        )
 
     def _finish_processing_part(self):
         assert self._output_part == None, \
@@ -126,7 +130,7 @@ class MachineAsset(Asset):
         temp = self._output_part
         self._output_part = None
         if self.is_operational and self._waiting_for_output_availability:
-            self._schedule_process_part()
+            self._schedule_start_processing_part()
         return temp
 
     def fail(self):
