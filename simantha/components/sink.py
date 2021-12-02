@@ -3,13 +3,12 @@ from .machine_asset import MachineAsset
 
 class Sink(MachineAsset):
 
-    def __init__(
-        self, name = None,
-        upstream = [],
-        time_to_receive_part = 0,
-        collect_parts = False
-    ):
-        super().__init__(name, upstream, cycle_time = time_to_receive_part)
+    def __init__(self,
+                 name = None,
+                 time_to_receive_part = 0,
+                 collect_parts = False,
+                 **kwargs):
+        super().__init__(name, cycle_time = time_to_receive_part, **kwargs)
 
         self._collect_parts = collect_parts
         self.collected_parts = []

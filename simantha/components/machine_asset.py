@@ -1,24 +1,22 @@
 from .asset import Asset
 from .machine_status import MachineStatus
-from ..simulation import Environment, EventType
+from ..simulation import EventType
 from ..utils import assert_is_instance
 
 
 class MachineAsset(Asset):
     '''Base class for machine assets in the system.'''
 
-    def __init__(
-        self,
-        name = None,
-        upstream = [],
-        cycle_time = 1.0,
-        machine_status = MachineStatus(),
-        value = 0.0
-    ):
-        super().__init__(name, value)
+    def __init__(self,
+                 name = None,
+                 upstream = [],
+                 cycle_time = 1.0,
+                 machine_status = MachineStatus(),
+                 **kwargs):
+        super().__init__(name, **kwargs)
 
         assert_is_instance(machine_status, MachineStatus)
-        self._machine_status = machine_status
+        self.machine_status = machine_status
 
         self._upstream = upstream
         self._downstream = []
@@ -47,7 +45,7 @@ class MachineAsset(Asset):
     def initialize(self, env):
         super().initialize(env)
 
-        self._machine_status.initialize(env)
+        self.machine_status.initialize(env)
 
         for obj in self._upstream:
             assert_is_instance(obj, MachineAsset)
@@ -72,7 +70,9 @@ class MachineAsset(Asset):
         for ups in self._upstream:
             self._part = ups._take_part()
             if self._part != None:
+                self._part.routing_history.append(self.name)
                 self._schedule_start_processing_part()
+                self.machine_status.got_new_part(self._part)
                 return
         self._waiting_for_part_availability = True
 
@@ -88,7 +88,7 @@ class MachineAsset(Asset):
         if self._output_part != None:
             self._waiting_for_output_availability = True
         else:
-            self._machine_status.started_processing_part(self._part)
+            self.machine_status.started_processing_part(self._part)
             self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self, time = None):
@@ -106,9 +106,10 @@ class MachineAsset(Asset):
 
         if self._is_operational:
             self._output_part = self._part
+            temp = self._part
             self._part = None
 
-            self._machine_status.finished_processing_part(self._part)
+            self.machine_status.finished_processing_part(temp)
             self._schedule_get_part_from_upstream()
 
             self._notify_downstream_of_available_part()
@@ -138,6 +139,7 @@ class MachineAsset(Asset):
         self._is_operational = False
 
         self._env.cancel_matching_events(asset_id = self.id)
+        self.machine_status.failed()
 
     def shutdown_machine(self, is_pause = False):
         self._is_operational = False
@@ -156,4 +158,5 @@ class MachineAsset(Asset):
 
         # TODO if machine was paused need to resume processing of current part
         self._schedule_get_part_from_upstream()
+        self.machine_status.restored()
 

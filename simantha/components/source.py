@@ -5,14 +5,13 @@ from ..utils import assert_is_instance
 
 class Source(MachineAsset):
 
-    def __init__(
-        self,
-        sample_part,
-        name = None,
-        time_to_produce_part = 0.0,
-        max_produced_parts = float('inf')
-    ):
-        super().__init__(name, cycle_time = time_to_produce_part)
+    def __init__(self,
+                 name = None,
+                 sample_part = Part(),
+                 time_to_produce_part = 0.0,
+                 max_produced_parts = float('inf'),
+                 **kwargs):
+        super().__init__(name, cycle_time = time_to_produce_part, **kwargs)
 
         assert_is_instance(sample_part, Part)
         self._sample_part = sample_part

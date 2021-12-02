@@ -5,6 +5,7 @@ import sys
 import traceback
 
 from enum import IntEnum, unique, auto
+from .utils import assert_is_instance
 
 
 @unique
@@ -131,19 +132,18 @@ class Environment:
             print(f'  time:     {next_event.time}')
             print(f'  asset_id: {next_event.asset_id}')
             print(f'  action:   {next_event.action.__name__}')
-            print(f'  priority: {next_event.priority}')
+            print(f'  event_type: {next_event.event_type.name}')
             print(traceback.format_exc())
             sys.exit()
 
-    def schedule_event(
-        self, time, asset_id, action, source = '', priority = 0, event_type = Event
-    ):
+    def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW,
+                       source = '', priority = 0):
         """
         Schedule a new simulation event by inserting it in its proper asset_id
         within the simulation events list. 
         """
-        # print(f'Scheduling: {time}, {asset_id}, {action} at {self.now}')
-        new_event = Event(time, asset_id, action, source, priority)
+        assert_is_instance(event_type, EventType)
+        new_event = Event(time, asset_id, action, event_type, source)
         bisect.insort(self.events, new_event)
 
     def terminate(self):
@@ -172,7 +172,7 @@ class Environment:
         if asset_id == None and action == None: return  # No parameters were set
 
         events_to_cancel = self.events
-        if location != None:
+        if asset_id != None:
             events_to_cancel = [x for x in events_to_cancel if x.asset_id == asset_id]
         if action != None:
             events_to_cancel = [x for x in events_to_cancel if x.action == action]

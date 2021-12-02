@@ -108,7 +108,10 @@ class System:
         stop = time.time()
         if verbose:
             print(f'Simulation finished in {stop-start:.2f}s')
-        #    print(f'Parts produced: {sum([sink.level for sink in self.sinks])}')
+            from . import Sink  # Late import to avoid circular dependency.
+            producedParts = sum(
+                len(x.collected_parts) for x in self.objects if isinstance(x, Sink))
+            print(f'Parts produced: {producedParts}')
 
     def iterate_simulation(
         self,
