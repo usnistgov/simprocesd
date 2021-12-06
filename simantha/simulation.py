@@ -27,12 +27,17 @@ class EventType(IntEnum):
 
 
 class Event:
-    """
+    '''
     Simulation event class. Should be extended when implementing custom simulation
     events. 
-    """
+    '''
 
     def __init__(self, time, asset_id, action, event_type, source = '', status = ''):
+        assert_is_instance(event_type, EventType)
+        assert_is_instance(asset_id, int)
+        assert_is_instance(time, (float, int))
+        assert callable(action), 'Passed in action is not callable.'
+
         self.time = time
         self.asset_id = asset_id
         self.action = action
@@ -100,7 +105,7 @@ class Environment:
         self.warm_up_time = warm_up_time
         self.simulation_time = simulation_time
         self.terminated = False
-        self.events.append(Event(warm_up_time + simulation_time, self, self.terminate,
+        self.events.append(Event(warm_up_time + simulation_time, -1, self.terminate,
                                  EventType.TERMINATE))
         self.event_index = 0
 
@@ -142,7 +147,6 @@ class Environment:
         Schedule a new simulation event by inserting it in its proper asset_id
         within the simulation events list. 
         """
-        assert_is_instance(event_type, EventType)
         new_event = Event(time, asset_id, action, event_type, source)
         bisect.insort(self.events, new_event)
 

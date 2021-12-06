@@ -110,7 +110,7 @@ class System:
             print(f'Simulation finished in {stop-start:.2f}s')
             from . import Sink  # Late import to avoid circular dependency.
             producedParts = sum(
-                len(x.collected_parts) for x in self.objects if isinstance(x, Sink))
+                x.received_parts_count for x in self.objects if isinstance(x, Sink))
             print(f'Parts produced: {producedParts}')
 
     def iterate_simulation(

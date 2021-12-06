@@ -11,7 +11,8 @@ class Source(MachineAsset):
                  time_to_produce_part = 0.0,
                  max_produced_parts = float('inf'),
                  **kwargs):
-        super().__init__(name, cycle_time = time_to_produce_part, **kwargs)
+        super().__init__(name, upstream = [self], cycle_time = time_to_produce_part,
+                         **kwargs)
 
         assert_is_instance(sample_part, Part)
         self._sample_part = sample_part

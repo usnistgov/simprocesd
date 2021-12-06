@@ -1,6 +1,5 @@
 
 from .machine_asset import MachineAsset
-from .machine_status import MachineStatus
 
 
 class Machine(MachineAsset):

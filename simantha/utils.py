@@ -34,6 +34,6 @@ def generate_degradation_matrix(p, h_max):
     return degradation_matrix
 
 
-def assert_is_instance(obj, type):
-    if not isinstance(obj, type):
-        raise TypeError(f"Object, {type(obj)}, is not and does not implement {type}")
+def assert_is_instance(obj, type_):
+    if not isinstance(obj, type_):
+        raise TypeError(f"Object, {type(obj)}, is not and does not implement {type_}")

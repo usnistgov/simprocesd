@@ -45,11 +45,14 @@ class MachineAsset(Asset):
     def initialize(self, env):
         super().initialize(env)
 
-        self.machine_status.initialize(env)
+        self.machine_status.initialize(self, env)
 
-        for obj in self._upstream:
-            assert_is_instance(obj, MachineAsset)
-            obj._add_downstream(self)
+        if len(self._upstream) <= 0:
+            print(f'Warning: {self.name} does not have an upstream machine.')
+        else:
+            for obj in self._upstream:
+                assert_is_instance(obj, MachineAsset)
+                obj._add_downstream(self)
 
         self._schedule_get_part_from_upstream();
 
@@ -101,7 +104,7 @@ class MachineAsset(Asset):
 
     def _finish_processing_part(self):
         assert self._output_part == None, \
-              f"Bad state, there should not be an output {output.name}."
+              f"Bad state, there should not be an output {self._output_part.name}."
         assert self._part != None, "Bad state, part should be available."
 
         if self._is_operational:
@@ -134,7 +137,15 @@ class MachineAsset(Asset):
             self._schedule_start_processing_part()
         return temp
 
-    def fail(self):
+    def schedule_machine_failure(self, time = None):
+        self._env.schedule_event(
+            time if time != None else self._env.now,
+            self.id,
+            self._fail,
+            EventType.FAIL
+        )
+
+    def _fail(self):
         self.part = None  # part being processed is lost
         self._is_operational = False
 

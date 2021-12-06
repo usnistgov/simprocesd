@@ -1,6 +1,6 @@
-import random 
+import random
 
-from .simulation import *
+# from .simulation import *
 
 
 class Maintainer:
@@ -8,8 +8,8 @@ class Maintainer:
     A maintainer is responsible for repairing machines that request maintenance 
     according to some preventive maintenance policy or upon the occurrence of failure. 
     """
-        
-    def __init__(self, name='maintainer', capacity=float('inf'), machines=None):
+
+    def __init__(self, name = 'maintainer', capacity = float('inf'), machines = None):
         self.name = name
         self.capacity = capacity
 

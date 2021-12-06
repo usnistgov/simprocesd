@@ -1,43 +1,34 @@
 import random
 
-from simantha import Source, Machine, Buffer, Sink, Maintainer, System, utils
+from .. import Source, Machine, Buffer, Sink, System
+from ..components.machine_status import PeriodicFailStatus
+
+
+def calculate_ttf():
+    degradation_rate_percentage = 1
+    starting_health = 4
+    ttf = 0
+    while starting_health > 0:
+        ttf += 1
+        if random.uniform(0, 100) <= degradation_rate_percentage:
+            starting_health -= 1
+    return ttf
+
 
 def main():
-    degradation_matrix = [
-        [0.9, 0.1, 0.,  0.,  0. ],
-        [0.,  0.9, 0.1, 0.,  0. ],
-        [0.,  0.,  0.9, 0.1, 0. ],
-        [0.,  0.,  0.,  0.9, 0.1],
-        [0.,  0.,  0.,  0.,  1. ]
-    ]
-
     source = Source()
-    M1 = Machine(
-        name='M1',
-        cycle_time=1,
-        degradation_matrix=degradation_matrix,
-        cm_distribution={'geometric': 0.1}
-    )
-    B1 = Buffer(capacity=5)
-    M2 = Machine(
-        name='M2',
-        cycle_time=1,
-        degradation_matrix=degradation_matrix,
-        cm_distribution={'geometric': 0.1}
-    )
-    sink = Sink()
+    status = PeriodicFailStatus(calculate_ttf)
+    M1 = Machine('M1', upstream = [source], machine_status = status, cycle_time = 1)
+    B1 = Buffer(upstream = [M1], capacity = 5)
+    M2 = Machine(name = 'M2', upstream = [B1], machine_status = status, cycle_time = 1)
+    sink = Sink(upstream = [M2])
 
-    source.define_routing(downstream=[M1])
-    M1.define_routing(upstream=[source], downstream=[B1])
-    B1.define_routing(upstream=[M1], downstream=[M2])
-    M2.define_routing(upstream=[B1], downstream=[sink])
-    sink.define_routing(upstream=[M2])
+    system = System([source, M1, B1, M2, sink])
 
-    maintainer = Maintainer(capacity=1)
-    system = System([source, M1, B1, M2, sink], maintainer=maintainer)
+    random.seed(10)
+    # If time units are minutes then simulation period is a week.
+    system.simulate(simulation_time = 60 * 24 * 7)
 
-    random.seed(1)
-    system.simulate(simulation_time=utils.WEEK)
 
 if __name__ == '__main__':
     main()

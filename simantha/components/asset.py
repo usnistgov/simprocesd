@@ -3,7 +3,9 @@ from ..utils import assert_is_instance
 
 
 class Asset:
-    '''Base class for all assets in the system. All components should extend this class.'''
+    '''Base class for all assets in the system. All simulated objects should
+    extend this class.
+    '''
 
     _id_counter = 0
 
