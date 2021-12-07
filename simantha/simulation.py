@@ -142,11 +142,13 @@ class Environment:
             sys.exit()
 
     def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW,
-                       source = '', priority = 0):
+                       source = ''):
         """
         Schedule a new simulation event by inserting it in its proper asset_id
         within the simulation events list. 
         """
+        assert time >= self.now, \
+            f'Can not schedule events in the past: now={self.now}, time={time}'
         new_event = Event(time, asset_id, action, event_type, source)
         bisect.insort(self.events, new_event)
 

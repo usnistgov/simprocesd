@@ -137,7 +137,7 @@ class MachineAsset(Asset):
             self._schedule_start_processing_part()
         return temp
 
-    def schedule_machine_failure(self, time = None):
+    def schedule_failure(self, time = None):
         self._env.schedule_event(
             time if time != None else self._env.now,
             self.id,
@@ -146,8 +146,9 @@ class MachineAsset(Asset):
         )
 
     def _fail(self):
-        self.part = None  # part being processed is lost
+        self._part = None  # part being processed is lost
         self._is_operational = False
+        self._waiting_for_part_availability = False
 
         self._env.cancel_matching_events(asset_id = self.id)
         self.machine_status.failed()

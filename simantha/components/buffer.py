@@ -8,7 +8,7 @@ class Buffer(MachineAsset):
         assert int(capacity) > 0, "Capacity can't be less than 1."
         super().__init__(name, cycle_time = 0, **kwargs)
 
-        self.capacity = capacity
+        self._capacity = capacity
         self._buffer = []
 
     def _start_processing_part(self):
@@ -24,7 +24,7 @@ class Buffer(MachineAsset):
     def _finish_processing_part(self):
         super()._finish_processing_part()
 
-        if len(self._buffer) < self.capacity - 1:  # -1 to account for item in self._part
+        if len(self._buffer) < self._capacity - 1:  # -1 to account for item in self._part
             self._buffer.append(self._output_part)
             self._output_part = None
 

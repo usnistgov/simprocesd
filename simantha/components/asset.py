@@ -30,5 +30,6 @@ class Asset:
         return self._id
 
     def initialize(self, env):
+        assert self._env == None, 'Initialize called more than once'
         assert_is_instance(env, Environment)
         self._env = env

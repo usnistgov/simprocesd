@@ -1,57 +1,55 @@
-import random
+# import random
 
-# from .simulation import *
+from .simulation import EventType
+
+
+class MaintenanceRequest:
+
+    def __init__(self, machine, request_capacity):
+        self.machine = machine
+        self.request_capacity = request_capacity
 
 
 class Maintainer:
-    """
-    A maintainer is responsible for repairing machines that request maintenance 
-    according to some preventive maintenance policy or upon the occurrence of failure. 
-    """
+    '''
+    A maintainer is responsible for repairing machines that request maintenance.
+    '''
 
-    def __init__(self, name = 'maintainer', capacity = float('inf'), machines = None):
+    def __init__(self, name = 'maintainer', capacity = float('inf')):
         self.name = name
-        self.capacity = capacity
+        self._capacity = capacity
 
-        self.utilization = 0
+        self._utilization = 0
+        self._env = None
+        self._request_queue = []
 
-        self.env = None
+    def initialize(self, env):
+        self._env = env
 
-        self.machines = machines
+    def request_maintenance(self, machine, request_capacity = 1):
+        self._request_queue.append(MaintenanceRequest(machine, request_capacity))
+        self.try_working_requests()
 
-    def initialize(self):
-        self.utilization = 0
+    def try_working_requests(self):
+        i = 0
+        while i < len(self._request_queue):
+            req = self._request_queue[i]
+            if self._utilization < self._capacity + req.request_capacity:
+                self._request_queue.pop(i)
 
-    def is_available(self):
-        return self.utilization < self.capacity
+                self._utilization += req.request_capacity
+                # Begin fixing
+                self._env.schedule_event(
+                    self._env.now + req.machine.machine_status.time_to_fix,
+                    req.machine.id,
+                    lambda: self._restore_machine(req),
+                    EventType.RESTORE)
+            else:
+                i += 1
 
-    def inspect(self):
-        # If available, check for machines requesting repair
-        current_queue = self.get_queue()
-        if (not self.is_available()) or (len(current_queue) == 0):
-            # No available capacity or empty queue
-            return
-        else:
-            machine = self.choose_maintenance_action(current_queue)
-            self.utilization += 1
-            machine.in_queue = False
-            machine.under_repair = True
-            source = f'{self.name}.inspect at {self.env.now}'
-            self.env.schedule_event(self.env.now, machine, machine.maintain, source)
+    def _restore_machine(self, request):
+        request.machine.restore_functionality()
+        self._utilization -= request.request_capacity
 
-    def choose_maintenance_action(self, queue):
-        """
-        Choose a machine to repair from among those in the queue. Uses a first-in, 
-        first-out (FIFO) rule by default with ties broken by random selection. This
-        method should be overridden by maintainers that implement alternative
-        maintenance scheduling rules. 
-        """
-        earliest_request = min(m.time_entered_queue for m in queue)
-        candidates = [m for m in queue if m.time_entered_queue == earliest_request]
-        return random.choice(candidates)
+        self.try_working_requests()
 
-    def get_queue(self):
-        """
-        Get a list of machines currently awaiting maintenance.
-        """
-        return [machine for machine in self.machines if machine.in_queue]
