@@ -18,7 +18,7 @@ class Buffer(MachineAsset):
         if self._output_part != None:
             self._waiting_for_output_availability = True
         else:
-            self.machine_status.started_processing_part(self._part)
+            self.machine_status.start_processing_callback(self._part)
             self._schedule_finish_processing_part()
 
     def _finish_processing_part(self):

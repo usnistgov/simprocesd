@@ -3,46 +3,28 @@ import random
 from .. import Source, Machine, Buffer, Sink, System
 from ..components.machine_status import PeriodicFailStatus
 from ..maintainer import Maintainer
-
-
-class CustomStatus(PeriodicFailStatus):
-
-    def __init__(self, maintainer, **kwargs):
-        super().__init__(**kwargs)
-        self.maintainer = maintainer
-
-    def failed(self):
-        self.maintainer.request_maintenance(self._machine, 1)
-
-
-def calculate_ttf():
-    degradation_rate_percentage = 10
-    starting_health = 4
-    ttf = 0
-    while starting_health > 0:
-        ttf += 1
-        if random.uniform(0, 100) <= degradation_rate_percentage:
-            starting_health -= 1
-    return ttf
-
-
-def get_time_to_fix():
-    return 10
+from ..math_utils import geometric_distribution_sample
 
 
 def main():
+    # 10% degradation rate with a starting health of 4.
+    get_ttf = lambda: geometric_distribution_sample(10, 4)
+    # Maintenance takes 5 long and has a 10% chance of failure in which case it
+    # needs to be performed again.
+    get_ttr = lambda: geometric_distribution_sample(90, 1) * 5
+
     maintainer = Maintainer()
-    status1 = CustomStatus(maintainer,
-                           get_time_to_failure = calculate_ttf,
-                           get_time_to_fix = get_time_to_fix)
-    status2 = CustomStatus(maintainer,
-                           get_time_to_failure = calculate_ttf,
-                           get_time_to_fix = get_time_to_fix)
+    status1 = PeriodicFailStatus(get_time_to_failure = get_ttf, get_time_to_fix = get_ttr)
+    status1.set_failed_callback(
+        lambda: maintainer.request_maintenance(status1.machine, 1))
+    status2 = PeriodicFailStatus(get_time_to_failure = get_ttf, get_time_to_fix = get_ttr)
+    status2.set_failed_callback(
+        lambda: maintainer.request_maintenance(status2.machine, 1))
 
     source = Source()
     M1 = Machine('M1', upstream = [source], machine_status = status1, cycle_time = 1)
     B1 = Buffer(upstream = [M1], capacity = 5)
-    M2 = Machine(name = 'M2', upstream = [B1], machine_status = status2, cycle_time = 1)
+    M2 = Machine('M2', upstream = [B1], machine_status = status2, cycle_time = 1)
     sink = Sink(upstream = [M2])
 
     system = System([source, M1, B1, M2, sink], maintainer)

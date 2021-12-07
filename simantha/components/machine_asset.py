@@ -75,7 +75,7 @@ class MachineAsset(Asset):
             if self._part != None:
                 self._part.routing_history.append(self.name)
                 self._schedule_start_processing_part()
-                self.machine_status.got_new_part(self._part)
+                self.machine_status.receive_part_callback(self._part)
                 return
         self._waiting_for_part_availability = True
 
@@ -91,7 +91,7 @@ class MachineAsset(Asset):
         if self._output_part != None:
             self._waiting_for_output_availability = True
         else:
-            self.machine_status.started_processing_part(self._part)
+            self.machine_status.start_processing_callback(self._part)
             self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self, time = None):
@@ -112,7 +112,7 @@ class MachineAsset(Asset):
             temp = self._part
             self._part = None
 
-            self.machine_status.finished_processing_part(temp)
+            self.machine_status.finish_processing_callback(temp)
             self._schedule_get_part_from_upstream()
 
             self._notify_downstream_of_available_part()
@@ -151,7 +151,7 @@ class MachineAsset(Asset):
         self._waiting_for_part_availability = False
 
         self._env.cancel_matching_events(asset_id = self.id)
-        self.machine_status.failed()
+        self.machine_status.failed_callback()
 
     def shutdown_machine(self, is_pause = False):
         self._is_operational = False
@@ -170,5 +170,5 @@ class MachineAsset(Asset):
 
         # TODO if machine was paused need to resume processing of current part
         self._schedule_get_part_from_upstream()
-        self.machine_status.restored()
+        self.machine_status.restored_callback()
 
