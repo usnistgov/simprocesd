@@ -17,13 +17,12 @@ class Source(MachineAsset):
         assert_is_instance(sample_part, Part)
         self._sample_part = sample_part
 
-        self._cost_of_produced_parts = 0
         self._max_produced_parts = max_produced_parts
         self._produced_parts = 0
 
     @property
     def cost_of_produced_parts(self):
-        return self._cost_of_produced_parts
+        return -self.value
 
     @property
     def produced_parts(self):
@@ -32,7 +31,7 @@ class Source(MachineAsset):
     def _take_part(self):
         if not self._is_operational or self._produced_parts >= self._max_produced_parts:
             return
-        self._cost_of_produced_parts += self._sample_part.value
+        self.value -= self._sample_part.value
         self._produced_parts += 1
 
         return super()._take_part()

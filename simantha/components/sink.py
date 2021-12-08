@@ -18,10 +18,16 @@ class Sink(MachineAsset):
     def received_parts_count(self):
         return self._received_parts_count
 
+    @property
+    def value_of_received_parts(self):
+        return self.value
+
     def _get_part_from_upstream(self):
         super()._get_part_from_upstream()
+
         if self._part != None:
             self._received_parts_count += 1
+            self.value += self._part.value
             if self._collect_parts:
                 self.collected_parts.append(self._part)
 

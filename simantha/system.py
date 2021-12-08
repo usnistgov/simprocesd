@@ -9,9 +9,8 @@ class System:
     simulation.
     '''
 
-    def __init__(self, objects = [], maintainer = None):
+    def __init__(self, objects = []):
         self.objects = objects
-        self._maintainer = maintainer
 
     def simulate(self,
                  simulation_time = 0,
@@ -23,14 +22,16 @@ class System:
         for obj in self.objects:
             obj.initialize(self._env)
 
-        if self._maintainer != None:
-            self._maintainer.initialize(self._env)
-
         self._env.run(simulation_time)
         stop = time.time()
 
         print(f'Simulation finished in {stop-start:.2f}s')
-        from . import Sink  # Late import to avoid circular dependency.
+        from .components.sink import Sink  # Late import to avoid circular dependency.
         producedParts = sum(
             x.received_parts_count for x in self.objects if isinstance(x, Sink))
         print(f'Parts produced: {producedParts}')
+
+    def get_net_value(self):
+        from .components.asset import Asset
+        return sum(x.value for x in self.objects if isinstance(x, Asset))
+

@@ -9,9 +9,8 @@ from ..math_utils import geometric_distribution_sample
 def main():
     # 10% degradation rate with a starting health of 4.
     get_ttf = lambda: geometric_distribution_sample(10, 4)
-    # Maintenance takes 5 long and has a 10% chance of failure in which case it
-    # needs to be performed again.
-    get_ttr = lambda: geometric_distribution_sample(90, 1) * 5
+    # Maintenance takes 5-8 long.
+    get_ttr = lambda: random.uniform(5, 8)
 
     maintainer = Maintainer()
     status1 = PeriodicFailStatus(get_time_to_failure = get_ttf, get_time_to_fix = get_ttr)
@@ -27,7 +26,7 @@ def main():
     M2 = Machine('M2', upstream = [B1], machine_status = status2, cycle_time = 1)
     sink = Sink(upstream = [M2])
 
-    system = System([source, M1, B1, M2, sink], maintainer)
+    system = System([source, M1, B1, M2, sink, maintainer])
 
     random.seed(1)
     # If time units are minutes then simulation period is a day.

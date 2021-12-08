@@ -1,5 +1,6 @@
 from .asset import Asset
 from .machine_status import MachineStatus
+from .part import Part
 from ..simulation import EventType
 from ..utils import assert_is_instance
 
@@ -73,6 +74,7 @@ class MachineAsset(Asset):
         for ups in self._upstream:
             self._part = ups._take_part()
             if self._part != None:
+                assert_is_instance(self._part, Part)
                 self._part.routing_history.append(self.name)
                 self._schedule_start_processing_part()
                 self.machine_status.receive_part_callback(self._part)
