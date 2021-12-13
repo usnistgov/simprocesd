@@ -7,23 +7,15 @@ parts.
 import random
 
 from .. import Source, Machine, Sink, System
-from ..components.machine_status import PeriodicFailStatus
-
-
-def calculate_ttf():
-    degradation_rate_percentage = 1
-    starting_health = 4
-    ttf = 0
-    while starting_health > 0:
-        ttf += 1
-        if random.uniform(0, 100) <= degradation_rate_percentage:
-            starting_health -= 1
-    return ttf
+from ..math_utils import geometric_distribution_sample
+from ..components.machine_status import MachineStatus
 
 
 def main():
     source = Source()
-    status = PeriodicFailStatus(calculate_ttf)
+    status = MachineStatus()
+    status.add_failure(get_time_to_failure = lambda: geometric_distribution_sample(1, 4))
+
     M1 = Machine('M1',
                  cycle_time = 1,
                  upstream = [source],

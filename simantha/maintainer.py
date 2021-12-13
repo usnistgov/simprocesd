@@ -6,8 +6,9 @@ from .components.asset import Asset
 
 class MaintenanceRequest:
 
-    def __init__(self, machine, request_capacity):
+    def __init__(self, machine, time_to_fix, request_capacity):
         self.machine = machine
+        self.time_to_fix = time_to_fix
         self.request_capacity = request_capacity
 
 
@@ -36,8 +37,8 @@ class Maintainer(Asset):
         if self._cost_per_interval[1] > 0:
             self._incur_cost()
 
-    def request_maintenance(self, machine, request_capacity = 1):
-        self._request_queue.append(MaintenanceRequest(machine, request_capacity))
+    def request_maintenance(self, machine, time_to_fix = 0, request_capacity = 1):
+        self._request_queue.append(MaintenanceRequest(machine, time_to_fix, request_capacity))
         self.try_working_requests()
 
     def try_working_requests(self):
@@ -50,10 +51,11 @@ class Maintainer(Asset):
                 self._utilization += req.request_capacity
                 # Begin fixing
                 self._env.schedule_event(
-                    self._env.now + req.machine.machine_status.time_to_fix,
-                    req.machine.id,
+                    self._env.now + req.time_to_fix,
+                    self.id,
                     lambda: self._restore_machine(req),
-                    EventType.RESTORE)
+                    EventType.RESTORE,
+                    f'Repairing: {req.machine.name}')
             else:
                 i += 1
 

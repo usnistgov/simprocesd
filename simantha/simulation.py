@@ -41,8 +41,8 @@ class Event:
         self.time = time
         self.asset_id = asset_id
         self.action = action
-        self.source = source
         self.event_type = event_type
+        self.source = source
         self.status = status
 
         self.canceled = False

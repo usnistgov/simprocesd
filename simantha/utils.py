@@ -5,6 +5,15 @@ theoretically represent any duration of time.
 """
 
 
-def assert_is_instance(obj, type_):
+def assert_is_instance(obj, type_, message = None):
     if not isinstance(obj, type_):
-        raise TypeError(f"Object, {type(obj)}, is not and does not implement {type_}")
+        if message == None:
+            message = f"Object, {type(obj)}, does not implement {type_}"
+        raise TypeError(message)
+
+
+def assert_callable(obj, none_allowed = False, message = None):
+    if obj != None and not callable(obj):
+        if message == None:
+            message = f"Object, {type(obj)}, is not None and is not a callable."
+        raise TypeError(message)

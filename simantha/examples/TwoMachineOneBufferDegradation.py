@@ -1,7 +1,7 @@
 import random
 
 from .. import Source, Machine, Buffer, Sink, System
-from ..components.machine_status import PeriodicFailStatus
+from ..components.machine_status import MachineStatus
 from ..maintainer import Maintainer
 from ..math_utils import geometric_distribution_sample
 
@@ -9,16 +9,21 @@ from ..math_utils import geometric_distribution_sample
 def main():
     # 10% degradation rate with a starting health of 4.
     get_ttf = lambda: geometric_distribution_sample(10, 4)
-    # Maintenance takes 5-8 long.
-    get_ttr = lambda: random.uniform(5, 8)
+    # Maintenance time is using a normal distribution with a mean of 7.
+    get_ttr = lambda: random.normalvariate(7, 1)
 
     maintainer = Maintainer()
-    status1 = PeriodicFailStatus(get_time_to_failure = get_ttf, get_time_to_fix = get_ttr)
-    status1.set_failed_callback(
-        lambda: maintainer.request_maintenance(status1.machine, 1))
-    status2 = PeriodicFailStatus(get_time_to_failure = get_ttf, get_time_to_fix = get_ttr)
-    status2.set_failed_callback(
-        lambda: maintainer.request_maintenance(status2.machine, 1))
+    schedule_repair = lambda f: maintainer.request_maintenance(
+            f.machine, f.get_time_to_repair(), f.capacity_to_repair)
+
+    status1 = MachineStatus()
+    status1.add_failure(get_time_to_failure = get_ttf,
+                        get_time_to_repair = get_ttr,
+                        failed_callback = schedule_repair)
+    status2 = MachineStatus()
+    status2.add_failure(get_time_to_failure = get_ttf,
+                        get_time_to_repair = get_ttr,
+                        failed_callback = schedule_repair)
 
     source = Source()
     M1 = Machine('M1', upstream = [source], machine_status = status1, cycle_time = 1)

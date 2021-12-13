@@ -69,7 +69,7 @@ class MachineAsset(Asset):
     def _get_part_from_upstream(self):
         if not self._is_operational: return
         assert self._part == None, \
-               f"Bad state, there should not be a part {self._part.name}."
+               f'Bad state, there should not be a part {self._part.name}.'
 
         for ups in self._upstream:
             self._part = ups._take_part()
@@ -77,7 +77,7 @@ class MachineAsset(Asset):
                 assert_is_instance(self._part, Part)
                 self._part.routing_history.append(self.name)
                 self._schedule_start_processing_part()
-                self.machine_status.receive_part_callback(self._part)
+                self.machine_status.receive_part(self._part)
                 return
         self._waiting_for_part_availability = True
 
@@ -88,12 +88,12 @@ class MachineAsset(Asset):
 
     def _start_processing_part(self):
         if not self._is_operational: return
-        assert self._part != None, "Bad state, part should be available."
+        assert self._part != None, 'Bad state, part should be available.'
 
         if self._output_part != None:
             self._waiting_for_output_availability = True
         else:
-            self.machine_status.start_processing_callback(self._part)
+            self.machine_status.start_processing(self._part)
             self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self, time = None):
@@ -106,15 +106,15 @@ class MachineAsset(Asset):
 
     def _finish_processing_part(self):
         assert self._output_part == None, \
-              f"Bad state, there should not be an output {self._output_part.name}."
-        assert self._part != None, "Bad state, part should be available."
+              f'Bad state, there should not be an output {self._output_part.name}.'
+        assert self._part != None, 'Bad state, part should be available.'
 
         if self._is_operational:
             self._output_part = self._part
             temp = self._part
             self._part = None
 
-            self.machine_status.finish_processing_callback(temp)
+            self.machine_status.finish_processing(temp)
             self._schedule_get_part_from_upstream()
 
             self._notify_downstream_of_available_part()
@@ -140,37 +140,27 @@ class MachineAsset(Asset):
         return temp
 
     def schedule_failure(self, time = None):
-        self._env.schedule_event(
-            time if time != None else self._env.now,
-            self.id,
-            self._fail,
-            EventType.FAIL
-        )
+        self._env.schedule_event(time if time != None else self._env.now,
+                                 self.id,
+                                 self.fail,
+                                 EventType.FAIL)
 
-    def _fail(self):
+    def fail(self):
         self._part = None  # part being processed is lost
         self._is_operational = False
         self._waiting_for_part_availability = False
 
         self._env.cancel_matching_events(asset_id = self.id)
-        self.machine_status.failed_callback()
+        self.machine_status.failed()
 
-    def shutdown_machine(self, is_pause = False):
-        self._is_operational = False
-
-        if not is_pause:
-            self.part = None
-            self._env.cancel_matching_events(location = self.name)
-        else:
-            # TODO pause processing so it can be resumed later and resume it later
-            raise NotImplementedError("Pause is not implemented.")
+    def shutdown_machine(self, lose_part = True):
+            raise NotImplementedError('Pause is not implemented.')
 
     def restore_functionality(self):
         assert not self._is_operational, \
                f'Restore functionality called when {self.name} is operational.'
         self._is_operational = True
 
-        # TODO if machine was paused need to resume processing of current part
         self._schedule_get_part_from_upstream()
-        self.machine_status.restored_callback()
+        self.machine_status.restored()
 
