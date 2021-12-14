@@ -1,5 +1,5 @@
 import bisect
-import pickle
+import json
 import random
 import sys
 import traceback
@@ -32,7 +32,7 @@ class Event:
     events. 
     '''
 
-    def __init__(self, time, asset_id, action, event_type, source = '', status = ''):
+    def __init__(self, time, asset_id, action, event_type, message = '', status = ''):
         assert_is_instance(event_type, EventType)
         assert_is_instance(asset_id, int)
         assert_is_instance(time, (float, int))
@@ -42,7 +42,7 @@ class Event:
         self.asset_id = asset_id
         self.action = action
         self.event_type = event_type
-        self.source = source
+        self.message = message
         self.status = status
 
         self.canceled = False
@@ -84,15 +84,7 @@ class Environment:
 
         self.trace = trace
         if self.trace:
-            self.event_trace = {
-                'time': [],
-                'asset_id': [],
-                'action': [],
-                'source': [],
-                'priority': [],
-                'status': [],
-                'index': []
-            }
+            self.event_trace = {}
 
         self.collect_data = collect_data
 
@@ -157,22 +149,17 @@ class Environment:
 
     def trace_event(self, event):
         if self.trace:
-            self.event_trace['time'].append(self.now)
-            self.event_trace['asset_id'].append(event.asset_id)
-            self.event_trace['action'].append(event.action.__name__)
-            self.event_trace['source'].append(event.source)
-            self.event_trace['priority'].append(event.priority)
-            if event.canceled:
-                self.event_trace['status'].append('canceled')
-            else:
-                self.event_trace['status'].append(event.status)
-            self.event_trace['index'].append(self.event_index)
+            self.event_trace[self.event_index] = {'time': self.now,
+                                                  'asset_id': event.asset_id,
+                                                  'action': event.action.__name__,
+                                                  'message': event.message,
+                                                  'event_type': event.event_type,
+                                                  'status': event.status}
 
     def export_trace(self):
         if self.trace:
-            trace_file = open(f'{self.name}_trace.pkl', 'wb')
-            pickle.dump(self.event_trace, trace_file)
-            trace_file.close()
+            with open(f'{self.name}_trace.json', 'w') as fp:
+                json.dump(self.event_trace, fp)
 
     def cancel_matching_events(self, asset_id = None, action = None):
         if asset_id == None and action == None: return  # No parameters were set

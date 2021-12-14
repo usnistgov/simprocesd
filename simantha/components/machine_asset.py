@@ -19,8 +19,9 @@ class MachineAsset(Asset):
         assert_is_instance(machine_status, MachineStatus)
         self.machine_status = machine_status
 
-        self._upstream = upstream
         self._downstream = []
+        self._upstream = []  # Needed for the setter to work
+        self.upstream = upstream
         self._cycle_time = cycle_time
 
         self._part = None
@@ -41,25 +42,27 @@ class MachineAsset(Asset):
     @upstream.setter
     def upstream(self, upstream):
         assert_is_instance(upstream, list)
+        for up in self._upstream:
+            up._remove_downstream(self)
+
         self._upstream = upstream
+        for up in self._upstream:
+            assert_is_instance(up, MachineAsset)
+            up._add_downstream(self)
 
     def initialize(self, env):
         super().initialize(env)
 
         self.machine_status.initialize(self, env)
-
-        if len(self._upstream) <= 0:
-            print(f'Warning: {self.name} does not have an upstream machine.')
-        else:
-            for obj in self._upstream:
-                assert_is_instance(obj, MachineAsset)
-                obj._add_downstream(self)
-
         self._schedule_get_part_from_upstream();
 
     def _add_downstream(self, downstream):
         assert_is_instance(downstream, MachineAsset)
         self._downstream.append(downstream)
+
+    def _remove_downstream(self, downstream):
+        assert_is_instance(downstream, MachineAsset)
+        self._downstream.remove(downstream)
 
     def _schedule_get_part_from_upstream(self, time = None):
         self._waiting_for_part_availability = False
@@ -156,11 +159,11 @@ class MachineAsset(Asset):
     def shutdown_machine(self, lose_part = True):
             raise NotImplementedError('Pause is not implemented.')
 
-    def restore_functionality(self):
-        assert not self._is_operational, \
-               f'Restore functionality called when {self.name} is operational.'
-        self._is_operational = True
+    def restore_functionality(self, failure_name):
+        # TODO is operational should be based on whether there are active hard failures.
+        if not self._is_operational:
+            self._is_operational = True
+            self._schedule_get_part_from_upstream()
 
-        self._schedule_get_part_from_upstream()
-        self.machine_status.restored()
+        self.machine_status.restored(failure_name)
 

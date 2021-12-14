@@ -66,7 +66,7 @@ class SimulationTests(unittest.TestCase):
             time=5, location=None, action=dummy_action, source='middle event'
         )
 
-        event_order = [ev.source for ev in env.events]
+        event_order = [ev.message for ev in env.events]
 
         self.assertEqual(event_order, ['first event', 'middle event', 'last event'])
 

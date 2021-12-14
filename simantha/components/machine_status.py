@@ -64,7 +64,8 @@ class MachineStatus:
                     self._env.schedule_event(self._env.now,
                                              self._machine.id,
                                              lambda: self._scheduled_fail(f, False),
-                                             EventType.FAIL)
+                                             EventType.FAIL,
+                                             f'Cycle count failure: {n}')
 
     def finish_processing(self, part):
         if self._finish_processing_callback != None:
@@ -78,26 +79,33 @@ class MachineStatus:
         if self._failed_callback != None:
             self._failed_callback()
 
-    def restored(self, failure = None):
-        for n, f in self.possible_failures.items():
-            if n in self.active_failures.keys() and (failure == None or failure == f):
-                del self.active_failures[n]
-                self._prepare_next_failures(f)
+    def restored(self, failure_name):
+        f = self.active_failures[failure_name]
+        assert f != None, f'Could not find active failure named: {failure_name}.'
+        del self.active_failures[failure_name]
+        self._machine.value -= f.get_cost_to_fix()
+        self._prepare_next_failures(f)
 
         if self._restored_callback != None:
             self._restored_callback()
 
     def add_failure(self,
-                 name = 'Default Failure Name',
+                 name = None,
                  get_time_to_failure = None,
                  get_operations_to_failure = None,  # start of n-th operation will enable failure
                  get_time_to_repair = lambda: 0,
+                 get_cost_to_fix = lambda: 0,
                  is_hard_failure = True,
                  capacity_to_repair = 1,
                  finish_processing_callback = None,
                  failed_callback = None):
+        if name == None:
+            name = f'Failure_{len(self.possible_failures)}'
+        assert not name in self.possible_failures.keys(), \
+            f'Failure with that name already exists: {name}'
+
         mf = MachineFailure(name, get_time_to_failure,
-                            get_operations_to_failure, get_time_to_repair,
+                            get_operations_to_failure, get_time_to_repair, get_cost_to_fix,
                             is_hard_failure, capacity_to_repair,
                             finish_processing_callback, failed_callback)
         self.possible_failures[name] = mf
@@ -115,7 +123,8 @@ class MachineStatus:
                 self._env.schedule_event(failure.scheduled_failure_time,
                                          self._machine.id,
                                          lambda: self._scheduled_fail(failure, True),
-                                         EventType.FAIL)
+                                         EventType.FAIL,
+                                         f'Timed failure: {failure.name}')
 
         # Prepare operations based failure
         if (failure.get_operations_to_failure != None
@@ -126,10 +135,10 @@ class MachineStatus:
         self.active_failures[failure.name] = failure
 
         # Save time to failure if there is a scheduled failure.
-        if not is_timed_failure and failure.scheduled_failure_time != None:
+        if not is_timed_failure:
             failure.remaining_time_to_failure = max(
                     0, failure.scheduled_failure_time - self._env.now)
-            failure.scheduled_failure_time = None
+        failure.scheduled_failure_time = None
 
         if failure.is_hard_failure:
             self._machine.fail()
@@ -145,6 +154,7 @@ class MachineFailure:
                  get_time_to_failure,
                  get_operations_to_failure,
                  get_time_to_repair,
+                 get_cost_to_fix,
                  is_hard_failure,
                  capacity_to_repair,
                  finish_processing_callback,
@@ -154,6 +164,7 @@ class MachineFailure:
         assert_callable(get_time_to_failure, True)
         assert_callable(get_operations_to_failure, True)
         assert_callable(get_time_to_repair, False)
+        assert_callable(get_cost_to_fix, False)
         assert_callable(finish_processing_callback, True)
         assert_callable(failed_callback, True)
 
@@ -162,6 +173,7 @@ class MachineFailure:
         self.get_operations_to_failure = get_operations_to_failure
         self.is_hard_failure = is_hard_failure
         self.get_time_to_repair = get_time_to_repair
+        self.get_cost_to_fix = get_cost_to_fix
         self.capacity_to_repair = capacity_to_repair
         self.finish_processing_callback = finish_processing_callback
         self.failed_callback = failed_callback
