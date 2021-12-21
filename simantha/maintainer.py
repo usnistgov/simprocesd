@@ -38,10 +38,15 @@ class Maintainer(Asset):
         if self._cost_per_interval[1] > 0:
             self._incur_cost()
 
-    def request_maintenance(self, machine, failure_name, time_to_fix = 0,
-                            request_capacity = 1):
+    def request_maintenance(self, machine, failure_name):
+        print(f'requesting maintenance {failure_name}')
+        machine_failure = machine.machine_status.possible_failures[failure_name]
+        assert machine_failure != None, f'{failure_name} is not a failure in {machine.name}'
         self._request_queue.append(
-            MaintenanceRequest(machine, failure_name, time_to_fix, request_capacity))
+            MaintenanceRequest(machine_failure.machine,
+                               machine_failure.name,
+                               machine_failure.get_time_to_repair(),
+                               machine_failure.capacity_to_repair))
         self.try_working_requests()
 
     def try_working_requests(self):
@@ -52,15 +57,25 @@ class Maintainer(Asset):
                 self._request_queue.pop(i)
 
                 self._utilization += req.request_capacity
-                # Begin fixing
                 self._env.schedule_event(
-                    self._env.now + req.time_to_fix,
+                    self._env.now,
                     self.id,
-                    lambda: self._restore_machine(req),
+                    lambda: self._shutdown_and_repair(req),
                     EventType.RESTORE,
-                    f'Repairing: {req.machine.name}')
+                    f'shutting down before repair: {req.machine.name}')
             else:
                 i += 1
+
+    def _shutdown_and_repair(self, request):
+        print(f'start working request {request.failure_name}')
+        request.machine.shutdown()
+        # Begin fixing
+        self._env.schedule_event(
+            self._env.now + request.time_to_fix,
+            self.id,
+            lambda: self._restore_machine(request),
+            EventType.RESTORE,
+            f'Repairing: {request.machine.name}')
 
     def _incur_cost(self):
         self.value -= self._cost_per_interval[0]
@@ -75,7 +90,9 @@ class Maintainer(Asset):
         )
 
     def _restore_machine(self, request):
-        request.machine.restore_functionality(request.failure_name)
+        print(f'restoring: {request.failure_name}')
+        request.machine.fix_failure(request.failure_name)
+        request.machine.restore_functionality()
         self._utilization -= request.request_capacity
 
         self.try_working_requests()

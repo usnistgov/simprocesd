@@ -14,7 +14,7 @@ def main():
 
     maintainer = Maintainer()
     schedule_repair = lambda f: maintainer.request_maintenance(
-            f.machine, f.get_time_to_repair(), f.capacity_to_repair)
+            f.machine, f.name)
 
     status1 = MachineStatus()
     status1.add_failure(get_time_to_failure = get_ttf,

@@ -77,6 +77,7 @@ class Environment:
 
     def __init__(self, name = 'environment', trace = False, collect_data = True):
         self.events = []
+        self.paused_events = []
         self.name = name
         self.now = 0
 
@@ -130,6 +131,8 @@ class Environment:
             print(f'  asset_id: {next_event.asset_id}')
             print(f'  action:   {next_event.action.__name__}')
             print(f'  event_type: {next_event.event_type.name}')
+            print(f'  message: {next_event.message}')
+            print(f'  status: {next_event.status}')
             print(traceback.format_exc())
             sys.exit()
 
@@ -172,6 +175,32 @@ class Environment:
 
         for event in events_to_cancel:
             event.canceled = True
+
+    def pause_matching_events(self, asset_id = None, action = None):
+        if asset_id == None and action == None: return  # No parameters were set
+
+        events_to_pause = self.events
+        if asset_id != None:
+            events_to_pause = [x for x in events_to_pause if x.asset_id == asset_id]
+        if action != None:
+            events_to_pause = [x for x in events_to_pause if x.action == action]
+
+        for event in events_to_pause:
+            self.paused_events.append(event)
+            self.events.remove(event)
+
+    def unpause_matching_events(self, asset_id = None, action = None):
+        if asset_id == None and action == None: return  # No parameters were set
+
+        events_to_unpause = self.paused_events
+        if asset_id != None:
+            events_to_unpause = [x for x in events_to_unpause if x.asset_id == asset_id]
+        if action != None:
+            events_to_unpause = [x for x in events_to_unpause if x.action == action]
+
+        for event in events_to_unpause:
+            self.paused_events.remove(event)
+            bisect.insort(self.events, event)
 
 
 class Distribution:

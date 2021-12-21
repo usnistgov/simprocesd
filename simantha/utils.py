@@ -13,7 +13,13 @@ def assert_is_instance(obj, type_, message = None):
 
 
 def assert_callable(obj, none_allowed = False, message = None):
-    if obj != None and not callable(obj):
-        if message == None:
-            message = f"Object, {type(obj)}, is not None and is not a callable."
+    if obj == None:
+        if not none_allowed:
+            message = f"obj can not be None."
+            raise TypeError(message)
+    elif not callable(obj):
+        if none_allowed:
+            message = f"Object, {type(obj)}, must be a callable or None."
+        else:
+            message = f"Object, {type(obj)}, must be a callable."
         raise TypeError(message)

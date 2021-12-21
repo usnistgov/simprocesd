@@ -1,6 +1,5 @@
 from .asset import Asset
 from .machine_status import MachineStatus
-from .part import Part
 from ..simulation import EventType
 from ..utils import assert_is_instance
 
@@ -77,7 +76,6 @@ class MachineAsset(Asset):
         for ups in self._upstream:
             self._part = ups._take_part()
             if self._part != None:
-                assert_is_instance(self._part, Part)
                 self._part.routing_history.append(self.name)
                 self._schedule_start_processing_part()
                 self.machine_status.receive_part(self._part)
@@ -114,10 +112,9 @@ class MachineAsset(Asset):
 
         if self._is_operational:
             self._output_part = self._part
-            temp = self._part
             self._part = None
 
-            self.machine_status.finish_processing(temp)
+            self.machine_status.finish_processing(self._output_part)
             self._schedule_get_part_from_upstream()
 
             self._notify_downstream_of_available_part()
@@ -150,20 +147,26 @@ class MachineAsset(Asset):
 
     def fail(self):
         self._part = None  # part being processed is lost
-        self._is_operational = False
-        self._waiting_for_part_availability = False
-
+        self._waiting_for_part_availability = True
         self._env.cancel_matching_events(asset_id = self.id)
         self.machine_status.failed()
 
-    def shutdown_machine(self, lose_part = True):
-            raise NotImplementedError('Pause is not implemented.')
+    def shutdown(self):
+        ''' Make sure not to call in the middle of another MachineAsset
+        operation, safest way is to schedule it as a separate event.
+        '''
+        self._is_operational = False
+        self._env.pause_matching_events(asset_id = self.id)
 
-    def restore_functionality(self, failure_name):
-        # TODO is operational should be based on whether there are active hard failures.
-        if not self._is_operational:
+    def fix_failure(self, failure_name):
+        self.machine_status.fix_failure(failure_name)
+
+    def restore_functionality(self):
+        # TODO: make a separate fix failure and restore functionality functions
+        if (not self._is_operational
+                and not self.machine_status.has_active_hard_failures()):
             self._is_operational = True
-            self._schedule_get_part_from_upstream()
-
-        self.machine_status.restored(failure_name)
+            self._env.unpause_matching_events(asset_id = self.id)
+            if self._waiting_for_part_availability:
+                self._schedule_get_part_from_upstream()
 
