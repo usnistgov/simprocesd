@@ -39,7 +39,6 @@ class Maintainer(Asset):
             self._incur_cost()
 
     def request_maintenance(self, machine, failure_name):
-        print(f'requesting maintenance {failure_name}')
         machine_failure = machine.machine_status.possible_failures[failure_name]
         assert machine_failure != None, f'{failure_name} is not a failure in {machine.name}'
         self._request_queue.append(
@@ -67,7 +66,6 @@ class Maintainer(Asset):
                 i += 1
 
     def _shutdown_and_repair(self, request):
-        print(f'start working request {request.failure_name}')
         request.machine.shutdown()
         # Begin fixing
         self._env.schedule_event(
@@ -90,7 +88,6 @@ class Maintainer(Asset):
         )
 
     def _restore_machine(self, request):
-        print(f'restoring: {request.failure_name}')
         request.machine.fix_failure(request.failure_name)
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity

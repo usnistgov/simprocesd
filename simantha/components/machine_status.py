@@ -71,7 +71,7 @@ class MachineStatus:
                     f.operations_to_fail = None
                     self._env.schedule_event(self._env.now,
                                              self._machine.id,
-                                             lambda: self._scheduled_fail(f, False),
+                                             lambda: self._scheduled_fail(f),
                                              EventType.FAIL,
                                              f'Cycle count failure: {n}')
 
@@ -92,13 +92,11 @@ class MachineStatus:
 
         f = self._active_failures.get(failure_name)
         if f != None:
-            print(f'failure fixed: {f.name} at {self._env.now}')
             del self._active_failures[failure_name]
             self._machine.value -= f.get_cost_to_fix()
             self._prepare_next_failures(f)
         else:
             f = self._possible_failures[failure_name]
-            print(f'false alert fixed: {f.name}')
             self._machine.value -= f.get_false_alert_cost()
 
     def restored(self, failure_name):
@@ -141,12 +139,11 @@ class MachineStatus:
                 failure.remaining_time_to_failure = None
             elif failure.get_time_to_failure != None:
                 failure.scheduled_failure_time = self._env.now + failure.get_time_to_failure()
-                print(f'next failure in: {failure.scheduled_failure_time - self._env.now}')
 
             if failure.scheduled_failure_time != None:
                 self._env.schedule_event(failure.scheduled_failure_time,
                                          self._machine.id,
-                                         lambda: self._scheduled_fail(failure, True),
+                                         lambda: self._scheduled_fail(failure),
                                          EventType.FAIL,
                                          f'Timed failure: {failure.name}')
 
@@ -155,16 +152,16 @@ class MachineStatus:
                 and failure.operations_to_fail == None):
             failure.operations_to_fail = failure.get_operations_to_failure()
 
-    def _scheduled_fail(self, failure, is_timed_failure):
-        print(f'failure: {failure.name} at {self._env.now}')
+    def _scheduled_fail(self, failure):
         self._active_failures[failure.name] = failure
 
-        # Save time to failure if there is a scheduled failure.
-        if (not is_timed_failure and failure.is_hard_failure
-                                 and failure.scheduled_failure_time != None):
-            failure.remaining_time_to_failure = max(
-                    0, failure.scheduled_failure_time - self._env.now)
-        failure.scheduled_failure_time = None
+        # Save time to failure if there are other failures waiting to happen.
+        if failure.is_hard_failure:
+            for n, f in self._active_failures.items():
+                if failure != f and f.scheduled_failure_time != None:
+                    f.remaining_time_to_failure = max(0,
+                          f.scheduled_failure_time - self._env.now)
+                f.scheduled_failure_time = None
 
         if failure.is_hard_failure:
             self._machine.fail()

@@ -3,7 +3,7 @@ import random
 from .. import Source, Machine, Sink, System, Part
 from ..components.machine_status import MachineStatus
 from ..components.sensor import OutputPartSensor, AttributeProbe, Probe
-from ..components.cms import CMS
+from ..components.cms import CmsEmulator
 from ..maintainer import Maintainer
 
 ''' Time units are seconds and value is in dollars.
@@ -31,25 +31,7 @@ def main():
     print(f'Yearly operational profit of using a CMS is: ${with_cms_net - no_cms_net}')
 
 
-class CustomCMS(CMS):
-
-    def __init__(self, maintainer, machine, with_cms, **kwargs):
-        super().__init__(maintainer, **kwargs)
-        self.machine = machine
-        self.part_count = {dulling_name: 0, ma_name: 0}
-        # How long until fault is detected if CMS catches or if it's missed.
-        self.miss_count = {dulling_name: 300 / count_per_part,
-                                ma_name: 500 / count_per_part}
-        self.catch_count = {dulling_name: 100 / count_per_part,
-                                ma_name: 150 / count_per_part}
-        # False alert rates and missed alert rates.
-        self.miss_rate = {dulling_name: 0.01 if with_cms else 1,
-                          ma_name: 0.001 if with_cms else 1}
-        # False alert rate per real failure = fa_rate / (1 - fa_rate) assuming total rates of
-        self.fa_rate = {dulling_name: 0.05 if with_cms else 0,
-                        ma_name: 0.01 if with_cms else 0}
-        # How many false alerts are buffered.
-        self.fa_buffer = {dulling_name: 0, ma_name: 0}
+class CustomCms(CmsEmulator):
 
     def on_sense(self, sensor, data):
         ''' data[0] is p1 data: part quality
@@ -62,33 +44,7 @@ class CustomCMS(CMS):
             for name, failure in data[1].items():
                 self.on_soft_failure(failure)
         else:  # No active failure
-            self.check_for_false_alert()
-
-    def on_soft_failure(self, failure):
-        self.part_count[failure.name] += 1
-        if self.part_count[failure.name] == 1:
-            # First bad part, failure just happened
-            if random.random() < self.fa_rate[failure.name]:
-                self.fa_buffer[failure.name] += 1
-        elif self.part_count[failure.name] == self.catch_count[failure.name]:
-            # reached count when a failure could be caught early
-            if random.random() >= self.miss_rate[failure.name]:
-                print(f'caught failure repair: {failure.name}')
-                # failure is detected now
-                self.part_count[failure.name] = 0
-                self.maintainer.request_maintenance(self.machine, failure.name)
-        elif self.part_count[failure.name] == self.miss_count[failure.name]:
-            print(f'missed failure repair: {failure.name}')
-            # failure was missed earlier by CMS and is caught now by other means
-            self.part_count[failure.name] = 0
-            self.maintainer.request_maintenance(self.machine, failure.name)
-
-    def check_for_false_alert(self):
-        for name, count in self.fa_buffer.items():
-            if count > 0 and random.random() < 0.01:
-                print(f'false alert for: {name}')
-                self.fa_buffer[name] -= 1
-                self.maintainer.request_maintenance(self.machine, name)
+            self.check_for_false_alerts()
 
 
 def sample(duration, with_cms):
@@ -98,14 +54,14 @@ def sample(duration, with_cms):
     status.add_finish_processing_callback(default_part_processing)
     status.add_failure(name = dulling_name,
                         # Failure rate of 100 days.
-                        get_time_to_failure = lambda: 100 * operating_time_per_day,
+                        get_time_to_failure = lambda: distributed_ttf(100),
                         get_cost_to_fix = lambda: 100,
                         get_false_alert_cost = lambda: 85,
                         is_hard_failure = False,
                         finish_processing_callback = wasted_part_processing)
     status.add_failure(name = ma_name,
                         # Failure rate 99% per day.
-                        get_time_to_failure = lambda: 1.01 * operating_time_per_day,
+                        get_time_to_failure = lambda: distributed_ttf(1.01),
                         get_cost_to_fix = lambda: 75,
                         get_false_alert_cost = lambda: 85,
                         is_hard_failure = False,
@@ -117,7 +73,18 @@ def sample(duration, with_cms):
     sink = Sink(upstream = [M1])
 
     maintainer = Maintainer()
-    cms = CustomCMS(maintainer, M1, with_cms, name = "default")
+    cms = CustomCms(maintainer, name = "CMS")
+    cms.configure_failure_handling(dulling_name, M1,
+                                   100 / count_per_part,
+                                   300 / count_per_part,
+                                   0.01 if with_cms else 1,
+                                   0.05 if with_cms else 0)
+    cms.configure_failure_handling(ma_name, M1,
+                                   150 / count_per_part,
+                                   500 / count_per_part,
+                                   0.001 if with_cms else 1,
+                                   0.01 if with_cms else 0)
+
     # target will be overwritten by OutputPartSensor
     p1 = AttributeProbe('quality', None)
     p2 = Probe(lambda t: M1.machine_status.active_failures, None)
@@ -128,6 +95,11 @@ def sample(duration, with_cms):
 
     system.simulate(duration)
     return system.get_net_value()
+
+
+def distributed_ttf(days_to_failure):
+    ttf = days_to_failure * operating_time_per_day
+    return random.normalvariate(ttf, ttf / 50)
 
 
 def wasted_part_processing(part):
