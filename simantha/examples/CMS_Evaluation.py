@@ -99,7 +99,7 @@ def sample(duration, with_cms):
 
 def distributed_ttf(days_to_failure):
     ttf = days_to_failure * operating_time_per_day
-    return random.normalvariate(ttf, ttf / 50)
+    return random.normalvariate(ttf, ttf * 0.05)
 
 
 def wasted_part_processing(part):

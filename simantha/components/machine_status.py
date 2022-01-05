@@ -65,10 +65,11 @@ class MachineStatus:
 
         # Check if any failures are happening
         for n, f in self._possible_failures.items():
-            if f.operations_to_fail != None:
-                f.operations_since_restore += 1
-                if f.operations_since_restore >= f.operations_to_fail:
-                    f.operations_to_fail = None
+            if f.operations_to_failure != None:
+                f.operations_since_last_fix += 1
+                if f.operations_since_last_fix >= f.operations_to_failure:
+                    # Reset operations to avoid scheduling multiple fails for same failure
+                    f.operations_to_failure = None
                     self._env.schedule_event(self._env.now,
                                              self._machine.id,
                                              lambda: self._scheduled_fail(f),
@@ -149,11 +150,15 @@ class MachineStatus:
 
         # Prepare operations based failure
         if (failure.get_operations_to_failure != None
-                and failure.operations_to_fail == None):
-            failure.operations_to_fail = failure.get_operations_to_failure()
+                and failure.operations_to_failure == None):
+            failure.operations_to_failure = failure.get_operations_to_failure()
 
     def _scheduled_fail(self, failure):
         self._active_failures[failure.name] = failure
+        # Reset trackers because failure occurred
+        failure.scheduled_failure_time = None
+        failure.operations_to_failure = None
+        failure.operations_since_last_fix = 0
 
         # Save time to failure if there are other failures waiting to happen.
         if failure.is_hard_failure:
@@ -161,9 +166,8 @@ class MachineStatus:
                 if failure != f and f.scheduled_failure_time != None:
                     f.remaining_time_to_failure = max(0,
                           f.scheduled_failure_time - self._env.now)
-                f.scheduled_failure_time = None
-
-        if failure.is_hard_failure:
+                    f.scheduled_failure_time = None
+            # Failing machine will cancel all currently scheduled events for the machine.
             self._machine.fail()
 
         if failure.failed_callback != None:
@@ -205,8 +209,8 @@ class MachineFailure:
 
         self.scheduled_failure_time = None
         self.remaining_time_to_failure = None
-        self.operations_since_restore = 0
-        self.operations_to_fail = None
+        self.operations_since_last_fix = 0
+        self.operations_to_failure = None
 
     @property
     def machine(self):
