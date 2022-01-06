@@ -30,7 +30,7 @@ class Source(MachineAsset):
 
     def _take_part(self):
         if not self._is_operational or self._produced_parts >= self._max_produced_parts:
-            return
+            return None
         self.value -= self._sample_part.value
         self._produced_parts += 1
 
@@ -39,5 +39,5 @@ class Source(MachineAsset):
     def _get_part_from_upstream(self):
         if not self._is_operational: return
         self._part = self._sample_part.copy()
-        self._schedule_start_processing_part()
+        self._on_received_new_part()
 

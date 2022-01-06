@@ -17,7 +17,6 @@ class EventType(IntEnum):
     # Order of the next 3 events is required for correct machine throughput.
     FINISH_PROCESSING = auto()
     GET_PART = auto()
-    START_PROCESSING = auto()
 
     FAIL = auto()
     SENSOR = auto()
@@ -45,6 +44,7 @@ class Event:
         self.message = message
         self.status = status
 
+        self.paused_at = None
         self.canceled = False
         self.executed = False
 
@@ -188,6 +188,7 @@ class Environment:
         for event in events_to_pause:
             self.paused_events.append(event)
             self.events.remove(event)
+            event.paused_at = self.now
 
     def unpause_matching_events(self, asset_id = None, action = None):
         if asset_id == None and action == None: return  # No parameters were set
@@ -200,6 +201,7 @@ class Environment:
 
         for event in events_to_unpause:
             self.paused_events.remove(event)
+            event.time += self.now - event.paused_at
             bisect.insort(self.events, event)
 
 

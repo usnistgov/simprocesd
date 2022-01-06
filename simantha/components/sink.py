@@ -34,3 +34,4 @@ class Sink(MachineAsset):
     def _finish_processing_part(self):
         super()._finish_processing_part()
         self._output_part = None
+        self._schedule_get_part_from_upstream()

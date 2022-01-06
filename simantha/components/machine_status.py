@@ -6,7 +6,6 @@ class MachineStatus:
 
     def __init__(self):
         self._receive_part_callbacks = []
-        self._start_processing_callbacks = []
         self._finish_processing_callbacks = []
         self._failed_callbacks = []
         self._restored_callbacks = []
@@ -39,10 +38,6 @@ class MachineStatus:
         assert_callable(callback)
         self._receive_part_callbacks.append(callback)
 
-    def add_start_processing_callback(self, callback):
-        assert_callable(callback)
-        self._start_processing_callbacks.append(callback)
-
     def add_finish_processing_callback(self, callback):
         assert_callable(callback)
         self._finish_processing_callbacks.append(callback)
@@ -57,10 +52,6 @@ class MachineStatus:
 
     def receive_part(self, part):
         for c in self._receive_part_callbacks:
-            c(part)
-
-    def start_processing(self, part):
-        for c in self._start_processing_callbacks:
             c(part)
 
         # Check if any failures are happening
