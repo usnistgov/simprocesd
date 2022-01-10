@@ -12,7 +12,7 @@ class Source(MachineAsset):
                  max_produced_parts = float('inf'),
                  **kwargs):
         super().__init__(name, upstream = [self], cycle_time = time_to_produce_part,
-                         **kwargs)
+                         value = 0, **kwargs)
 
         assert_is_instance(sample_part, Part)
         self._sample_part = sample_part
@@ -31,7 +31,7 @@ class Source(MachineAsset):
     def _take_part(self):
         if not self._is_operational or self._produced_parts >= self._max_produced_parts:
             return None
-        self.value -= self._sample_part.value
+        self.add_cost('supplied_part', self._sample_part.value)
         self._produced_parts += 1
 
         return super()._take_part()
@@ -39,5 +39,6 @@ class Source(MachineAsset):
     def _get_part_from_upstream(self):
         if not self._is_operational: return
         self._part = self._sample_part.copy()
+        self._part.initialize(self._env)
         self._on_received_new_part()
 

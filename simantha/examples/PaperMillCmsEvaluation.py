@@ -103,12 +103,13 @@ def distributed_ttf(days_to_failure):
 
 
 def wasted_part_processing(part):
-    part.value = 0
     part.quality = 0
+    part.add_cost('M1_failed_processing', part.value)
 
 
 def default_part_processing(part):
-    part.value = 1.5 * count_per_part * part.quality
+    if part.quality > 0:
+        part.add_value('M1_processing', 1.5 * count_per_part * part.quality)
 
 
 if __name__ == '__main__':

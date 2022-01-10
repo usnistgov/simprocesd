@@ -85,15 +85,15 @@ class MachineStatus:
         f = self._active_failures.get(failure_name)
         if f != None:
             del self._active_failures[failure_name]
-            self._machine.value -= f.get_cost_to_fix()
+            self._machine.add_cost(f'fix-{failure_name}', f.get_cost_to_fix())
             self._prepare_next_failures(f)
         else:
             f = self._possible_failures[failure_name]
-            self._machine.value -= f.get_false_alert_cost()
+            self._machine.add_cost(f'fix_false_alert-{failure_name}', f.get_false_alert_cost())
 
     def restored(self, failure_name):
         for c in self._restored_callbacks:
-            c()
+            c(failure_name)
 
     def add_failure(self,
                  name = None,

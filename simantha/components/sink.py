@@ -8,7 +8,7 @@ class Sink(MachineAsset):
                  time_to_receive_part = 0,
                  collect_parts = False,
                  **kwargs):
-        super().__init__(name, cycle_time = time_to_receive_part, **kwargs)
+        super().__init__(name, cycle_time = time_to_receive_part, value = 0, **kwargs)
 
         self._collect_parts = collect_parts
         self.collected_parts = []
@@ -27,7 +27,7 @@ class Sink(MachineAsset):
 
         if self._part != None:
             self._received_parts_count += 1
-            self.value += self._part.value
+            self.add_value(f'collected_part', self._part.value)
             if self._collect_parts:
                 self.collected_parts.append(self._part)
 

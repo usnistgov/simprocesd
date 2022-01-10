@@ -36,7 +36,7 @@ class Maintainer(Asset):
 
         # Interval of 0 or less means no periodic cost..
         if self._cost_per_interval[1] > 0:
-            self._incur_cost()
+            self._incur_periodic_expense()
 
     def request_maintenance(self, machine, failure_name):
         machine_failure = machine.machine_status.possible_failures[failure_name]
@@ -75,15 +75,15 @@ class Maintainer(Asset):
             EventType.RESTORE,
             f'Repairing: {request.machine.name}')
 
-    def _incur_cost(self):
-        self.value -= self._cost_per_interval[0]
-        self._schedule_next_cost()
+    def _add_periodic_cost(self):
+        self.add_cost('maintainer_periodic_expense', self._cost_per_interval[0])
+        self._schedule_next_periodic_cost()
 
-    def _schedule_next_cost(self):
+    def _schedule_next_periodic_cost(self):
         self._env.schedule_event(
             self._env.now + self._cost_per_interval[1],
             self.id,
-            self._incur_cost,
+            self._add_periodic_cost,
             EventType.OTHER_HIGH
         )
 
