@@ -3,9 +3,9 @@ import json
 import random
 import sys
 import traceback
-
 from enum import IntEnum, unique, auto
-from .utils import assert_is_instance
+
+from ..utils import assert_is_instance
 
 
 @unique

@@ -1,8 +1,8 @@
-from ..utils import assert_callable
+from ...utils import assert_callable
 from ..simulation import EventType
 
 
-class MachineStatus:
+class MachineStatusTracker:
 
     def __init__(self):
         self._receive_part_callbacks = []
@@ -11,28 +11,28 @@ class MachineStatus:
         self._restored_callbacks = []
         self._machine = None
         self._env = None
-        self._possible_failures = {}  # name, MachineFailure
-        self._active_failures = {}  # name, MachineFailure
+        self._possible_faults = {}  # name, MachineFault
+        self._active_faults = {}  # name, MachineFault
 
     @property
     def machine(self):
         return self._machine
 
     @property
-    def possible_failures(self):
-        return self._possible_failures
+    def possible_faults(self):
+        return self._possible_faults
 
     @property
-    def active_failures(self):
-        return self._active_failures
+    def active_faults(self):
+        return self._active_faults
 
     def initialize(self, machine, env):
         self._machine = machine
         self._env = env
 
-        for n, f in self._possible_failures.items():
+        for n, f in self._possible_faults.items():
             f.initialize(self)
-            self._prepare_next_failures(f)
+            self._prepare_fault(f)
 
     def add_receive_part_callback(self, callback):
         assert_callable(callback)
@@ -54,21 +54,22 @@ class MachineStatus:
         for c in self._receive_part_callbacks:
             c(part)
 
-        # Check if any failures are happening
-        for n, f in self._possible_failures.items():
-            if f.operations_to_failure != None:
+        # Check if any faults need to cause machine to fail
+        for n, f in self._possible_faults.items():
+            if f.operations_to_fault != None:
                 f.operations_since_last_fix += 1
-                if f.operations_since_last_fix >= f.operations_to_failure:
-                    # Reset operations to avoid scheduling multiple fails for same failure
-                    f.operations_to_failure = None
+                if f.operations_since_last_fix >= f.operations_to_fault:
+                    # Reset operations to avoid scheduling multiple machine
+                    # failures for same fault.
+                    f.operations_to_fault = None
                     self._env.schedule_event(self._env.now,
                                              self._machine.id,
-                                             lambda: self._scheduled_fail(f),
+                                             lambda: self._scheduled_fault(f),
                                              EventType.FAIL,
-                                             f'Cycle count failure: {n}')
+                                             f'Cycle count fault: {n}')
 
     def finish_processing(self, part):
-        for n, f in self._active_failures.items():
+        for n, f in self._active_faults.items():
             if f.finish_processing_callback != None:
                 f.finish_processing_callback(part)
 
@@ -79,108 +80,108 @@ class MachineStatus:
         for c in self._failed_callbacks:
             c()
 
-    def fix_failure(self, failure_name):
-        assert failure_name != None, 'failure_name can not be None'
+    def fix_fault(self, fault_name):
+        assert fault_name != None, 'fault_name can not be None'
 
-        f = self._active_failures.get(failure_name)
+        f = self._active_faults.get(fault_name)
         if f != None:
-            del self._active_failures[failure_name]
-            self._machine.add_cost(f'fix-{failure_name}', f.get_cost_to_fix())
-            self._prepare_next_failures(f)
+            del self._active_faults[fault_name]
+            self._machine.add_cost(f'fix-{fault_name}', f.get_cost_to_fix())
+            self._prepare_fault(f)
         else:
-            f = self._possible_failures[failure_name]
-            self._machine.add_cost(f'fix_false_alert-{failure_name}', f.get_false_alert_cost())
+            f = self._possible_faults[fault_name]
+            self._machine.add_cost(f'fix_false_alert-{fault_name}', f.get_false_alert_cost())
 
-    def restored(self, failure_name):
+    def restored(self, fault_name):
         for c in self._restored_callbacks:
-            c(failure_name)
+            c(fault_name)
 
-    def add_failure(self,
+    def add_recurring_fault(self,
                  name = None,
-                 get_time_to_failure = None,
-                 get_operations_to_failure = None,  # start of n-th operation will enable failure
+                 get_time_to_fault = None,
+                 get_operations_to_fault = None,  # start of n-th operation will trigger fault
                  get_time_to_repair = lambda: 0,
                  get_cost_to_fix = lambda: 0,
                  get_false_alert_cost = lambda: 0,
-                 is_hard_failure = True,
+                 is_hard_fault = True,  # will machine keep operating when fault occurs
                  capacity_to_repair = 1,
                  finish_processing_callback = None,
                  failed_callback = None):
         if name == None:
-            name = f'Failure_{len(self._possible_failures)}'
-        assert not name in self._possible_failures.keys(), \
+            name = f'Failure_{len(self._possible_faults)}'
+        assert not name in self._possible_faults.keys(), \
             f'Failure with that name already exists: {name}'
 
-        mf = MachineFailure(name, get_time_to_failure,
-                            get_operations_to_failure, get_time_to_repair, get_cost_to_fix,
-                            get_false_alert_cost, is_hard_failure, capacity_to_repair,
-                            finish_processing_callback, failed_callback)
-        self._possible_failures[name] = mf
+        mf = MachineFault(name, get_time_to_fault,
+                          get_operations_to_fault, get_time_to_repair, get_cost_to_fix,
+                          get_false_alert_cost, is_hard_fault, capacity_to_repair,
+                          finish_processing_callback, failed_callback)
+        self._possible_faults[name] = mf
 
-    def has_active_hard_failures(self):
-        for n, f in self._active_failures.items():
-            if f.is_hard_failure:
+    def has_active_hard_faults(self):
+        for n, f in self._active_faults.items():
+            if f.is_hard_fault:
                 return True
         return False
 
-    def _prepare_next_failures(self, failure):
-        # If the failure is not scheduled then schedule or reschedule it to occur.
-        if failure.scheduled_failure_time == None:
-            if failure.remaining_time_to_failure != None:
-                failure.scheduled_failure_time = self._env.now + failure.remaining_time_to_failure
-                failure.remaining_time_to_failure = None
-            elif failure.get_time_to_failure != None:
-                failure.scheduled_failure_time = self._env.now + failure.get_time_to_failure()
+    def _prepare_fault(self, fault):
+        # If the fault is not scheduled then schedule or reschedule it to occur.
+        if fault.scheduled_fault_time == None:
+            if fault.remaining_time_to_fault != None:
+                fault.scheduled_fault_time = self._env.now + fault.remaining_time_to_fault
+                fault.remaining_time_to_fault = None
+            elif fault.get_time_to_fault != None:
+                fault.scheduled_fault_time = self._env.now + fault.get_time_to_fault()
 
-            if failure.scheduled_failure_time != None:
-                self._env.schedule_event(failure.scheduled_failure_time,
+            if fault.scheduled_fault_time != None:
+                self._env.schedule_event(fault.scheduled_fault_time,
                                          self._machine.id,
-                                         lambda: self._scheduled_fail(failure),
+                                         lambda: self._scheduled_fault(fault),
                                          EventType.FAIL,
-                                         f'Timed failure: {failure.name}')
+                                         f'Timed fault: {fault.name}')
 
-        # Prepare operations based failure
-        if (failure.get_operations_to_failure != None
-                and failure.operations_to_failure == None):
-            failure.operations_to_failure = failure.get_operations_to_failure()
+        # Prepare operations based fault
+        if (fault.get_operations_to_fault != None
+                and fault.operations_to_fault == None):
+            fault.operations_to_fault = fault.get_operations_to_fault()
 
-    def _scheduled_fail(self, failure):
-        self._active_failures[failure.name] = failure
-        # Reset trackers because failure occurred
-        failure.scheduled_failure_time = None
-        failure.operations_to_failure = None
-        failure.operations_since_last_fix = 0
+    def _scheduled_fault(self, fault):
+        self._active_faults[fault.name] = fault
+        # Reset trackers because fault occurred
+        fault.scheduled_fault_time = None
+        fault.operations_to_fault = None
+        fault.operations_since_last_fix = 0
 
-        # Save time to failure if there are other failures waiting to happen.
-        if failure.is_hard_failure:
-            for n, f in self._active_failures.items():
-                if failure != f and f.scheduled_failure_time != None:
-                    f.remaining_time_to_failure = max(0,
-                          f.scheduled_failure_time - self._env.now)
-                    f.scheduled_failure_time = None
+        # Save time to fault if there are other faults waiting to happen.
+        if fault.is_hard_fault:
+            for n, f in self._active_faults.items():
+                if fault != f and f.scheduled_fault_time != None:
+                    f.remaining_time_to_fault = max(0,
+                          f.scheduled_fault_time - self._env.now)
+                    f.scheduled_fault_time = None
             # Failing machine will cancel all currently scheduled events for the machine.
             self._machine.fail()
 
-        if failure.failed_callback != None:
-            failure.failed_callback(failure)
+        if fault.failed_callback != None:
+            fault.failed_callback(fault)
 
 
-class MachineFailure:
+class MachineFault:
 
     def __init__(self,
                  name,
-                 get_time_to_failure,
-                 get_operations_to_failure,
+                 get_time_to_fault,
+                 get_operations_to_fault,
                  get_time_to_repair,
                  get_cost_to_fix,
                  get_false_alert_cost,
-                 is_hard_failure,
+                 is_hard_fault,
                  capacity_to_repair,
                  finish_processing_callback,
                  failed_callback
                  ):
-        assert_callable(get_time_to_failure, True)
-        assert_callable(get_operations_to_failure, True)
+        assert_callable(get_time_to_fault, True)
+        assert_callable(get_operations_to_fault, True)
         assert_callable(get_time_to_repair, False)
         assert_callable(get_cost_to_fix, False)
         assert_callable(get_false_alert_cost, False)
@@ -188,9 +189,9 @@ class MachineFailure:
         assert_callable(failed_callback, True)
 
         self.name = name
-        self.get_time_to_failure = get_time_to_failure
-        self.get_operations_to_failure = get_operations_to_failure
-        self.is_hard_failure = is_hard_failure
+        self.get_time_to_fault = get_time_to_fault
+        self.get_operations_to_fault = get_operations_to_fault
+        self.is_hard_fault = is_hard_fault
         self.get_time_to_repair = get_time_to_repair
         self.get_cost_to_fix = get_cost_to_fix
         self.get_false_alert_cost = get_false_alert_cost
@@ -198,10 +199,10 @@ class MachineFailure:
         self.finish_processing_callback = finish_processing_callback
         self.failed_callback = failed_callback
 
-        self.scheduled_failure_time = None
-        self.remaining_time_to_failure = None
+        self.scheduled_fault_time = None
+        self.remaining_time_to_fault = None
         self.operations_since_last_fix = 0
-        self.operations_to_failure = None
+        self.operations_to_fault = None
 
     @property
     def machine(self):

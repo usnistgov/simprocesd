@@ -1,9 +1,9 @@
-from .machine_asset import MachineAsset
+from .machine import Machine
 from .part import Part
-from ..utils import assert_is_instance
+from ...utils import assert_is_instance
 
 
-class Source(MachineAsset):
+class Source(Machine):
 
     def __init__(self,
                  name = None,

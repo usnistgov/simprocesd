@@ -1,7 +1,7 @@
-from .machine_asset import MachineAsset
+from .machine import Machine
 
 
-class Sink(MachineAsset):
+class Sink(Machine):
 
     def __init__(self,
                  name = None,

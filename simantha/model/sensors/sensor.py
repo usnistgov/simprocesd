@@ -1,8 +1,6 @@
-
+from ..factory_floor.machine import Machine
 from ..simulation import EventType
-from ..utils import assert_is_instance, assert_callable
-from .asset import Asset
-from .machine_asset import MachineAsset
+from ...utils import assert_is_instance, assert_callable
 
 
 class Probe:
@@ -25,7 +23,7 @@ class AttributeProbe(Probe):
                          target)
 
 
-class Sensor(Asset):
+class Sensor(Machine):
 
     def __init__(self,
                  target,
@@ -104,7 +102,7 @@ class PeriodicSensor(Sensor):
 
 
 class OutputPartSensor(Sensor):
-    ''' Probes processed parts of a MachineAsset.
+    ''' Probes processed parts of a Machine.
     '''
 
     def __init__(self,
@@ -112,13 +110,13 @@ class OutputPartSensor(Sensor):
                  part_probes,
                  probing_interval = 1,
                  **kwargs):
-        assert_is_instance(machine, MachineAsset)
+        assert_is_instance(machine, Machine)
         super().__init__(machine, part_probes, **kwargs)
 
         self._probing_interval = probing_interval
         self._counter = self._probing_interval
 
-        machine.machine_status.add_finish_processing_callback(self._probe_part)
+        machine.status_tracker.add_finish_processing_callback(self._probe_part)
 
     def _probe_part(self, part):
         self._counter -= 1

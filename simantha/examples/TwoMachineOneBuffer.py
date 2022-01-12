@@ -1,4 +1,5 @@
-from .. import Source, Machine, Buffer, Sink, System
+from ..model.factory_floor import Source, Machine, Sink, Buffer
+from ..model import System
 
 
 def main():

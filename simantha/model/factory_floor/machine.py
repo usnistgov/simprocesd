@@ -1,22 +1,25 @@
 from .asset import Asset
-from .machine_status import MachineStatus
+from .machine_status_tracker import MachineStatusTracker
 from ..simulation import EventType
-from ..utils import assert_is_instance
+from ...utils.utils import assert_is_instance
 
 
-class MachineAsset(Asset):
+class Machine(Asset):
     '''Base class for machine assets in the system.'''
 
     def __init__(self,
                  name = None,
                  upstream = [],
                  cycle_time = 1.0,
-                 machine_status = MachineStatus(),
+                 machine_status_tracker = None,
                  **kwargs):
         super().__init__(name, **kwargs)
 
-        assert_is_instance(machine_status, MachineStatus)
-        self.machine_status = machine_status
+        if machine_status_tracker == None:
+            machine_status_tracker = MachineStatusTracker()
+        else:
+            assert_is_instance(machine_status_tracker, MachineStatusTracker)
+        self.status_tracker = machine_status_tracker
 
         self._downstream = []
         self._upstream = []  # Needed for the setter to work
@@ -45,21 +48,21 @@ class MachineAsset(Asset):
 
         self._upstream = upstream
         for up in self._upstream:
-            assert_is_instance(up, MachineAsset)
+            assert_is_instance(up, Machine)
             up._add_downstream(self)
 
     def initialize(self, env):
         super().initialize(env)
 
-        self.machine_status.initialize(self, env)
+        self.status_tracker.initialize(self, env)
         self._schedule_get_part_from_upstream();
 
     def _add_downstream(self, downstream):
-        assert_is_instance(downstream, MachineAsset)
+        assert_is_instance(downstream, Machine)
         self._downstream.append(downstream)
 
     def _remove_downstream(self, downstream):
-        assert_is_instance(downstream, MachineAsset)
+        assert_is_instance(downstream, Machine)
         self._downstream.remove(downstream)
 
     def _schedule_get_part_from_upstream(self, time = None):
@@ -85,7 +88,7 @@ class MachineAsset(Asset):
     def _on_received_new_part(self):
         self._part.routing_history.append(self.name)
         self._schedule_finish_processing_part()
-        self.machine_status.receive_part(self._part)
+        self.status_tracker.receive_part(self._part)
 
     def _schedule_finish_processing_part(self, time = None):
         self._env.schedule_event(
@@ -103,7 +106,7 @@ class MachineAsset(Asset):
 
         self._output_part = self._part
         self._part = None
-        self.machine_status.finish_processing(self._output_part)
+        self.status_tracker.finish_processing(self._output_part)
         self._notify_downstream_of_available_part()
 
     def _notify_downstream_of_available_part(self):
@@ -131,24 +134,23 @@ class MachineAsset(Asset):
 
     def fail(self):
         self._part = None  # part being processed is lost
-        self._waiting_for_part_availability = True
+        self._waiting_for_part_availability = self._output_part == None
         self._env.cancel_matching_events(asset_id = self.id)
-        self.machine_status.failed()
+        self.status_tracker.failed()
 
     def shutdown(self):
-        ''' Make sure not to call in the middle of another MachineAsset
+        ''' Make sure not to call in the middle of another Machine
         operation, safest way is to schedule it as a separate event.
         '''
         self._is_operational = False
         self._env.pause_matching_events(asset_id = self.id)
 
-    def fix_failure(self, failure_name):
-        self.machine_status.fix_failure(failure_name)
+    def fix_fault(self, fault_name):
+        self.status_tracker.fix_fault(fault_name)
 
     def restore_functionality(self):
-        # TODO: make a separate fix failure and restore functionality functions
         if (not self._is_operational
-                and not self.machine_status.has_active_hard_failures()):
+                and not self.status_tracker.has_active_hard_faults()):
             self._is_operational = True
             self._env.unpause_matching_events(asset_id = self.id)
             if self._waiting_for_part_availability:

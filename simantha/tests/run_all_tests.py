@@ -1,2 +1,2 @@
-"""One place to run all included tests."""
+'''One place to run all included tests.'''
 

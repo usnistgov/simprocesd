@@ -1,14 +1,14 @@
 # import random
 
-from .simulation import EventType
-from .components.asset import Asset
+from ..simulation import EventType
+from .asset import Asset
 
 
 class MaintenanceRequest:
 
-    def __init__(self, machine, failure_name, time_to_fix, request_capacity):
+    def __init__(self, machine, fault_name, time_to_fix, request_capacity):
         self.machine = machine
-        self.failure_name = failure_name
+        self.fault_name = fault_name
         self.time_to_fix = time_to_fix
         self.request_capacity = request_capacity
 
@@ -38,14 +38,14 @@ class Maintainer(Asset):
         if self._cost_per_interval[1] > 0:
             self._incur_periodic_expense()
 
-    def request_maintenance(self, machine, failure_name):
-        machine_failure = machine.machine_status.possible_failures[failure_name]
-        assert machine_failure != None, f'{failure_name} is not a failure in {machine.name}'
+    def request_maintenance(self, machine, fault_name):
+        machine_fault = machine.status_tracker.possible_faults[fault_name]
+        assert machine_fault != None, f'{fault_name} is not a fault in {machine.name}'
         self._request_queue.append(
-            MaintenanceRequest(machine_failure.machine,
-                               machine_failure.name,
-                               machine_failure.get_time_to_repair(),
-                               machine_failure.capacity_to_repair))
+            MaintenanceRequest(machine_fault.machine,
+                               machine_fault.name,
+                               machine_fault.get_time_to_repair(),
+                               machine_fault.capacity_to_repair))
         self.try_working_requests()
 
     def try_working_requests(self):
@@ -88,7 +88,7 @@ class Maintainer(Asset):
         )
 
     def _restore_machine(self, request):
-        request.machine.fix_failure(request.failure_name)
+        request.machine.fix_fault(request.fault_name)
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity
 

@@ -1,5 +1,5 @@
 from ..system import Environment
-from ..utils import assert_is_instance
+from ...utils import assert_is_instance
 
 
 class Asset:

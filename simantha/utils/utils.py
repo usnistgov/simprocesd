@@ -1,8 +1,3 @@
-'''
-The ``utils`` module provides convenient utility functions and useful constants. 
-Although the constants are given in minutes, a single simulation time unit can 
-theoretically represent any duration of time. 
-'''
 import csv
 
 

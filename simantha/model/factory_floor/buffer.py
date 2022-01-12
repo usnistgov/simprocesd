@@ -1,7 +1,7 @@
-from .machine_asset import MachineAsset
+from .machine import Machine
 
 
-class Buffer(MachineAsset):
+class Buffer(Machine):
     ''' Buffers store parts that are waiting for processing at a downstream machine.'''
 
     def __init__(self, name = None, capacity = float('inf'), **kwargs):
@@ -17,7 +17,7 @@ class Buffer(MachineAsset):
 
     def _finish_processing_part(self):
         super()._finish_processing_part()
-        self._buffer.append(super()._take_part())
+        self._buffer.append(Machine._take_part(self))
 
     def _take_part(self):
         if not self.is_operational or len(self._buffer) < 1:

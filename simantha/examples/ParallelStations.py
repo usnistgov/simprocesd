@@ -1,4 +1,5 @@
-from .. import Source, Machine, Sink, System
+from ..model.factory_floor import Source, Machine, Sink
+from ..model import System
 
 
 def main():
@@ -11,7 +12,7 @@ def main():
     M3 = Machine('M3', upstream = first_stage, cycle_time = 3)
     M4 = Machine('M4', upstream = first_stage, cycle_time = 3)
     M5 = Machine('M5', upstream = first_stage, cycle_time = 3)
-    second_stage = [M2, M3, M4]
+    second_stage = [M3, M4, M5]
 
     M6 = Machine('M6', upstream = second_stage, cycle_time = 2)
     M7 = Machine('M7', upstream = second_stage, cycle_time = 2)

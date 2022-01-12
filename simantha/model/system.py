@@ -26,12 +26,12 @@ class System:
         stop = time.time()
 
         print(f'Simulation finished in {stop-start:.2f}s')
-        from .components.sink import Sink  # Late import to avoid circular dependency.
+        from .factory_floor.sink import Sink  # Late import to avoid circular dependency.
         producedParts = sum(
             x.received_parts_count for x in self.objects if isinstance(x, Sink))
         print(f'Parts produced: {producedParts}')
 
     def get_net_value(self):
-        from .components.asset import Asset
+        from .factory_floor.asset import Asset
         return sum(x.value for x in self.objects if isinstance(x, Asset))
 

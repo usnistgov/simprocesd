@@ -1,25 +1,23 @@
-"""
+'''
 An example of Markovian degradation of a single machine. Once the machine
 reaches the zero health it will shut down and stop receiving and processing
 parts.
-"""
+'''
 
 import random
 
-from .. import Source, Machine, Sink, System
-from ..math_utils import geometric_distribution_sample
-from ..components.machine_status import MachineStatus
+from ..model.factory_floor import Source, Machine, Sink
+from ..model import System
+from ..utils import geometric_distribution_sample
 
 
 def main():
     source = Source()
-    status = MachineStatus()
-    status.add_failure(get_time_to_failure = lambda: geometric_distribution_sample(1, 4))
-
     M1 = Machine('M1',
                  cycle_time = 1,
-                 upstream = [source],
-                 machine_status = status)
+                 upstream = [source])
+    M1.status_tracker.add_recurring_fault(
+        get_time_to_fault = lambda: geometric_distribution_sample(1, 4))
     sink = Sink(upstream = [M1])
 
     system = System([source, M1, sink])
