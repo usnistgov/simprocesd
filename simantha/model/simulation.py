@@ -10,7 +10,11 @@ from ..utils import assert_is_instance
 
 @unique
 class EventType(IntEnum):
-    '''Events in the order of highest to lowest priority.'''
+    '''Events in the order of highest to lowest priority. Default events are all
+    ints. To give a custom priority to an event specify a value that is slightly
+    higher or lower than another event. For example,
+    event_type = EventType.FAIL + 0.1 -- this type of event will be executed
+    with a slightly lower priority than EventType.FAIL'''
     OTHER_HIGH = auto()
     RESTORE = auto()
 
@@ -32,7 +36,6 @@ class Event:
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = '', status = ''):
-        assert_is_instance(event_type, EventType)
         assert_is_instance(asset_id, int)
         assert_is_instance(time, (float, int))
         assert callable(action), 'Passed in action is not callable.'

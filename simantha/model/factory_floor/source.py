@@ -7,12 +7,12 @@ class Source(Machine):
 
     def __init__(self,
                  name = None,
+                 # All sources share the default sample part.
                  sample_part = Part(),
                  time_to_produce_part = 0.0,
-                 max_produced_parts = float('inf'),
-                 **kwargs):
+                 max_produced_parts = float('inf')):
         super().__init__(name, upstream = [self], cycle_time = time_to_produce_part,
-                         value = 0, **kwargs)
+                         value = 0)
 
         assert_is_instance(sample_part, Part)
         self._sample_part = sample_part
@@ -31,10 +31,12 @@ class Source(Machine):
     def _take_part(self):
         if not self._is_operational or self._produced_parts >= self._max_produced_parts:
             return None
-        self.add_cost('supplied_part', self._sample_part.value)
-        self._produced_parts += 1
 
-        return super()._take_part()
+        part = super()._take_part()
+        if part != None:
+            self.add_cost('supplied_part', part.value)
+            self._produced_parts += 1
+        return part
 
     def _get_part_from_upstream(self):
         if not self._is_operational: return

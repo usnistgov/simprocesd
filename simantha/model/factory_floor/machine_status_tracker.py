@@ -69,10 +69,11 @@ class MachineStatusTracker:
                                              f'Cycle count fault: {n}')
 
     def finish_processing(self, part):
+        # Fault callbacks.
         for n, f in self._active_faults.items():
             if f.finish_processing_callback != None:
                 f.finish_processing_callback(part)
-
+        # Other callbacks.
         for c in self._finish_processing_callbacks:
             c(part)
 
