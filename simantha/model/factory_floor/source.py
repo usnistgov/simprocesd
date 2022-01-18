@@ -29,7 +29,7 @@ class Source(Machine):
         return self._produced_parts
 
     def _take_part(self):
-        if not self._is_operational or self._produced_parts >= self._max_produced_parts:
+        if not self.is_operational or self._produced_parts >= self._max_produced_parts:
             return None
 
         part = super()._take_part()
@@ -39,7 +39,7 @@ class Source(Machine):
         return part
 
     def _get_part_from_upstream(self):
-        if not self._is_operational: return
+        if not self.is_operational: return
         self._part = self._sample_part.copy()
         self._part.initialize(self._env)
         self._on_received_new_part()

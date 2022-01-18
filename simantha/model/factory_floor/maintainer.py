@@ -39,13 +39,10 @@ class Maintainer(Asset):
             self._incur_periodic_expense()
 
     def request_maintenance(self, machine, fault_name):
-        machine_fault = machine.status_tracker.possible_faults[fault_name]
-        assert machine_fault != None, f'{fault_name} is not a fault in {machine.name}'
+        ttr = machine.status_tracker.get_time_to_repair(fault_name)
+        capacity = machine.status_tracker.get_capacity_to_repair(fault_name)
         self._request_queue.append(
-            MaintenanceRequest(machine_fault.machine,
-                               machine_fault.name,
-                               machine_fault.get_time_to_repair(),
-                               machine_fault.capacity_to_repair))
+            MaintenanceRequest(machine, fault_name, ttr, capacity))
         self.try_working_requests()
 
     def try_working_requests(self):
@@ -88,7 +85,7 @@ class Maintainer(Asset):
         )
 
     def _restore_machine(self, request):
-        request.machine.fix_fault(request.fault_name)
+        request.machine.status_tracker.fix_fault(request.fault_name)
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity
 

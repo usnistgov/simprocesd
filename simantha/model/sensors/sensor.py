@@ -99,30 +99,3 @@ class PeriodicSensor(Sensor):
             EventType.SENSOR,
             f'{self._target.name}'
         )
-
-
-class OutputPartSensor(Sensor):
-    ''' Probes processed parts of a Machine.
-    '''
-
-    def __init__(self,
-                 machine,
-                 part_probes,
-                 probing_interval = 1,
-                 **kwargs):
-        assert_is_instance(machine, Machine)
-        super().__init__(machine, part_probes, **kwargs)
-
-        self._probing_interval = probing_interval
-        self._counter = self._probing_interval
-
-        machine.status_tracker.add_finish_processing_callback(self._probe_part)
-
-    def _probe_part(self, part):
-        self._counter -= 1
-        if self._counter <= 0:
-            for p in self._probes:
-                p.target = part
-            self.sense()
-        self._counter = self._probing_interval
-

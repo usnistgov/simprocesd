@@ -2,7 +2,7 @@ import random
 
 from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
 from ..model import System
-from ..model.sensors.sensor import OutputPartSensor, AttributeProbe, Probe
+from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
 from ..model.cms.cms import CmsEmulator
 
 ''' Time units are seconds and value is in dollars.
@@ -51,7 +51,7 @@ def sample(duration, with_cms):
     source = Source(sample_part = part)
 
     M1 = Machine('M1', upstream = [source], cycle_time = machine_cycle_time)
-    M1.status_tracker.add_finish_processing_callback(default_part_processing)
+    M1.add_finish_processing_callback(default_part_processing)
     M1.status_tracker.add_recurring_fault(
         name = dulling_name,
         # Failure rate of 100 days.
@@ -59,7 +59,7 @@ def sample(duration, with_cms):
         get_cost_to_fix = lambda: 100,
         get_false_alert_cost = lambda: 85,
         is_hard_fault = False,
-        finish_processing_callback = wasted_part_processing
+        receive_part_callback = wasted_part_processing
     )
     M1.status_tracker.add_recurring_fault(
         name = ma_name,
@@ -68,7 +68,7 @@ def sample(duration, with_cms):
         get_cost_to_fix = lambda: 75,
         get_false_alert_cost = lambda: 85,
         is_hard_fault = False,
-        finish_processing_callback = wasted_part_processing
+        receive_part_callback = wasted_part_processing
     )
 
     sink = Sink(upstream = [M1])
