@@ -3,6 +3,7 @@ import random
 from ..model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
 from ..model import System
 from ..utils import geometric_distribution_sample
+from . import StatusTrackerWithFaults
 
 
 def main():
@@ -16,12 +17,14 @@ def main():
             f.machine, f.name)
 
     source = Source()
-    M1 = Machine('M1', upstream = [source], cycle_time = 1)
+    M1 = Machine('M1', upstream = [source], cycle_time = 1,
+                 status_tracker = StatusTrackerWithFaults())
     M1.status_tracker.add_recurring_fault(get_time_to_fault = get_ttf,
                                           get_time_to_repair = get_ttr,
                                           failed_callback = schedule_repair)
     B1 = Buffer(upstream = [M1], capacity = 5)
-    M2 = Machine('M2', upstream = [B1], cycle_time = 1)
+    M2 = Machine('M2', upstream = [B1], cycle_time = 1,
+                 status_tracker = StatusTrackerWithFaults())
     M2.status_tracker.add_recurring_fault(get_time_to_fault = get_ttf,
                                           get_time_to_repair = get_ttr,
                                           failed_callback = schedule_repair)

@@ -1,30 +1,24 @@
-from ...utils import assert_callable
-from ..simulation import EventType
+import random
+
+from ..utils import assert_callable
+from ..model.simulation import EventType
+from ..model.factory_floor import MachineStatusTracker
+from ..model.cms.cms import Cms
 
 
-class MachineStatusTracker:
+class StatusTrackerWithFaults(MachineStatusTracker):
 
     def __init__(self):
-        self._machine = None
-        self._env = None
+        super().__init__()
         self._possible_faults = {}  # name, MachineFault
         self._active_faults = {}  # name, MachineFault
-
-    @property
-    def machine(self):
-        return self._machine
-
-    @property
-    def possible_faults(self):
-        return self._possible_faults
 
     @property
     def active_faults(self):
         return self._active_faults
 
     def initialize(self, machine, env):
-        self._machine = machine
-        self._env = env
+        super().initialize(machine, env)
         self._machine.add_receive_part_callback(self._receive_part)
 
         for n, f in self._possible_faults.items():
@@ -51,7 +45,7 @@ class MachineStatusTracker:
                                              EventType.FAIL,
                                              f'Cycle count fault: {n}')
 
-    def fix_fault(self, fault_name):
+    def maintain(self, fault_name):
         f = self._active_faults.get(fault_name)
         if f != None:
             del self._active_faults[fault_name]
@@ -72,6 +66,24 @@ class MachineStatusTracker:
                  capacity_to_repair = 1,
                  receive_part_callback = None,
                  failed_callback = None):
+        '''
+        Arguments:
+        name -- name of fault, used as maintenance tag to fix fault.
+        get_time_to_fault -- function that gives time to fault, no
+            periodic faults if not set.
+        get_operations_to_fault -- function that gives n and n-th
+            operation will trigger fault, n is infinite if not set.
+        get_time_to_repair -- how long it takes for maintenance to fix
+            this fault.
+        get_cost_to_fix -- how much it costs to fix this fault.
+        get_false_alert_cost -- how much it costs to fix this fault.
+        is_hard_fault -- will machine keep operating when fault occurs.
+        capacity_to_repair -- maintainer capacity needed while
+            maintaining this fault.
+        receive_part_callback = called with received part if the fault
+            occurred and has not been maintained yet.
+        failed_callback -- called with fault name when fault occurs.
+        '''
         if name == None:
             name = f'Failure_{len(self._possible_faults)}'
         assert not name in self._possible_faults.keys(), \
@@ -85,10 +97,10 @@ class MachineStatusTracker:
         self._possible_faults[name] = mf
 
     def get_time_to_repair(self, fault_name):
-        return self.possible_faults[fault_name].get_time_to_repair()
+        return self._possible_faults[fault_name].get_time_to_repair()
 
     def get_capacity_to_repair(self, fault_name):
-        return self.possible_faults[fault_name].capacity_to_repair
+        return self._possible_faults[fault_name].capacity_to_repair
 
     def is_operational(self):
         for n, f in self._active_faults.items():
@@ -182,3 +194,76 @@ class RecurringMachineFault:
 
     def initialize(self, machine_status):
         self._machine_status = machine_status
+
+
+class CmsEmulator(Cms):
+    ''' CMS emulator that is configured with average rates rather than
+    actual detection logic. Built to work with machines using
+    StatusTrackerWithFaults.
+    '''
+
+    def __init__(self, maintainer, **kwargs):
+        super().__init__(maintainer, **kwargs)
+
+        self.machine = {}
+        self.sense_fault_count = {}
+        # How long until fault is detected if CMS catches or if it's missed.
+        self.catch_count = {}
+        self.miss_count = {}
+        # False alert rates and missed alert rates.
+        self.miss_rate = {}
+        # False alert rate per real fault = fa_rate / (1 - fa_rate) assuming total rates of
+        self.fa_rate = {}
+        # How many false alerts are buffered.
+        self.fa_buffer = {}
+
+    def on_sense(self, sensor, data):
+        raise NotImplementedError('on_sense needs to be implemented or'
+                                  +' CustomCms will not do anything.')
+
+    def on_soft_fault(self, fault):
+        ''' Called when sensor detect an ongoing fault. Will increase sense_fault_count
+        for this fault by one. If count reaches count_to_detection or
+        on_miss_count_to_detection (based on miss_rate) a repair will be scheduled.
+        '''
+        self.sense_fault_count[fault.name] += 1
+        if self.sense_fault_count[fault.name] == 1:
+            # First bad part, fault just happened
+            if random.random() < self.fa_rate[fault.name]:
+                self.fa_buffer[fault.name] += 1
+        elif self.sense_fault_count[fault.name] == self.catch_count[fault.name]:
+            # reached count when a fault could be caught early
+            if random.random() >= self.miss_rate[fault.name]:
+                # fault is detected now
+                self.sense_fault_count[fault.name] = 0
+                self.maintainer.request_maintenance(self.machine[fault.name], fault.name)
+        elif self.sense_fault_count[fault.name] == self.miss_count[fault.name]:
+            # fault was missed earlier by CMS and is caught now by other means
+            self.sense_fault_count[fault.name] = 0
+            self.maintainer.request_maintenance(self.machine[fault.name], fault.name)
+
+    def check_for_false_alerts(self, allow_multiple = False):
+        ''' Called when a sense event shows no ongoing faults so that false alerts can
+        be triggered if any are supposed to happen.
+        '''
+        for name, count in self.fa_buffer.items():
+            if count > 0 and random.random() < 0.01:
+                self.fa_buffer[name] -= 1
+                self.maintainer.request_maintenance(self.machine[name], name)
+                if not allow_multiple: return
+
+    def configure_fault_handling(self, fault_name, machine,
+                                   count_to_detection = 1,
+                                   on_miss_count_to_detection = 2,
+                                   miss_rate = 0,
+                                   false_alert_rate = 0):
+        assert miss_rate + false_alert_rate <= 1, \
+            'miss_rate and false_alert_rate can not add up to more than one'
+        self.machine[fault_name] = machine
+        self.sense_fault_count[fault_name] = 0
+        self.catch_count[fault_name] = count_to_detection
+        self.miss_count[fault_name] = on_miss_count_to_detection
+        self.miss_rate[fault_name] = miss_rate / (1 - false_alert_rate)
+        self.fa_rate[fault_name] = false_alert_rate / (1 - false_alert_rate)
+        self.fa_buffer[fault_name] = 0
+

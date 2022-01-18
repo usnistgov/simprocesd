@@ -6,9 +6,9 @@ from .asset import Asset
 
 class MaintenanceRequest:
 
-    def __init__(self, machine, fault_name, time_to_fix, request_capacity):
+    def __init__(self, machine, maintenance_tag, time_to_fix, request_capacity):
         self.machine = machine
-        self.fault_name = fault_name
+        self.maintenance_tag = maintenance_tag
         self.time_to_fix = time_to_fix
         self.request_capacity = request_capacity
 
@@ -38,11 +38,11 @@ class Maintainer(Asset):
         if self._cost_per_interval[1] > 0:
             self._incur_periodic_expense()
 
-    def request_maintenance(self, machine, fault_name):
-        ttr = machine.status_tracker.get_time_to_repair(fault_name)
-        capacity = machine.status_tracker.get_capacity_to_repair(fault_name)
+    def request_maintenance(self, machine, maintenance_tag):
+        ttr = machine.status_tracker.get_time_to_repair(maintenance_tag)
+        capacity = machine.status_tracker.get_capacity_to_repair(maintenance_tag)
         self._request_queue.append(
-            MaintenanceRequest(machine, fault_name, ttr, capacity))
+            MaintenanceRequest(machine, maintenance_tag, ttr, capacity))
         self.try_working_requests()
 
     def try_working_requests(self):
@@ -85,7 +85,7 @@ class Maintainer(Asset):
         )
 
     def _restore_machine(self, request):
-        request.machine.status_tracker.fix_fault(request.fault_name)
+        request.machine.status_tracker.maintain(request.maintenance_tag)
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity
 

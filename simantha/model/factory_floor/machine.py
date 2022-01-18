@@ -1,5 +1,4 @@
 from .asset import Asset
-from .machine_status_tracker import MachineStatusTracker
 from ..simulation import EventType
 from ...utils.utils import assert_is_instance, assert_callable
 
@@ -11,15 +10,15 @@ class Machine(Asset):
                  name = None,
                  upstream = [],
                  cycle_time = 1.0,
-                 machine_status_tracker = None,
+                 status_tracker = None,
                  **kwargs):
         super().__init__(name, **kwargs)
 
-        if machine_status_tracker == None:
-            machine_status_tracker = MachineStatusTracker()
+        if status_tracker == None:
+            status_tracker = MachineStatusTracker()
         else:
-            assert_is_instance(machine_status_tracker, MachineStatusTracker)
-        self.status_tracker = machine_status_tracker
+            assert_is_instance(status_tracker, MachineStatusTracker)
+        self.status_tracker = status_tracker
 
         self._downstream = []
         self._upstream = []  # Needed for the setter to work
@@ -92,7 +91,6 @@ class Machine(Asset):
     def _on_received_new_part(self):
         self._part.routing_history.append(self.name)
         self._schedule_finish_processing_part()
-        # self.status_tracker._receive_part(self._part)
 
         for c in self._receive_part_callbacks:
             c(self._part)
@@ -114,7 +112,6 @@ class Machine(Asset):
         self._output_part = self._part
         self._part = None
         self._notify_downstream_of_available_part()
-        # self.status_tracker.finish_processing(self._output_part)
 
         for c in self._finish_processing_callbacks:
             c(self._output_part)
@@ -195,3 +192,29 @@ class Machine(Asset):
         assert_callable(callback)
         self._restored_callbacks.append(callback)
 
+
+class MachineStatusTracker:
+
+    def __init__(self):
+        self._machine = None
+        self._env = None
+
+    @property
+    def machine(self):
+        return self._machine
+
+    def initialize(self, machine, env):
+        self._machine = machine
+        self._env = env
+
+    def maintain(self, maintenance_tag):
+        pass
+
+    def get_time_to_repair(self, fault_name):
+        pass
+
+    def get_capacity_to_repair(self, fault_name):
+        pass
+
+    def is_operational(self):
+        return True

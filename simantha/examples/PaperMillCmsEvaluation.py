@@ -3,7 +3,7 @@ import random
 from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
 from ..model import System
 from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
-from ..model.cms.cms import CmsEmulator
+from . import StatusTrackerWithFaults, CmsEmulator
 
 ''' Time units are seconds and value is in dollars.
 Machine produces 10 items per second but we will have each Part represent 50 items in
@@ -50,7 +50,9 @@ def sample(duration, with_cms):
     part = Part(f'{count_per_part}xPart', 0, 1)
     source = Source(sample_part = part)
 
-    M1 = Machine('M1', upstream = [source], cycle_time = machine_cycle_time)
+    status = StatusTrackerWithFaults()
+    M1 = Machine('M1', upstream = [source], cycle_time = machine_cycle_time,
+                 status_tracker = status)
     M1.add_finish_processing_callback(default_part_processing)
     M1.status_tracker.add_recurring_fault(
         name = dulling_name,
