@@ -92,17 +92,15 @@ class Environment:
 
         self.collect_data = collect_data
 
-    def run(self, warm_up_time = 0, simulation_time = 0):
+    def run(self, simulation_time = 0):
         """
         Simulate the system for the specified run time or until no simulation events
         remain. 
         """
         self.now = 0
-        self.warm_up_time = warm_up_time
         self.simulation_time = simulation_time
         self.terminated = False
-        self.events.append(Event(warm_up_time + simulation_time, -1, self.terminate,
-                                 EventType.TERMINATE))
+        self.events.append(Event(simulation_time, -1, self.terminate, EventType.TERMINATE))
         self.event_index = 0
 
         self.events.sort()

@@ -59,7 +59,7 @@ class StatusTrackerWithFaults(MachineStatusTracker):
                  name = None,
                  get_time_to_fault = None,
                  get_operations_to_fault = None,  # start of n-th operation will trigger fault
-                 get_time_to_repair = lambda: 0,
+                 get_time_to_maintain = lambda: 0,
                  get_cost_to_fix = lambda: 0,
                  get_false_alert_cost = lambda: 0,
                  is_hard_fault = True,  # will machine keep operating when fault occurs
@@ -67,13 +67,14 @@ class StatusTrackerWithFaults(MachineStatusTracker):
                  receive_part_callback = None,
                  failed_callback = None):
         '''
+        Do not call after simulation starts.
         Arguments:
         name -- name of fault, used as maintenance tag to fix fault.
         get_time_to_fault -- function that gives time to fault, no
             periodic faults if not set.
         get_operations_to_fault -- function that gives n and n-th
             operation will trigger fault, n is infinite if not set.
-        get_time_to_repair -- how long it takes for maintenance to fix
+        get_time_to_maintain -- how long it takes for maintenance to fix
             this fault.
         get_cost_to_fix -- how much it costs to fix this fault.
         get_false_alert_cost -- how much it costs to fix this fault.
@@ -90,16 +91,16 @@ class StatusTrackerWithFaults(MachineStatusTracker):
             f'Failure with that name already exists: {name}'
 
         mf = RecurringMachineFault(name, get_time_to_fault,
-            get_operations_to_fault, get_time_to_repair, get_cost_to_fix,
+            get_operations_to_fault, get_time_to_maintain, get_cost_to_fix,
             get_false_alert_cost, is_hard_fault, capacity_to_repair,
             receive_part_callback, failed_callback
         )
         self._possible_faults[name] = mf
 
-    def get_time_to_repair(self, fault_name):
-        return self._possible_faults[fault_name].get_time_to_repair()
+    def get_time_to_maintain(self, fault_name):
+        return self._possible_faults[fault_name].get_time_to_maintain()
 
-    def get_capacity_to_repair(self, fault_name):
+    def get_capacity_to_maintain(self, fault_name):
         return self._possible_faults[fault_name].capacity_to_repair
 
     def is_operational(self):
@@ -156,7 +157,7 @@ class RecurringMachineFault:
                  name,
                  get_time_to_fault,
                  get_operations_to_fault,
-                 get_time_to_repair,
+                 get_time_to_maintain,
                  get_cost_to_fix,
                  get_false_alert_cost,
                  is_hard_fault,
@@ -166,7 +167,7 @@ class RecurringMachineFault:
                  ):
         assert_callable(get_time_to_fault, True)
         assert_callable(get_operations_to_fault, True)
-        assert_callable(get_time_to_repair, False)
+        assert_callable(get_time_to_maintain, False)
         assert_callable(get_cost_to_fix, False)
         assert_callable(get_false_alert_cost, False)
         assert_callable(receive_part_callback, True)
@@ -176,7 +177,7 @@ class RecurringMachineFault:
         self.get_time_to_fault = get_time_to_fault
         self.get_operations_to_fault = get_operations_to_fault
         self.is_hard_fault = is_hard_fault
-        self.get_time_to_repair = get_time_to_repair
+        self.get_time_to_maintain = get_time_to_maintain
         self.get_cost_to_fix = get_cost_to_fix
         self.get_false_alert_cost = get_false_alert_cost
         self.capacity_to_repair = capacity_to_repair

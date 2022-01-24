@@ -5,8 +5,8 @@ class Cms(Asset):
     ''' Based class to represent a Condition Monitoring System.
     '''
 
-    def __init__(self, maintainer, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, maintainer, name = None, value = 0):
+        super().__init__(name, value)
 
         self.maintainer = maintainer
         self._sensors = []
@@ -20,7 +20,7 @@ class Cms(Asset):
     def add_sensor(self, sensor):
         self._sensors.append(sensor)
         # user_data can be manipulated directly from sensor
-        callback = lambda ud, d:self.on_sense(sensor, d)
+        callback = lambda sensor_target, data:self.on_sense(sensor, data)
         sensor.add_on_sense_callback(callback)
 
     def on_sense(self, sensor, data):

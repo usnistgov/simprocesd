@@ -11,8 +11,8 @@ class Machine(Asset):
                  upstream = [],
                  cycle_time = 1.0,
                  status_tracker = None,
-                 **kwargs):
-        super().__init__(name, **kwargs)
+                 value = 0):
+        super().__init__(name, value)
 
         if status_tracker == None:
             status_tracker = MachineStatusTracker()
@@ -160,6 +160,8 @@ class Machine(Asset):
         self._env.unpause_matching_events(asset_id = self.id)
         if self._waiting_for_part_availability:
             self._schedule_get_part_from_upstream()
+        elif self._output_part != None:
+            self._notify_downstream_of_available_part()
 
         for c in self._restored_callbacks:
             c()
@@ -210,10 +212,10 @@ class MachineStatusTracker:
     def maintain(self, maintenance_tag):
         pass
 
-    def get_time_to_repair(self, fault_name):
+    def get_time_to_maintain(self, maintenance_tag):
         pass
 
-    def get_capacity_to_repair(self, fault_name):
+    def get_capacity_to_maintain(self, maintenance_tag):
         pass
 
     def is_operational(self):

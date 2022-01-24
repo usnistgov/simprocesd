@@ -3,7 +3,7 @@ import random
 from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
 from ..model import System
 from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
-from . import StatusTrackerWithFaults, CmsEmulator
+from .status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
 
 ''' Time units are seconds and value is in dollars.
 Machine produces 10 items per second but we will have each Part represent 50 items in

@@ -6,16 +6,19 @@ from .asset import Asset
 
 class MaintenanceRequest:
 
-    def __init__(self, machine, maintenance_tag, time_to_fix, request_capacity):
+    def __init__(self, machine, maintenance_tag, request_capacity):
         self.machine = machine
         self.maintenance_tag = maintenance_tag
-        self.time_to_fix = time_to_fix
         self.request_capacity = request_capacity
 
 
 class Maintainer(Asset):
     '''
-    A maintainer is responsible for repairing machines that request maintenance.
+    A maintainer is responsible for repairing machines that request
+    maintenance.
+    Requests are generally worked in a first in first out order. A later
+    request may be worked first when available capacity is insufficient
+    for the earlier request but sufficient for the later request.
     '''
 
     def __init__(self,
@@ -29,6 +32,7 @@ class Maintainer(Asset):
         self._utilization = 0
         self._env = None
         self._request_queue = []
+        self._active_requests = []
         self._cost_per_interval = cost_per_interval
 
     def initialize(self, env):
@@ -38,35 +42,55 @@ class Maintainer(Asset):
         if self._cost_per_interval[1] > 0:
             self._incur_periodic_expense()
 
-    def request_maintenance(self, machine, maintenance_tag):
-        ttr = machine.status_tracker.get_time_to_repair(maintenance_tag)
-        capacity = machine.status_tracker.get_capacity_to_repair(maintenance_tag)
+    def request_maintenance(self, machine, maintenance_tag = None):
+        ''' Enter maintenance request into the queue, see class
+        description for more details on the queue.
+        Returns True if request was added to the queue and False
+        otherwise. Request may be skipped if the same request is already
+        in the queue or is already being worked.
+        '''
+        if self._is_maintenance_requested(machine, maintenance_tag):
+            return False
+
+        capacity = machine.status_tracker.get_capacity_to_maintain(maintenance_tag)
         self._request_queue.append(
-            MaintenanceRequest(machine, maintenance_tag, ttr, capacity))
+            MaintenanceRequest(machine, maintenance_tag, capacity))
         self.try_working_requests()
+        return True
+
+    def _is_maintenance_requested(self, machine, maintenance_tag = None):
+        for r in self._request_queue:
+            if r.machine == machine and r.maintenance_tag == maintenance_tag:
+                return True
+        for r in self._active_requests:
+            if r.machine == machine and r.maintenance_tag == maintenance_tag:
+                return True
+        return False
 
     def try_working_requests(self):
         i = 0
         while i < len(self._request_queue):
             req = self._request_queue[i]
-            if self._utilization < self._capacity + req.request_capacity:
+            if self._utilization <= self._capacity - req.request_capacity:
                 self._request_queue.pop(i)
+                self._active_requests.append(req)
 
                 self._utilization += req.request_capacity
                 self._env.schedule_event(
                     self._env.now,
                     self.id,
                     lambda: self._shutdown_and_repair(req),
-                    EventType.RESTORE,
+                    EventType.OTHER_LOW,
                     f'shutting down before repair: {req.machine.name}')
             else:
                 i += 1
 
     def _shutdown_and_repair(self, request):
+        ttm = request.machine.status_tracker.get_time_to_maintain(request.maintenance_tag)
         request.machine.shutdown()
         # Begin fixing
         self._env.schedule_event(
-            self._env.now + request.time_to_fix,
+            self._env.now + ttm,
             self.id,
             lambda: self._restore_machine(request),
             EventType.RESTORE,
@@ -88,6 +112,7 @@ class Maintainer(Asset):
         request.machine.status_tracker.maintain(request.maintenance_tag)
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity
+        self._active_requests.remove(request)
 
         self.try_working_requests()
 

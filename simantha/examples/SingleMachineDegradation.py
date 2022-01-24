@@ -9,7 +9,7 @@ import random
 from ..model.factory_floor import Source, Machine, Sink
 from ..model import System
 from ..utils import geometric_distribution_sample
-from . import StatusTrackerWithFaults
+from .status_tracker_with_faults import StatusTrackerWithFaults
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
                  upstream = [source],
                  status_tracker = StatusTrackerWithFaults())
     M1.status_tracker.add_recurring_fault(
-        get_time_to_fault = lambda: geometric_distribution_sample(1, 4))
+        get_time_to_fault = lambda: geometric_distribution_sample(0.01, 4))
     sink = Sink(upstream = [M1])
 
     system = System([source, M1, sink])
