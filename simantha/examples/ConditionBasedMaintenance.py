@@ -1,7 +1,6 @@
 '''
-Not supported at this time.
 Example of a condition-based maintenance policy. The CBM threshold determines the health
-index level at which a machine requests maintenance. 
+index level at which a machine requests maintenance.
 Expected parts produced: around 4400.
 '''
 import random
@@ -69,6 +68,7 @@ def main():
     system = System(objects = [source, M1, B1, M2, sink, cms])
 
     random.seed(1)
+    # If time units are minutes then simulation period is a week.
     system.simulate(simulation_time = 60 * 24 * 7)
 
 

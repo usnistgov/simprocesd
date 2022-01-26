@@ -6,8 +6,10 @@ from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
 from .status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
 
 ''' Time units are seconds and value is in dollars.
-Machine produces 10 items per second but we will have each Part represent 50 items in
-order to speed up the simulation.
+Machine produces 10 items per second but we will have each Part
+represent 50 items in order to speed up the simulation.
+Expected parts produced: 75005
+Expected yearly operational profit of using a CMS is: about $130,000
 '''
 count_per_part = 50  # set to 1 for more accurate results
 processing_rate = 10

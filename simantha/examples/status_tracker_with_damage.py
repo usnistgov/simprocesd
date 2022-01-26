@@ -61,11 +61,7 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         if self.is_operational():
             self._prepare_next_degrade_event()
         else:
-            self._env.schedule_event(self._env.now,
-                                     self._machine.id,
-                                     lambda: self._machine.fail(),
-                                     EventType.FAIL,
-                                     f'damage_failure')
+            self._machine.schedule_failure(self._env.now)
 
     def maintain(self, maintenance_id):
         was_operational = self.is_operational()

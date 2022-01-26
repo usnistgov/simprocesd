@@ -1,10 +1,13 @@
+''' Expected parts produced: 100.
+'''
+
 from ..model.factory_floor import Source, Machine, Sink, Part
 from ..model import System
 
 
 def main():
     part = Part()
-    source = Source(part)
+    source = Source(sample_part = part)
     M1 = Machine(name = 'M1', upstream = [source], cycle_time = 1)
     sink = Sink(upstream = [M1])
 

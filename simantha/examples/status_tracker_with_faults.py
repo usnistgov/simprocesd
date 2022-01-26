@@ -141,11 +141,11 @@ class StatusTrackerWithFaults(MachineStatusTracker):
         if fault.is_hard_fault:
             for n, f in self._active_faults.items():
                 if fault != f and f.scheduled_fault_time != None:
-                    f.remaining_time_to_fault = max(0,
-                          f.scheduled_fault_time - self._env.now)
+                    f.remaining_time_to_fault = max(0, f.scheduled_fault_time - self._env.now)
                     f.scheduled_fault_time = None
             # Failing machine will cancel all currently scheduled events for the machine.
-            self._machine.fail()
+            self._machine.schedule_failure(self._env.now,
+                    f'Fault: {fault.name} on machine: {self._machine.name}')
 
         if fault.failed_callback != None:
             fault.failed_callback(fault)

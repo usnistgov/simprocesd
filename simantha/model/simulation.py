@@ -20,7 +20,7 @@ class EventType(IntEnum):
 
     # Order of the next 3 events is required for correct machine throughput.
     FINISH_PROCESSING = auto()
-    GET_PART = auto()
+    PASS_PART = auto()
 
     FAIL = auto()
     SENSOR = auto()
@@ -32,7 +32,7 @@ class EventType(IntEnum):
 class Event:
     '''
     Simulation event class. Should be extended when implementing custom simulation
-    events. 
+    events.
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = '', status = ''):
@@ -73,8 +73,8 @@ class Event:
 class Environment:
     """
     The main simulation environment for Simantha. This is designed to be an environment
-    specifically for use with Simantha objects and is not intended to be a general 
-    simulation engine. In general, users of Simantha should not need to instantiate an 
+    specifically for use with Simantha objects and is not intended to be a general
+    simulation engine. In general, users of Simantha should not need to instantiate an
     Environment object.
     """
 
@@ -95,7 +95,7 @@ class Environment:
     def run(self, simulation_time = 0):
         """
         Simulate the system for the specified run time or until no simulation events
-        remain. 
+        remain.
         """
         self.now = 0
         self.simulation_time = simulation_time
@@ -115,7 +115,7 @@ class Environment:
         """
         Find and execute the next earliest simulation event. Simultaneous events are
         executed in order according to their event type priority, then their
-        user-assigned priority. If these values are equal then ties are broken randomly. 
+        user-assigned priority. If these values are equal then ties are broken randomly.
         """
         next_event = self.events.pop(0)
 
@@ -138,14 +138,14 @@ class Environment:
             sys.exit()
 
     def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW,
-                       source = ''):
+                       message = ''):
         """
         Schedule a new simulation event by inserting it in its proper asset_id
-        within the simulation events list. 
+        within the simulation events list.
         """
         assert time >= self.now, \
             f'Can not schedule events in the past: now={self.now}, time={time}'
-        new_event = Event(time, asset_id, action, event_type, source)
+        new_event = Event(time, asset_id, action, event_type, message)
         bisect.insort(self.events, new_event)
 
     def terminate(self):
@@ -209,23 +209,23 @@ class Environment:
 class Distribution:
     """
     A class for representing random probability distributions. Should return an integer
-    value when sampled. 
+    value when sampled.
 
 
     Parameters
     ----------
     distribution : int or dict
         If an ``int`` is passed, the distribution will return a constant value when
-        sampled. Otherwise, the built-in distributions are discrete uniform, specified 
-        by passing ``{'uniform': [a, b]}`` to the distribution object, and geometric, 
+        sampled. Otherwise, the built-in distributions are discrete uniform, specified
+        by passing ``{'uniform': [a, b]}`` to the distribution object, and geometric,
         specified via ``{'geometric': p}``.
 
 
     Methods
     -------
     sample()
-        Returns a single integer value from the specified distribution. This method 
-        should be overridden by children of the ``Distribution`` class. 
+        Returns a single integer value from the specified distribution. This method
+        should be overridden by children of the ``Distribution`` class.
 
     """
 

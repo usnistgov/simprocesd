@@ -1,3 +1,5 @@
+''' Expected parts produced: 10074
+'''
 from ..model.factory_floor import Source, Machine, Sink
 from ..model import System
 
