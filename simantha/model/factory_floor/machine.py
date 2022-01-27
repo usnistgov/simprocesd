@@ -1,4 +1,3 @@
-from .asset import Asset
 from .machine_base import MachineBase
 from ..simulation import EventType
 from ...utils.utils import assert_is_instance, assert_callable
@@ -13,8 +12,8 @@ class Machine(MachineBase):
                  cycle_time = 1.0,
                  status_tracker = None,
                  value = 0):
-        super().__init__(name, upstream, value)
         assert cycle_time >= 0, 'Cycle time cannot be negative.'
+        super().__init__(name, upstream, value)
 
         if status_tracker == None:
             status_tracker = MachineStatusTracker()
@@ -22,14 +21,9 @@ class Machine(MachineBase):
             assert_is_instance(status_tracker, MachineStatusTracker)
         self.status_tracker = status_tracker
 
-        self._downstream = []
-        self._upstream = []  # Needed for the setter to work
-        self.upstream = upstream
         self._cycle_time = cycle_time
 
-        self._part = None
         self._is_part_processed = False
-        self._env = None
         self._is_shut_down = False
         self._received_part_callbacks = []
         self._finish_processing_callbacks = []
@@ -46,14 +40,15 @@ class Machine(MachineBase):
 
     def _pass_part_downstream(self):
         if not self._is_part_processed: return
+
         super()._pass_part_downstream()
         if self._part == None:
             self._is_part_processed = False
 
-    def _on_received_new_part(self, part):
+    def _on_received_new_part(self):
         self._schedule_finish_processing_part()
         for c in self._received_part_callbacks:
-            c(part)
+            c(self._part)
 
     def _schedule_finish_processing_part(self):
         self._env.schedule_event(

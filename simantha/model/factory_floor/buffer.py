@@ -27,7 +27,7 @@ class Buffer(Machine):
 
         # Try to pass parts to downstream machines.
         for dwn in self._downstream:
-            if len(self._buffer) > 0 and dwn._give_part(self._buffer[0]):
+            while len(self._buffer) > 0 and dwn._give_part(self._buffer[0]):
                 self._buffer.pop(0)
 
         if len(self._buffer) < self._capacity:

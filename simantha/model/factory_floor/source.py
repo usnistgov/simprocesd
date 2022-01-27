@@ -39,9 +39,10 @@ class Source(Machine):
 
         self._part = self._sample_part.copy()
         self._part.initialize(self._env)
+        self._part.routing_history.append(self.name)
         self.add_cost('supplied_part', self._part.value)
         self._produced_parts += 1
-        self._on_received_new_part(self._part)
+        self._on_received_new_part()
 
     def _pass_part_downstream(self):
         super()._pass_part_downstream()

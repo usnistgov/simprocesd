@@ -22,7 +22,8 @@ class Sink(Machine):
     def value_of_received_parts(self):
         return self.value
 
-    def _schedule_pass_part_downstream(self):
+    def _finish_processing_part(self):
+        super()._finish_processing_part()
         if self._part == None or not self._is_part_processed: return
 
         self._received_parts_count += 1
@@ -32,4 +33,7 @@ class Sink(Machine):
         self._part = None
         self._is_part_processed = False
         self._notify_upstream_of_available_space()
+
+    def _schedule_pass_part_downstream(self):
+        pass  # Sink does not pass parts anywhere.
 

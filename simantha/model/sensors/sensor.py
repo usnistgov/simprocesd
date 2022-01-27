@@ -1,4 +1,4 @@
-from ..factory_floor.machine import Asset
+from ..factory_floor import Asset
 from ..simulation import EventType
 from ...utils import assert_is_instance, assert_callable
 

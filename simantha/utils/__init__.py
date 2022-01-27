@@ -1,5 +1,3 @@
-from .utils import assert_is_instance
-from .utils import assert_callable
-from .utils import save_list_to_csv
-
+from .utils import assert_is_instance, assert_callable, save_list_to_csv
 from .math_utils import geometric_distribution_sample
+from .simulation_check_utils import print_machines_that_received_parts

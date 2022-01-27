@@ -4,7 +4,8 @@ from ...utils.utils import assert_is_instance
 
 
 class MachineBase(Asset):
-    '''Base class for machine assets in the system.'''
+    '''Base class for machine assets in the system.
+    '''
 
     def __init__(self,
                  name = None,
@@ -70,7 +71,8 @@ class MachineBase(Asset):
             self._schedule_pass_part_downstream()
 
     def _give_part(self, part):
-        ''' Returns True if part has been accepted, otherwise False.
+        ''' Try to pass a part to this machine.
+        Returns True if part has been accepted, otherwise False.
         '''
         assert part != None, 'Cannot give part=None.'
         if not self.is_operational or self._part != None:
@@ -78,9 +80,9 @@ class MachineBase(Asset):
 
         self._part = part
         self._part.routing_history.append(self.name)
-        self._on_received_new_part(self._part)
+        self._on_received_new_part()
         return True
 
-    def _on_received_new_part(self, part):
+    def _on_received_new_part(self):
         self._schedule_pass_part_downstream()
 

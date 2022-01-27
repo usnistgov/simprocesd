@@ -15,7 +15,8 @@ class System:
     def simulate(self,
                  simulation_time = 0,
                  trace = False,
-                 collect_data = True):
+                 collect_data = True,
+                 print_summary = True):
         start = time.time()
 
         self._env = Environment(trace = trace, collect_data = collect_data)
@@ -25,11 +26,12 @@ class System:
         self._env.run(simulation_time)
         stop = time.time()
 
-        print(f'Simulation finished in {stop-start:.2f}s')
-        from .factory_floor.sink import Sink  # Late import to avoid circular dependency.
-        producedParts = sum(
-            x.received_parts_count for x in self.objects if isinstance(x, Sink))
-        print(f'Parts produced: {producedParts}')
+        if print_summary:
+            print(f'Simulation finished in {stop-start:.2f}s')
+            from .factory_floor.sink import Sink  # Late import to avoid circular dependency.
+            producedParts = sum(
+                x.received_parts_count for x in self.objects if isinstance(x, Sink))
+            print(f'Parts produced: {producedParts}')
 
     def get_net_value(self):
         from .factory_floor.asset import Asset

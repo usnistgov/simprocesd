@@ -61,7 +61,8 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         if self.is_operational():
             self._prepare_next_degrade_event()
         else:
-            self._machine.schedule_failure(self._env.now)
+            self._machine.schedule_failure(self._env.now,
+                    f'{self._machine.name} failed from wear and tear degradation.')
 
     def maintain(self, maintenance_id):
         was_operational = self.is_operational()
