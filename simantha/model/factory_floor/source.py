@@ -37,15 +37,15 @@ class Source(Machine):
     def _prepare_next_part(self):
         if self._produced_parts >= self._max_produced_parts: return
 
-        self._part = self._sample_part.copy()
-        self._part.initialize(self._env)
-        self._part.routing_history.append(self.name)
-        self.add_cost('supplied_part', self._part.value)
+        self._output = self._sample_part.copy()
+        self._output.initialize(self._env)
+        self._output.routing_history.append(self.name)
+        self.add_cost('supplied_part', self._output.value)
         self._produced_parts += 1
-        self._on_received_new_part()
+        self._schedule_pass_part_downstream()
 
     def _pass_part_downstream(self):
         super()._pass_part_downstream()
-        if self._part == None:
+        if self._output == None:
             self._prepare_next_part()
 

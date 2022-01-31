@@ -4,7 +4,15 @@ from ...utils.utils import assert_is_instance
 
 
 class MachineBase(Asset):
-    '''Base class for machine assets in the system.
+    ''' Base class for machine assets in the system.
+
+    WARNING: This machine can hold up to 2 parts, 1 processed part and
+    one input part that will not begin to be processed until the
+    processed part is passed downstream.
+    Possible parts within MachineBase:
+        - 1 part being processed
+        - 1 processed part (ready for downstream)
+        - 1 processed part and 1 input part not being processed
     '''
 
     def __init__(self,
@@ -18,6 +26,7 @@ class MachineBase(Asset):
         self.upstream = upstream
 
         self._part = None
+        self._output = None
         self._waiting_for_space_availability = False
         self._env = None
 
@@ -52,12 +61,12 @@ class MachineBase(Asset):
                                  EventType.PASS_PART, f'From {self.name}')
 
     def _pass_part_downstream(self):
-        if not self.is_operational or self._part == None: return
+        if not self.is_operational or self._output == None: return
 
         for dwn in self._downstream:
-            if dwn._give_part(self._part):
-                self._part = None
-                self._notify_upstream_of_available_space()
+            if dwn._give_part(self._output):
+                self._output = None
+                self._try_move_part_to_output()
                 return
         # Could not pass part downstream
         self._waiting_for_space_availability = True
@@ -84,5 +93,15 @@ class MachineBase(Asset):
         return True
 
     def _on_received_new_part(self):
+        if self._output == None:
+            self._try_move_part_to_output()
+
+    def _try_move_part_to_output(self):
+        if not self.is_operational or self._part == None or self._output != None:
+            return
+        self._output = self._part
+        self._part = None
         self._schedule_pass_part_downstream()
+        self._notify_upstream_of_available_space()
+        return
 

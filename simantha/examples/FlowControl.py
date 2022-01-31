@@ -1,7 +1,6 @@
 ''' Expected parts produced: 97
 M02 should receive 97 parts while M03 and M04 should not receive any.
-M05, M06, and M07 should all have received almost the same number of
-parts, within 1 of each other.
+M05, M06, and M07 should each receive 33 parts.
 M08, M09, and M10 use random distribution will and likely have similar
 received part counts. Change n in random.seed(n) to get a different
 random distribution.
@@ -42,7 +41,7 @@ def main():
 
     system = System([source, sink, M1, phd1, phd2, phd3] + stage_1 + stage_2 + stage_3)
     random.seed(5)
-    system.simulate(simulation_time = 100)
+    system.simulate(simulation_time = 99)
 
     print_machines_that_received_parts(sink.collected_parts, lambda n: n[0] == 'M')
 

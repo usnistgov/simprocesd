@@ -4,7 +4,13 @@ from ...utils.utils import assert_is_instance, assert_callable
 
 
 class Machine(MachineBase):
-    '''Base class for machine assets in the system.'''
+    ''' Machine that has a state and a configurable cycle time.
+
+    WARNING: This machine can hold up to 2 parts, 1 processed part and
+    one input part that will not begin to be processed until the
+    processed part is passed downstream.
+    See MachineBase class for more information.
+    '''
 
     def __init__(self,
                  name = None,
@@ -38,17 +44,14 @@ class Machine(MachineBase):
         super().initialize(env)
         self.status_tracker.initialize(self, env)
 
-    def _pass_part_downstream(self):
-        if not self._is_part_processed: return
-
-        super()._pass_part_downstream()
-        if self._part == None:
-            self._is_part_processed = False
-
     def _on_received_new_part(self):
-        self._schedule_finish_processing_part()
+        super()._on_received_new_part()
         for c in self._received_part_callbacks:
             c(self._part)
+
+    def _try_move_part_to_output(self):
+        if self._part != None and self._output == None:
+            self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self):
         self._env.schedule_event(
@@ -61,31 +64,28 @@ class Machine(MachineBase):
 
     def _finish_processing_part(self):
         if not self.is_operational: return
-        assert not self._is_part_processed, \
-              f'Bad state, part already processed {self._part.name}.'
-        assert self._part != None, 'Bad state, part should be available.'
+        assert self._part != None, f'Input part is missing.'
+        assert self._output == None, f'Output part slot is already full.'
 
-        self._is_part_processed = True
+        self._output = self._part
+        self._part = None
         self._schedule_pass_part_downstream()
+        self._notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
-            c(self._part)
+            c(self._output)
 
     def schedule_failure(self, time, message):
         self._env.schedule_event(time, self.id, self._fail, EventType.FAIL, message)
 
     def _fail(self):
-        if self._is_part_processed:
-            # Part is not lost if it was already processed.
-            self._waiting_for_space_availability = True
-        else:
-            self._waiting_for_space_availability = False
-            self._part = None
+        # Processed part (_output) is not lost but input part is.
+        self._part = None
         self._env.cancel_matching_events(asset_id = self.id)
         for c in self._failed_callbacks:
             c()
 
     def shutdown(self):
-        '''Make sure not to call in the middle of another Machine
+        ''' Make sure not to call in the middle of another Machine
         operation, safest way is to schedule it as a separate event.
         '''
         self._is_shut_down = True
@@ -96,9 +96,9 @@ class Machine(MachineBase):
             return
         self._is_shut_down = False
         self._env.unpause_matching_events(asset_id = self.id)
-        if self._waiting_for_space_availability:
+        if self._output != None:
             self._schedule_pass_part_downstream()
-        elif self._part == None:
+        if self._part == None:
             self._notify_upstream_of_available_space()
 
         for c in self._restored_callbacks:

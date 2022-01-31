@@ -24,15 +24,13 @@ class Sink(Machine):
 
     def _finish_processing_part(self):
         super()._finish_processing_part()
-        if self._part == None or not self._is_part_processed: return
+        if self._output == None: return
 
         self._received_parts_count += 1
-        self.add_value(f'collected_part', self._part.value)
+        self.add_value(f'collected_part', self._output.value)
         if self._collect_parts:
-            self.collected_parts.append(self._part)
-        self._part = None
-        self._is_part_processed = False
-        self._notify_upstream_of_available_space()
+            self.collected_parts.append(self._output)
+        self._output = None
 
     def _schedule_pass_part_downstream(self):
         pass  # Sink does not pass parts anywhere.

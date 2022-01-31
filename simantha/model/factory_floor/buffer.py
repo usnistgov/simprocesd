@@ -15,12 +15,15 @@ class Buffer(Machine):
 
     def _finish_processing_part(self):
         super()._finish_processing_part()
-        if self._part != None and self._is_part_processed:
-            self._buffer.append(self._part)
-            self._part = None
-            self._is_part_processed = False
-            if len(self._buffer) < self._capacity:
-                self._notify_upstream_of_available_space()
+        if self._output:
+            self._buffer.append(self._output)
+            self._output = None
+
+    def _notify_upstream_of_available_space(self):
+        parts_count = (len(self._buffer) + 1 if self._part != None else 0
+                                         +1 if self._output != None else 0)
+        if parts_count < self._capacity:
+            super()._notify_upstream_of_available_space()
 
     def _pass_part_downstream(self):
         if not self.is_operational: return
@@ -30,8 +33,7 @@ class Buffer(Machine):
             while len(self._buffer) > 0 and dwn._give_part(self._buffer[0]):
                 self._buffer.pop(0)
 
-        if len(self._buffer) < self._capacity:
-            self._notify_upstream_of_available_space()
+        self._notify_upstream_of_available_space()
         if len(self._buffer) > 0:
             self._waiting_for_space_availability = True
 
