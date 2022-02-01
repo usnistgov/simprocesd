@@ -31,7 +31,8 @@ class FlowOrder(Enum):
 
 class PartHandlingDevice(MachineBase):
     ''' Accepts parts from upstream and sends them to downstream
-    machines based on chosen order.
+    machines based on chosen order. If a part cannot be passed
+    downstream then a part will not be accepted from upstream.
 
     Downstream order of the list will be used to determine order
     of which downstream machines get parts in what order. Downstream
@@ -110,5 +111,5 @@ class PartHandlingDevice(MachineBase):
 
     def _pass_part_downstream(self, part):
         # Safety check, function should never be called.
-        raise NotImplementedError('This method should never have to be called.')
+        raise RuntimeError('This method should never be called.')
 

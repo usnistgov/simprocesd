@@ -16,5 +16,5 @@ def print_machines_that_received_parts(parts, filter_ = lambda machine_name: Tru
 
     for name, count in sorted(part_counter.items()):
         if filter_(name):
-            print(f'Machine {name} received {count} parts.')
+            print(f'Machine {name} received {count} of the parts.')
 
