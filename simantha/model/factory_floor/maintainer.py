@@ -1,5 +1,3 @@
-# import random
-
 from ..simulation import EventType
 from .asset import Asset
 
@@ -53,6 +51,8 @@ class Maintainer(Asset):
             return False
 
         capacity = machine.status_tracker.get_capacity_to_maintain(maintenance_tag)
+        self._env.add_datapoint('enter_queue', self.name,
+                                (self._env.now, machine.name, maintenance_tag))
         self._request_queue.append(
             MaintenanceRequest(machine, maintenance_tag, capacity))
         self.try_working_requests()
@@ -87,6 +87,8 @@ class Maintainer(Asset):
 
     def _shutdown_and_repair(self, request):
         ttm = request.machine.status_tracker.get_time_to_maintain(request.maintenance_tag)
+        self._env.add_datapoint('begin_maintenance', self.name,
+                                (self._env.now, request.machine.name, request.maintenance_tag))
         request.machine.shutdown()
         # Begin fixing
         self._env.schedule_event(
@@ -113,6 +115,8 @@ class Maintainer(Asset):
         request.machine.restore_functionality()
         self._utilization -= request.request_capacity
         self._active_requests.remove(request)
+        self._env.add_datapoint('finish_maintenance', self.name,
+                                (self._env.now, request.machine.name, request.maintenance_tag))
 
         self.try_working_requests()
 

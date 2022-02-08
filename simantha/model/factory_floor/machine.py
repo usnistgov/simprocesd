@@ -1,6 +1,6 @@
-from .machine_base import MachineBase
-from ..simulation import EventType
 from ...utils.utils import assert_is_instance, assert_callable
+from ..simulation import EventType
+from .machine_base import MachineBase
 
 
 class Machine(MachineBase):
@@ -45,6 +45,7 @@ class Machine(MachineBase):
         self.status_tracker.initialize(self, env)
 
     def _on_received_new_part(self):
+        self._env.add_datapoint('received_parts', self.name, (self._env.now, self._part.quality))
         super()._on_received_new_part()
         for c in self._received_part_callbacks:
             c(self._part)
@@ -69,6 +70,7 @@ class Machine(MachineBase):
 
         self._output = self._part
         self._part = None
+        self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
         self._schedule_pass_part_downstream()
         self._notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:

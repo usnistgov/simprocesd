@@ -1,20 +1,22 @@
 import bisect
+from enum import IntEnum, unique, auto
 import json
 import random
 import sys
 import traceback
-from enum import IntEnum, unique, auto
 
-from ..utils import assert_is_instance
+from ..utils import DataStorageType, assert_is_instance
 
 
 @unique
 class EventType(IntEnum):
-    '''Events in the order of highest to lowest priority. Default events are all
-    ints. To give a custom priority to an event specify a value that is slightly
-    higher or lower than another event. For example,
-    event_type = EventType.FAIL + 0.1 -- this type of event will be executed
-    with a slightly lower priority than EventType.FAIL'''
+    ''' Events in the order of highest to lowest priority. Default
+    events are all ints. To give a custom priority to an event specify
+    a value that is slightly higher or lower than another event.
+    For example:
+    event_type = EventType.FAIL + 0.1 -- this type of event will be
+    executed with a slightly lower priority than EventType.FAIL
+    '''
     OTHER_HIGH = auto()
     RESTORE = auto()
 
@@ -78,19 +80,22 @@ class Environment:
     Environment object.
     """
 
-    def __init__(self, name = 'environment', trace = False, collect_data = True):
-        self.events = []
-        self.paused_events = []
-        self.name = name
-        self.now = 0
-
-        self.terminated = False
-
+    def __init__(self, name = 'environment', trace = False,
+                 simulation_data_storage_type = DataStorageType.NONE):
         self.trace = trace
         if self.trace:
             self.event_trace = {}
 
-        self.collect_data = collect_data
+        self._simulation_data_storage_type = simulation_data_storage_type
+        if self._simulation_data_storage_type == DataStorageType.FILE:
+            raise NotImplementedError('Storing to file/disk is not supported yet.')
+
+        self.simulation_data = {}
+        self.events = []
+        self.paused_events = []
+        self.name = name
+        self.now = 0
+        self.terminated = False
 
     def run(self, simulation_time = 0):
         """
@@ -204,6 +209,33 @@ class Environment:
             self.paused_events.remove(event)
             event.time += self.now - event.paused_at
             bisect.insort(self.events, event)
+
+    def add_datapoint(self, list_label, asset_name, data_point):
+        ''' Arguments:
+        label -- usually a string indicating the theme of stored data
+        in the related list.
+        asset_name -- second identified for the list where data_point
+        will be added. It indicates which asset the data is related to.
+        data_point -- new data point that will be added to the list
+        using list.append(data_point)
+        '''
+        if self._simulation_data_storage_type == DataStorageType.NONE:
+            return
+        elif self._simulation_data_storage_type == DataStorageType.MEMORY:
+            try:
+                table_dictionary = self.simulation_data[list_label]
+            except KeyError:
+                # Using KeyError to indicate dictionary entry needs
+                # initialization for better overall performance.
+                table_dictionary = {}
+                self.simulation_data[list_label] = table_dictionary
+
+            try:
+                table_dictionary[asset_name].append(data_point)
+            except KeyError:
+                table_dictionary[asset_name] = [data_point]
+        elif self._simulation_data_storage_type == DataStorageType.FILE:
+            raise NotImplementedError('Storing to file/disk is not supported yet.')
 
 
 class Distribution:

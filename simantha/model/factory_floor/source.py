@@ -1,6 +1,6 @@
+from ...utils import assert_is_instance
 from .machine import Machine
 from .part import Part
-from ...utils import assert_is_instance
 
 
 class Source(Machine):
@@ -47,5 +47,6 @@ class Source(Machine):
     def _pass_part_downstream(self):
         super()._pass_part_downstream()
         if self._output == None:
+            self._env.add_datapoint('supplied_new_part', self.name, self._env.now)
             self._prepare_next_part()
 

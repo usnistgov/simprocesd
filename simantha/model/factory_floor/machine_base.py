@@ -1,6 +1,6 @@
-from .asset import Asset
-from ..simulation import EventType
 from ...utils.utils import assert_is_instance
+from ..simulation import EventType
+from .asset import Asset
 
 
 class MachineBase(Asset):

@@ -1,5 +1,6 @@
 import time
 
+from ..utils import DataStorageType
 from .simulation import Environment
 
 
@@ -9,17 +10,26 @@ class System:
     simulation.
     '''
 
-    def __init__(self, objects = []):
+    def __init__(self, objects = [], simulation_data_storage_type = DataStorageType.NONE):
         self.objects = objects
+        self._simulation_data_storage_type = simulation_data_storage_type
+
+    @property
+    def simulation_data(self):
+        return self._env.simulation_data
+
+    @simulation_data.setter
+    def simulation_data(self, data):
+        raise RuntimeError('Cannot override simulation_data dictionary.')
 
     def simulate(self,
                  simulation_time = 0,
                  trace = False,
-                 collect_data = True,
                  print_summary = True):
         start = time.time()
 
-        self._env = Environment(trace = trace, collect_data = collect_data)
+        self._env = Environment(trace = trace,
+                                simulation_data_storage_type = self._simulation_data_storage_type)
         for obj in self.objects:
             obj.initialize(self._env)
 

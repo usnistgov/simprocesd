@@ -1,9 +1,6 @@
-import random
-
-from ..utils import geometric_distribution_sample
-from ..model.simulation import EventType
 from ..model.factory_floor import MachineStatusTracker
-from ..model.cms.cms import Cms
+from ..model.simulation import EventType
+from ..utils import geometric_distribution_sample
 
 
 class StatusTrackerWithDamage(MachineStatusTracker):
@@ -36,8 +33,14 @@ class StatusTrackerWithDamage(MachineStatusTracker):
     def damage(self):
         return self._damage
 
+    @damage.setter
+    def damage(self, value):
+        self._env.add_datapoint('damage_update', self._machine.name, (self._env.now, value))
+        self._damage = value
+
     def initialize(self, machine, env):
         super().initialize(machine, env)
+        self.damage = 0  # records initial datapoint
         self._prepare_next_degrade_event()
         if self._receive_part_callback != None:
             self._machine.add_receive_part_callback(
@@ -55,20 +58,18 @@ class StatusTrackerWithDamage(MachineStatusTracker):
                                  f'Machine degrade event.')
 
     def _degrade(self):
-        if self._machine._env.now == 22:
-            self._damage += 0
-        self._damage += self._damage_on_degrade
+        self.damage += self._damage_on_degrade
         if self.is_operational():
             self._prepare_next_degrade_event()
         else:
             self._machine.schedule_failure(self._env.now,
                     f'{self._machine.name} failed from wear and tear degradation.')
 
-    def maintain(self, maintenance_id):
+    def maintain(self, maintenance_tag):
         was_operational = self.is_operational()
 
         self._machine.add_cost(f'maintenance', self._get_cost_to_maintain(self.damage))
-        self._damage = 0
+        self.damage = 0
 
         if not was_operational:
             self._prepare_next_degrade_event()

@@ -1,6 +1,6 @@
-from .sensor import Sensor
-from ..factory_floor.machine import Machine
 from ...utils import assert_is_instance
+from ..factory_floor.machine import Machine
+from .sensor import Sensor
 
 
 class OutputPartSensor(Sensor):
@@ -34,5 +34,5 @@ class OutputPartSensor(Sensor):
             for p in self._probes:
                 p.target = part
             self.sense()
-        self._counter = self._probing_interval
+            self._counter = self._probing_interval
 
