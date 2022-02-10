@@ -1,14 +1,15 @@
 ''' Expected parts produced: 97
-M02 should receive 97 parts while M03 and M04 should not receive any.
-M05, M06, and M07 should each receive 33 parts.
+M01 and M02 should receive 97 parts.
+M03 and M04 should not receive any parts.
+M05, M06, and M07 should each receive 33, 32, and 32 parts respectively.
 M08, M09, and M10 use random distribution will and likely have similar
 received part counts. Change n in random.seed(n) to get a different
 random distribution.
 '''
 import random
 
-from ..model.factory_floor import Source, Machine, Sink, PartHandlingDevice, FlowOrder
 from ..model import System
+from ..model.factory_floor import Source, Machine, Sink, PartHandlingDevice, FlowOrder
 from ..utils import print_machines_that_received_parts
 
 
@@ -39,11 +40,12 @@ def main():
 
     sink = Sink(upstream = stage_3, collect_parts = True)
 
-    system = System([source, sink, M1, phd1, phd2, phd3] + stage_1 + stage_2 + stage_3)
+    machines = [M1] + stage_1 + stage_2 + stage_3
+    system = System([source, sink, phd1, phd2, phd3] + machines)
     random.seed(5)
     system.simulate(simulation_time = 99)
 
-    print_machines_that_received_parts(sink.collected_parts, lambda n: n[0] == 'M')
+    print_machines_that_received_parts(sink.collected_parts, machines)
 
 
 if __name__ == '__main__':

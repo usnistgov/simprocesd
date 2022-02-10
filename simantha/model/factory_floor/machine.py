@@ -70,11 +70,11 @@ class Machine(MachineBase):
 
         self._output = self._part
         self._part = None
-        self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
         self._schedule_pass_part_downstream()
         self._notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
             c(self._output)
+        self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
 
     def schedule_failure(self, time, message):
         self._env.schedule_event(time, self.id, self._fail, EventType.FAIL, message)

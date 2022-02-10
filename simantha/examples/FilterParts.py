@@ -1,14 +1,14 @@
 ''' Expected parts produced: 999-1000
 Processor should have received 999-1000 parts (same as parts produced).
-Processor average output part quality should be around 0.5
 PartFixer should have received about 750 parts
+Processor average output part quality should be around 0.5
 PartFixer average output part quality should be around 0.96
 '''
 import random
 
+from ..model import System
 from ..model.factory_floor import Source, Machine, Sink, Filter
 from ..model.sensors import OutputPartSensor, AttributeProbe
-from ..model import System
 from ..utils import print_machines_that_received_parts
 
 part_quality_data = {}
@@ -55,7 +55,7 @@ def main():
     system.simulate(simulation_time = 1000)
 
     # Automatically named machine names start with '<'
-    print_machines_that_received_parts(sink.collected_parts, lambda n: n[0] != '<')
+    print_machines_that_received_parts(sink.collected_parts, [M1, M2])
 
     for machine_name, data in part_quality_data.items():
         quality_sum = 0
