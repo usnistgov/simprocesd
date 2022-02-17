@@ -6,17 +6,19 @@ Expected parts produced: around 4400.
 import random
 
 from ..model import System
+from ..model.cms import Cms
 from ..model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
 from ..model.sensors import PeriodicSensor, AttributeProbe
-from ..model.cms import Cms
 from ..utils import geometric_distribution_sample
 from .status_tracker_with_damage import StatusTrackerWithDamage
 
 
 def time_to_maintain(damage):
     if damage < 4:
+        # maintenance before machine failure
         return geometric_distribution_sample(0.25, 1)
     else:
+        # maintenance for a failed machine
         return geometric_distribution_sample(0.10, 1)
 
 

@@ -1,3 +1,3 @@
-from .simulation import Event, Environment, Distribution
+from .simulation import Event, Environment, EventType
 from .system import System
 

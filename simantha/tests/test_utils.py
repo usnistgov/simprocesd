@@ -1,0 +1,25 @@
+from unittest.mock import patch
+
+
+def add_side_effect_to_class_method(test_case, target, original_method, side_effect):
+    ''' Configure side_effect and original_method to be called with parameters
+    that the target is normally called with. For target format see target
+    parameter used by unittest.mock.patch
+
+    Returns mock object for the target.
+    '''
+    # Configure patch target.
+    patcher = patch(target, autospec = True)
+    # Add patcher cleanup
+    test_case.addCleanup(patcher.stop)
+    # Start the patch and get the mock.
+    execute_event_mock = patcher.start()
+
+    # Add helper method to be called when target is called, helper will
+    # in turn call the callback and the original method.
+    def _help(*args, original_method = original_method, side_effect = side_effect, **kwargs):
+        original_method(*args, **kwargs)
+        return side_effect(*args, **kwargs)
+
+    execute_event_mock.side_effect = _help
+    return execute_event_mock
