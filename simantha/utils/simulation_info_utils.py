@@ -89,7 +89,6 @@ def plot_value(assets):
     ''' Shows a graph of value over time for provided assets.
 
     Arguments:
-    system -- System object used in the simulation.
     assets -- list of Asset objects.
     '''
     for asset in assets:

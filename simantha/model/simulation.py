@@ -1,9 +1,7 @@
 import bisect
 from enum import IntEnum, unique, auto
 import json
-import random
-import sys
-import traceback
+import os
 
 from ..utils import DataStorageType, assert_is_instance, assert_callable
 
@@ -52,6 +50,9 @@ class Event:
         self.executed = False
 
     def execute(self):
+        ''' Calls the event's action unless the event is marked as
+        cancelled or as executed.
+        '''
         if self.cancelled:
             self.status = 'cancelled'
             return
@@ -84,10 +85,8 @@ class Environment:
     Environment object.
     '''
 
-    def __init__(self, name = 'environment', trace = False,
-                 simulation_data_storage_type = DataStorageType.NONE):
+    def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE):
         self.name = name
-        self._trace = trace
         self._simulation_data_storage_type = simulation_data_storage_type
         if self._simulation_data_storage_type == DataStorageType.FILE:
             raise NotImplementedError('Storing to file/disk is not supported yet.')
@@ -96,16 +95,25 @@ class Environment:
         self.simulation_data = {}
         self._events = []
         self._paused_events = []
-        self._event_trace = {}
         self._terminated = False
+        self._event_trace = {}
+        self._trace = False
         self._event_index = 0
 
-    def run(self, simulation_time):
-        ''' Simulate the system for the specified run time.
+    def run(self, simulation_time, trace = False):
+        ''' Simulate the system for a limited duration.
+
+        Arguments:
+        simulation_time -- How long to simulate for. Time is measured
+            in simulation's time rather than real time.
+        trace -- if true then each event is recorded and at the end
+            exported to {self.name)_trace.json in Downloads.
+
+        Raises RuntimeError if called more than once.
         '''
-        self.now = 0
-        self._event_index = 0
-        self._terminated = False
+        if self._terminated:
+            raise RuntimeError('Cannot run simulation more than once on the same environment.')
+        self._trace = trace
         self.schedule_event(simulation_time, -1, self._terminate, EventType.TERMINATE)
 
         try:
@@ -117,9 +125,8 @@ class Environment:
 
     def step(self):
         ''' Find and execute the next earliest simulation event.
-        Simultaneous _events are executed in order according to their
-        event type priority, then their user-assigned priority. If these
-        values are equal then ties are broken randomly.
+        Simultaneous _events are executed in order according to Event's
+        default comparator.
         '''
         next_event = self._events.pop(0)
 
@@ -163,7 +170,7 @@ class Environment:
         self._event_index += 1
 
     def _export_trace(self):
-        with open(f'{self.name}_trace.json', 'w') as fp:
+        with open(os.path.expanduser(f'~/Downloads/{self.name}_trace.json'), 'w') as fp:
             json.dump(self._event_trace, fp)
 
     def cancel_matching_events(self, asset_id = None):
@@ -209,11 +216,11 @@ class Environment:
 
         Arguments:
         label -- usually a string indicating the theme of stored data
-        in the related list.
+            in the related list.
         asset_name -- second identified for the list where data_point
-        will be added. It indicates which asset the data is related to.
+            will be added. It indicates related asset.
         data_point -- new data point that will be added to the list
-        using list.append(data_point)
+            using list.append(data_point)
         '''
         if self._simulation_data_storage_type == DataStorageType.NONE:
             return

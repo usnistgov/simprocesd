@@ -15,7 +15,7 @@ class EnvironmentTestCase(TestCase):
         EnvironmentTestCase.execution_order.append(event)
 
     def setUp(self):
-        self.env = Environment('env', False, DataStorageType.MEMORY)
+        self.env = Environment('env', DataStorageType.MEMORY)
         self.action = MagicMock()
         # Clear the list between tests.
         EnvironmentTestCase.execution_order = []
@@ -75,6 +75,7 @@ class EnvironmentTestCase(TestCase):
         self.assertEqual(self.env.now, events[0].time)
         self.assertEqual(len(self.execution_order), 1)
         self.assertEqual(self.execution_order[0], events[0])
+        events[0].action.assert_called_once()
 
     def test_run(self):
         self.schedule_events()
@@ -87,6 +88,8 @@ class EnvironmentTestCase(TestCase):
         # Ensure the execution order is correct, ignore terminate event.
         for i in range(len(self.execution_order) - 1):
             self.assertEqual(self.execution_order[i], events[i])
+        # Calling run more than once throws an error.
+        self.assertRaises(RuntimeError, lambda: self.env.run(10))
 
     def test_event_scheduled_after_simulation_end(self):
         self.schedule_events()
@@ -123,7 +126,7 @@ class EnvironmentTestCase(TestCase):
                 self.assertEquals(e.paused_at, 0)
                 self.assertIn(e, self.env._paused_events)
             else:
-                self.assertEquals(e.paused_at, None)
+                self.assertEqual(e.paused_at, None)
                 self.assertNotIn(e, self.env._paused_events)
 
     def test_unpause_events(self):
