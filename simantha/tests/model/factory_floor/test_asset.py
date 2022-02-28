@@ -8,6 +8,11 @@ from ....model.factory_floor import Asset
 
 class AssetTestCase(TestCase):
 
+    def test_init_basic(self):
+        asset = Asset('name', 99)
+        self.assertEqual(asset.name, 'name')
+        self.assertEqual(asset.value, 99)
+
     def test_init(self):
         assets = []
         ids = []
