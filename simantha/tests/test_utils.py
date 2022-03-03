@@ -1,4 +1,5 @@
-from unittest.mock import patch
+from collections.abc import Iterable
+from unittest.mock import patch, MagicMock
 
 
 def add_side_effect_to_class_method(test_case, target, original_method = None, side_effect = None):
@@ -26,3 +27,19 @@ def add_side_effect_to_class_method(test_case, target, original_method = None, s
     if original_method is not None or side_effect is not None:
         target_mock.side_effect = _help
     return target_mock
+
+
+def mock_wrap(object_):
+    ''' Returns MagicMock object that wraps object_ and has
+    specifications set to that of object_. If object_ is iterable then a
+    list of MagicMock items is returned where each object_ item is
+    wrapped individually.
+    '''
+    wrap = lambda obj_: MagicMock(spec = obj_, wraps = obj_)
+    if hasattr(object_ , '__iter__'):
+        rtn = []
+        for o in object_:
+            rtn.append(wrap(o))
+        return rtn
+    else:
+        return wrap(object_)

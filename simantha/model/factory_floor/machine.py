@@ -9,7 +9,10 @@ class Machine(MachineBase):
     WARNING: This machine can hold up to 2 parts, 1 processed part and
     one input part that will not begin to be processed until the
     processed part is passed downstream.
-    See MachineBase class for more information.
+    Possible scenarios of parts held by Machine:
+        - 1 part being processed
+        - 1 processed part (ready for downstream)
+        - 1 processed part and 1 input part not being processed
     '''
 
     def __init__(self,
@@ -36,7 +39,6 @@ class Machine(MachineBase):
         self._failed_callbacks = []
         self._restored_callbacks = []
 
-    @property
     def is_operational(self):
         return not self._is_shut_down and self.status_tracker.is_operational()
 
@@ -64,14 +66,14 @@ class Machine(MachineBase):
         )
 
     def _finish_processing_part(self):
-        if not self.is_operational: return
+        if not self.is_operational(): return
         assert self._part != None, f'Input part is missing.'
         assert self._output == None, f'Output part slot is already full.'
 
         self._output = self._part
         self._part = None
         self._schedule_pass_part_downstream()
-        self._notify_upstream_of_available_space()
+        self.notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
             c(self._output)
         self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
@@ -101,7 +103,7 @@ class Machine(MachineBase):
         if self._output != None:
             self._schedule_pass_part_downstream()
         if self._part == None:
-            self._notify_upstream_of_available_space()
+            self.notify_upstream_of_available_space()
 
         for c in self._restored_callbacks:
             c()

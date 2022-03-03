@@ -9,16 +9,12 @@ class MachineBase(Asset):
     WARNING: This machine can hold up to 2 parts, 1 processed part and
     one input part that will not begin to be processed until the
     processed part is passed downstream.
-    Possible parts within MachineBase:
-        - 1 part being processed
+    Possible scenarios of parts held by MachineBase:
         - 1 processed part (ready for downstream)
         - 1 processed part and 1 input part not being processed
     '''
 
-    def __init__(self,
-                 name = None,
-                 upstream = [],
-                 value = 0):
+    def __init__(self, name = None, upstream = [], value = 0):
         super().__init__(name, value)
 
         self._downstream = []
@@ -30,8 +26,10 @@ class MachineBase(Asset):
         self._waiting_for_space_availability = False
         self._env = None
 
-    @property
     def is_operational(self):
+        ''' Returns True is the machine can perform its part handling
+        and processing functions, returns False otherwise.
+        '''
         return True
 
     @property
@@ -61,30 +59,37 @@ class MachineBase(Asset):
                                  EventType.PASS_PART, f'From {self.name}')
 
     def _pass_part_downstream(self):
-        if not self.is_operational or self._output == None: return
+        if not self.is_operational() or self._output == None: return
 
         for dwn in self._downstream:
-            if dwn._give_part(self._output):
+            if dwn.give_part(self._output):
                 self._output = None
                 self._try_move_part_to_output()
                 return
         # Could not pass part downstream
         self._waiting_for_space_availability = True
 
-    def _notify_upstream_of_available_space(self):
+    def notify_upstream_of_available_space(self):
+        ''' Communicate to all immediate upstream machines that this
+        machine can accept a new part.
+        '''
         for up in self._upstream:
-            up._space_available_downstream()
+            up.space_available_downstream()
 
-    def _space_available_downstream(self):
-        if self.is_operational and self._waiting_for_space_availability:
+    def space_available_downstream(self):
+        ''' Notify this machine that dowstream now can accept a part.
+        This does not guarantee that this machine will pass a part
+        downstream because other machines could pass their parts first.
+        '''
+        if self.is_operational() and self._waiting_for_space_availability:
             self._schedule_pass_part_downstream()
 
-    def _give_part(self, part):
+    def give_part(self, part):
         ''' Try to pass a part to this machine.
         Returns True if part has been accepted, otherwise False.
         '''
         assert part != None, 'Cannot give part=None.'
-        if not self.is_operational or self._part != None:
+        if not self.is_operational() or self._part != None:
             return False
 
         self._part = part
@@ -97,11 +102,11 @@ class MachineBase(Asset):
             self._try_move_part_to_output()
 
     def _try_move_part_to_output(self):
-        if not self.is_operational or self._part == None or self._output != None:
+        if not self.is_operational() or self._part == None or self._output != None:
             return
         self._output = self._part
         self._part = None
         self._schedule_pass_part_downstream()
-        self._notify_upstream_of_available_space()
+        self.notify_upstream_of_available_space()
         return
 

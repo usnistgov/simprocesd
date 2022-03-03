@@ -1,8 +1,8 @@
-import random
 from enum import Enum, auto, unique
+import random
 
-from .machine_base import MachineBase
 from ...utils.utils import assert_is_instance
+from .machine_base import MachineBase
 
 
 @unique
@@ -73,7 +73,7 @@ class PartHandlingDevice(MachineBase):
         starting_index = self._next_round_robin_index
         length = len(self._downstream)
         while part != None:
-            if self._downstream[self._next_round_robin_index]._give_part(part):
+            if self._downstream[self._next_round_robin_index].give_part(part):
                 part = None
             # Update next index
             self._next_round_robin_index = (self._next_round_robin_index + 1) % length
@@ -84,7 +84,7 @@ class PartHandlingDevice(MachineBase):
 
     def _try_pass_part_first_available(self, part):
         for dwn in self._downstream:
-            if dwn._give_part(part):
+            if dwn.give_part(part):
                 return True
         return False
 
@@ -92,22 +92,22 @@ class PartHandlingDevice(MachineBase):
         downstream_copy = self._downstream.copy()
         random.shuffle(downstream_copy)
         while len(downstream_copy) > 0:
-            if downstream_copy[0]._give_part(part):
+            if downstream_copy[0].give_part(part):
                 return True
             else:
                 downstream_copy.pop(0)
         return False
 
-    def _give_part(self, part):
+    def give_part(self, part):
         assert part != None, 'Part cannot be set to None.'
-        if not self.is_operational:
+        if not self.is_operational():
             return False
 
         return self._try_pass_part(part)
 
-    def _space_available_downstream(self):
-        if self.is_operational:
-            self._notify_upstream_of_available_space()
+    def space_available_downstream(self):
+        if self.is_operational():
+            self.notify_upstream_of_available_space()
 
     def _pass_part_downstream(self, part):
         # Safety check, function should never be called.
