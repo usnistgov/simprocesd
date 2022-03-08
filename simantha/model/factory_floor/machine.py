@@ -79,6 +79,13 @@ class Machine(MachineBase):
         self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
 
     def schedule_failure(self, time, message):
+        ''' Schedule a failure for this machine.
+
+        Arguments:
+        time -- when the failure will be scheduled to occur.
+        message -- message that will be associated with the event.
+            Useful for debugging.
+        '''
         self._env.schedule_event(time, self.id, self._fail, EventType.FAIL, message)
 
     def _fail(self):
@@ -145,6 +152,8 @@ class Machine(MachineBase):
 
 
 class MachineStatusTracker:
+    ''' Base class for representing the status of the machine
+    '''
 
     def __init__(self):
         self._machine = None
@@ -152,6 +161,8 @@ class MachineStatusTracker:
 
     @property
     def machine(self):
+        ''' Machine whose status this represents.
+        '''
         return self._machine
 
     def initialize(self, machine, env):
@@ -159,13 +170,32 @@ class MachineStatusTracker:
         self._env = env
 
     def maintain(self, maintenance_tag):
+        ''' Perform maintenance.
+
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
         pass
 
     def get_time_to_maintain(self, maintenance_tag):
+        ''' Return how long it will take to perform the maintenance.
+
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
         return 0
 
     def get_capacity_to_maintain(self, maintenance_tag):
+        ''' Return how much maintenance capacity is needed to perform
+        the maintenance.
+
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
         return 0
 
     def is_operational(self):
+        ''' Return True if the status of the machine does not prevent it
+        from operating, False otherwise.
+        '''
         return True
