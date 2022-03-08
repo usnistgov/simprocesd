@@ -2,7 +2,7 @@ from unittest import TestCase
 import unittest
 from unittest.mock import MagicMock, call
 
-from ... import mock_wrap
+from ... import mock_wrap, add_side_effect_to_class_method
 from ....model import Environment, EventType
 from ....model.factory_floor import Part
 from ....model.factory_floor.machine_base import MachineBase
@@ -85,6 +85,17 @@ class MachineBaseTestCase(TestCase):
         self.assertEqual(part2.routing_history, [machine.name])
         self.assertFalse(machine.give_part(part3))
         self.assertEqual(part3.routing_history, [])
+
+    def test_give_part_when_not_operational(self):
+        part = Part()
+        machine = MachineBase(upstream = self.upstream)
+        machine.initialize(self.env)
+        # Make machine return that it is not operational.
+        add_side_effect_to_class_method(self, __name__ + '.MachineBase.is_operational',
+                                        lambda s: False)
+
+        self.assertFalse(machine.give_part(part))
+        self.assertEqual(part.routing_history, [])
 
     def test_pass_part_downstream(self):
         part = Part()

@@ -71,8 +71,8 @@ class Machine(MachineBase):
         assert self._output == None, f'Output part slot is already full.'
 
         self._output = self._part
-        self._part = None
         self._schedule_pass_part_downstream()
+        self._part = None
         self.notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
             c(self._output)
@@ -91,11 +91,18 @@ class Machine(MachineBase):
     def shutdown(self):
         ''' Make sure not to call in the middle of another Machine
         operation, safest way is to schedule it as a separate event.
+
+        WARNING: Part being processed will pause and resume when
+        machine is restored.
         '''
         self._is_shut_down = True
         self._env.pause_matching_events(asset_id = self.id)
 
     def restore_functionality(self):
+        ''' Restore machine to an operational state after a shutdown()
+        or after a maintained/repaired failure. If status tracker is not
+        operational nothing will be done.
+        '''
         if not self.status_tracker.is_operational():
             return
         self._is_shut_down = False

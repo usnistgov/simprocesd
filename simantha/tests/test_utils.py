@@ -1,4 +1,3 @@
-from collections.abc import Iterable
 from unittest.mock import patch, MagicMock
 
 
@@ -43,3 +42,4 @@ def mock_wrap(object_):
         return rtn
     else:
         return wrap(object_)
+

@@ -149,8 +149,18 @@ class Environment:
     def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW,
                        message = ''):
         '''
-        Schedule a new simulation event by inserting it in its proper asset_id
-        within the simulation _events list.
+        Schedule a new simulation event to be executed.
+
+        Arguments:
+        time -- when to perform the action. Time cannot be lower than
+            the current simulation time (Environment.now).
+        asset_id -- id of the actor of the action. If this actor were to
+            shutdown then this event should be paused/cancelled.
+        action -- this will be called with no additional parameters at
+            the specified simulation time.
+        event_type -- one of the EventType enum values or a float.
+        message -- any message to be associated with this event. Useful
+            for debugging information.
         '''
         if time < self.now:
             raise ValueError(f'Can not schedule _events in the past: now={self.now}, time={time}')
