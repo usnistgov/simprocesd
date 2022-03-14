@@ -12,8 +12,6 @@ class MachineTestCase(TestCase):
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
         self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
-        for m in self.upstream:
-            m.initialize(self.env)
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
         args, kwargs = self.env.schedule_event.call_args_list[-1]
@@ -30,7 +28,7 @@ class MachineTestCase(TestCase):
         machine = Machine('mb', self.upstream, 2, status_tracker, 15)
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 15)
-        self.assertEqual(machine._upstream, self.upstream)
+        self.assertEqual(machine.upstream, self.upstream)
         self.assertEqual(machine.status_tracker, status_tracker)
 
     def test_is_operational(self):

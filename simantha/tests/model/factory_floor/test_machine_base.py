@@ -31,7 +31,7 @@ class MachineBaseTestCase(TestCase):
         machine = MachineBase('mb', self.upstream, 10)
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 10)
-        self.assertEqual(machine._upstream, self.upstream)
+        self.assertEqual(machine.upstream, self.upstream)
         self.assertEqual(machine._downstream, [])
         self.assertTrue(machine.is_operational)
 

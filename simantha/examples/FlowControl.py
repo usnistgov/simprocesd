@@ -43,7 +43,7 @@ def main():
     machines = [M1] + stage_1 + stage_2 + stage_3
     system = System([source, sink, phd1, phd2, phd3] + machines)
     random.seed(5)
-    system.simulate(simulation_time = 99)
+    system.simulate(simulation_time = 100)
 
     print_machines_that_received_parts(sink.collected_parts, machines)
 
