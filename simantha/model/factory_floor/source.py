@@ -41,15 +41,15 @@ class Source(Machine):
 
     @property
     def cost_of_produced_parts(self):
-        ''' Returns the total value of parts that have been produced by
-        this Source and passed downstream.
+        ''' Returns the summed value of the parts that have been
+        produced by this Source and passed downstream.
         '''
         return self._cost_of_produced_parts
 
     @property
     def produced_parts(self):
-        ''' Returns the number of parts that have been produced by this
-        Source and passed downstream.
+        ''' Returns the count of the parts that have been produced by
+        this Source and passed downstream.
         '''
         return self._produced_parts
 

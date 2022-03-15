@@ -18,7 +18,7 @@ class Machine(MachineBase):
     def __init__(self,
                  name = None,
                  upstream = [],
-                 cycle_time = 1.0,
+                 cycle_time = 0,
                  status_tracker = None,
                  value = 0):
         assert cycle_time >= 0, 'Cycle time cannot be negative.'
