@@ -74,7 +74,7 @@ class BufferTestCase(TestCase):
         # Downstream should have been given all 4 parts, the mock was
         # configured to accept all parts.
         self.assertEqual(len(self.downstream.give_part.call_args_list), 4)
-        # verify order of passed parts.
+        # Verify the order of passed parts.
         for i in range(4):
             args, kwards = self.downstream.give_part.call_args_list[i]
             self.assertEqual(args[0], parts[i])

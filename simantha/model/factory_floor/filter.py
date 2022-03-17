@@ -5,10 +5,17 @@ class Filter(MachineBase):
     ''' Allows to filter which parts can be passed between when upstream
     and downstream of this filter.
     Filter does not hold/buffer any parts.
+
+    Arguments:
+    should_pass_part -- a callable with signature func(part) that
+        returns True if the part is allowed to be passed downstream or
+        False if the it is not allowed.
+    name -- name of the Filter.
+    upstream -- list of upstream machines.
     '''
 
     def __init__(self,
-                 should_pass_part,  # function(part): return True/False
+                 should_pass_part,
                  name = None,
                  upstream = []):
         super().__init__(name, upstream, 0)
