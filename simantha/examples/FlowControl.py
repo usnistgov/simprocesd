@@ -24,7 +24,7 @@ def main():
     M4 = Machine('M04', upstream = [phd1], cycle_time = 1)
     stage_1 = [M2, M3, M4]
     # Set downstream manually to ensure list order where M02 is first.
-    phd1.set_downstream(stage_1)
+    phd1.set_downstream_order(stage_1)
 
     phd2 = PartHandlingDevice(upstream = stage_1, flow_order = FlowOrder.ROUND_ROBIN)
     M5 = Machine('M05', upstream = [phd2], cycle_time = 1)

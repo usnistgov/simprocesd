@@ -1,7 +1,6 @@
 from enum import Enum, auto, unique
 import random
 
-from ...utils.utils import assert_is_instance
 from .machine_base import MachineBase
 
 
@@ -34,10 +33,12 @@ class PartHandlingDevice(MachineBase):
     machines based on chosen order. If a part cannot be passed
     downstream then a part will not be accepted from upstream.
 
-    Downstream order of the list will be used to determine order
-    of which downstream machines get parts in what order. Downstream
-    has to contain all and only of those MachineBase objects that have
-    this PartHandlingDevice object as an upstream.
+    Arguments:
+    name -- name of the PartHandlingDevice.
+    upstream -- list of upstream machines.
+    flow_order -- FlowOrder used to determine the order in which the
+        machines will receive parts. To set the order of downstream
+        machines use set_downstream_order(new_order).
     '''
 
     def __init__(self,
@@ -51,23 +52,31 @@ class PartHandlingDevice(MachineBase):
                                FlowOrder.RANDOM: self._try_pass_part_random
                               }[flow_order]
         self._next_round_robin_index = 0
-        self._is_downstream_list_locked = False
 
-    def set_downstream(self, downstream):
-        ''' Sets downstream list to new value and locks the list from
-        changing by means other than this function.
+    @property
+    def downstream(self):
+        ''' Returns the list of current downstream Machines.
         '''
-        assert_is_instance(downstream, list)
-        self._is_downstream_list_locked = True
-        self._downstream = downstream
+        return self._downstream
 
-    def _add_downstream(self, downstream):
-        if not self._is_downstream_list_locked:
-            super()._add_downstream(downstream)
+    def set_downstream_order(self, downstream):
+        ''' Sets the downstream list of machines. Used for setting the order
+        of downstream machines.
 
-    def _remove_downstream(self, downstream):
-        if not self._is_downstream_list_locked:
-            self._remove_downstream(downstream)
+        Arguments:
+        downstream -- an ordered list of downstream machines that must
+            have the same elements as the current downstream list.
+        '''
+        downstream_copy = downstream.copy()
+        for d in self._downstream:
+            try:
+                downstream_copy.remove(d)
+            except ValueError:
+                AssertionError(f'{d} is missing from the new downstream list.')
+                break
+        if len(downstream_copy) > 0:
+            raise AssertionError(f'New downstream list has {len(downstream_copy)} extra elements.')
+        self._downstream = downstream.copy()
 
     def _try_pass_part_round_robin(self, part):
         starting_index = self._next_round_robin_index
@@ -91,11 +100,9 @@ class PartHandlingDevice(MachineBase):
     def _try_pass_part_random(self, part):
         downstream_copy = self._downstream.copy()
         random.shuffle(downstream_copy)
-        while len(downstream_copy) > 0:
-            if downstream_copy[0].give_part(part):
+        for d in downstream_copy:
+            if d.give_part(part):
                 return True
-            else:
-                downstream_copy.pop(0)
         return False
 
     def give_part(self, part):

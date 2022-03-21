@@ -41,8 +41,8 @@ class MachineBase(Asset):
         assert_is_instance(upstream, list)
         for up in self._upstream:
             up._remove_downstream(self)
-
-        self._upstream = upstream
+        # Use copy so changes to upstream don't affect self._upstream.
+        self._upstream = upstream.copy()
         for up in self._upstream:
             assert_is_instance(up, MachineBase)
             up._add_downstream(self)
