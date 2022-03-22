@@ -1,0 +1,111 @@
+from unittest import TestCase
+import unittest
+from unittest.mock import MagicMock
+
+from ....model import Environment, EventType
+from ....model.factory_floor import Machine, Maintainer, MachineStatusTracker
+
+
+class MaintainerTestCase(TestCase):
+
+    def setUp(self):
+        self.env = MagicMock(spec = Environment)
+        self.env.now = 2
+        self.machines = []
+        for i in range(3):
+            self.machines.append(MagicMock(spec = Machine))
+            st = MagicMock(spec = MachineStatusTracker)
+            self.machines[i].status_tracker = st
+            # Configure the capacity to fix and time to fix.
+            st.get_time_to_maintain.return_value = 10 * (i + 1)
+            st.get_capacity_to_maintain.return_value = i + 1
+
+    def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
+        args, kwargs = self.env.schedule_event.call_args_list[-1]
+        self.assertEqual(args[0], time)
+        self.assertEqual(args[1], id_)
+        if action != None:  # Use None for lambda functions.
+            self.assertEqual(args[2], action)
+        self.assertEqual(args[3], event_type)
+        self.assertIsInstance(args[4], str)
+        if message != None:
+            self.assertEqual(args[4], message)
+
+    def test_init(self):
+        mt = Maintainer('m', 7, (100, 5000), -20000)
+        self.assertEqual(mt.name, 'm')
+        self.assertEqual(mt.total_capacity, 7)
+        self.assertEqual(mt.available_capacity, 7)
+        self.assertEqual(mt.value, -20000)
+
+    def test_periodic_cost(self):
+        mt = Maintainer('m', 7, (100, 5000), -20000)
+        mt.initialize(self.env)
+        self.assertEqual(mt.value, -20000 - 100)
+        self.assert_last_scheduled_event(self.env.now + 5000, mt.id, mt._add_periodic_cost,
+            EventType.OTHER_HIGH)
+
+        self.env.now += 5000
+        mt._add_periodic_cost()
+        self.assertEqual(mt.value, -20000 - 200)
+        self.assert_last_scheduled_event(self.env.now + 5000, mt.id, mt._add_periodic_cost,
+            EventType.OTHER_HIGH)
+
+    def test_request_lifecycle(self):
+        mt = Maintainer(capacity = 5)
+        mt.initialize(self.env)
+
+        tag = object()  # Tag should support any object type.
+        self.assertTrue(mt.request_maintenance(self.machines[0], tag))
+        self.assertEqual(mt.total_capacity, 5)
+        # Capacity to fix is configured in setUp.
+        self.assertEqual(mt.available_capacity, 5 - 1)
+        self.assert_last_scheduled_event(self.env.now, mt.id, None, EventType.OTHER_LOW)
+        self.machines[0].status_tracker.get_capacity_to_maintain.assert_called_once_with(tag)
+        # Get time should only get called once the maintenance began.
+        self.machines[0].status_tracker.get_time_to_maintain.assert_not_called()
+        self.machines[0].shutdown.assert_not_called()
+        # Execute scheduled event.
+        mt._shutdown_and_repair(mt._active_requests[-1])
+        self.assertEqual(mt.available_capacity, 5 - 1)
+        # Time to fix is configured in setUp.
+        self.assert_last_scheduled_event(self.env.now + 10, mt.id, None, EventType.RESTORE)
+        self.machines[0].status_tracker.get_time_to_maintain.assert_called_once_with(tag)
+        self.machines[0].shutdown.assert_called_once()
+        self.machines[0].restore_functionality.assert_not_called()
+        self.machines[0].status_tracker.maintain.assert_not_called()
+        # Execute scheduled event.
+        mt._restore_machine(mt._active_requests[-1])
+        self.assertEqual(mt.available_capacity, 5)
+        self.machines[0].restore_functionality.assert_called_once()
+        self.machines[0].status_tracker.maintain.assert_called_once_with(tag)
+
+    def test_max_capacity(self):
+        mt = Maintainer(capacity = 5)
+        mt.initialize(self.env)
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 0)
+        # First request.
+        self.assertTrue(mt.request_maintenance(self.machines[0]))
+        self.assertEqual(mt.available_capacity, 5 - 1)
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
+        # Second request.
+        self.assertTrue(mt.request_maintenance(self.machines[1]))
+        self.assertEqual(mt.available_capacity, 5 - 1 - 2)
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 2)
+        # Third request will be accepted but will not be worked because
+        # there is not enough capacity left.
+        self.assertTrue(mt.request_maintenance(self.machines[2]))
+        self.assertEqual(mt.available_capacity, 5 - 1 - 2)
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 2)
+
+    def test_requests_acceptance(self):
+        mt = Maintainer()
+        mt.initialize(self.env)
+        self.assertTrue(mt.request_maintenance(self.machines[0], 'tag1'))
+        self.assertFalse(mt.request_maintenance(self.machines[0], 'tag1'))
+        self.assertTrue(mt.request_maintenance(self.machines[0], 'tag2'))
+        self.assertTrue(mt.request_maintenance(self.machines[1], 'tag1'))
+
+
+if __name__ == '__main__':
+    unittest.main()
