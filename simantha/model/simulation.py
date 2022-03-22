@@ -188,7 +188,8 @@ class Environment:
         then as cancelled.
         '''
         if asset_id == None: return
-        events_to_cancel = [x for x in self._events if x.asset_id == asset_id]
+        # Cancel events that are scheduled and ones that are paused.
+        events_to_cancel = [x for x in self._events + self._paused_events if x.asset_id == asset_id]
 
         for event in events_to_cancel:
             event.cancelled = True

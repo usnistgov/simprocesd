@@ -106,17 +106,6 @@ class EnvironmentTestCase(TestCase):
         for e in EnvironmentTestCase.execution_order:
             self.assertNotEqual(e.asset_id, 7357)
 
-    def test_cancel_events(self):
-        self.schedule_events()
-        self.env.cancel_matching_events(1)
-        self.env.cancel_matching_events(2)
-
-        for e in self.env._events:
-            if e.asset_id == 1 or e.asset_id == 2:
-                self.assertTrue(e.cancelled, e)
-            else:
-                self.assertFalse(e.cancelled, e)
-
     def test_pause_events(self):
         self.schedule_events()
         self.env.pause_matching_events(2)
@@ -148,6 +137,28 @@ class EnvironmentTestCase(TestCase):
         # Ensure right events ran and in the right order.
         for i in range(len(self.execution_order)):
             self.assertEqual(self.execution_order[i], new_events_order[i], f'i = {i}')
+
+    def test_cancel_events(self):
+        self.schedule_events()
+        self.env.cancel_matching_events(1)
+        self.env.cancel_matching_events(2)
+
+        for e in self.env._events:
+            if e.asset_id == 1 or e.asset_id == 2:
+                self.assertTrue(e.cancelled, e)
+            else:
+                self.assertFalse(e.cancelled, e)
+
+    def test_cancel_paused_events(self):
+        self.schedule_events()
+        self.env.pause_matching_events(2)
+        self.env.cancel_matching_events(2)
+
+        for e in self.env._events + self.env._paused_events:
+            if e.asset_id == 2:
+                self.assertTrue(e.cancelled, e)
+            else:
+                self.assertFalse(e.cancelled, e)
 
     def test_add_simple_datapoints(self):
         self.env.add_datapoint('label', 'asset_name', 1)
