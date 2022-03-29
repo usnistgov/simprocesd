@@ -108,7 +108,7 @@ class Maintainer(Asset):
                 self._env.schedule_event(
                     self._env.now,
                     self.id,
-                    lambda: self._shutdown_and_repair(req),
+                    lambda r = req: self._shutdown_and_repair(r),
                     EventType.OTHER_LOW,
                     f'shutting down before repair: {req.machine.name}')
             else:
@@ -123,7 +123,7 @@ class Maintainer(Asset):
         self._env.schedule_event(
             self._env.now + ttm,
             self.id,
-            lambda: self._restore_machine(request),
+            lambda r = request: self._restore_machine(r),
             EventType.RESTORE,
             f'Repairing: {request.machine.name}')
 
