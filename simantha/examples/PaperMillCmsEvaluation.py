@@ -1,14 +1,17 @@
+''' Time units are seconds and value is in dollars.
+Machine produces 10 items per second but we will have each Part
+represent 50 items in order to speed up the simulation.
+Expected parts produced: 75005
+Expected yearly operational profit of using a CMS is: about $130,000
+'''
+
 import random
 
-from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
 from ..model import System
+from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
 from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
-from . import StatusTrackerWithFaults, CmsEmulator
+from .status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
 
-''' Time units are seconds and value is in dollars.
-Machine produces 10 items per second but we will have each Part represent 50 items in
-order to speed up the simulation.
-'''
 count_per_part = 50  # set to 1 for more accurate results
 processing_rate = 10
 machine_cycle_time = count_per_part / processing_rate
@@ -97,7 +100,7 @@ def sample(duration, with_cms):
     system = System([source, M1, sink, cms])
 
     system.simulate(duration)
-    return system.get_net_value()
+    return system.get_net_value_of_objects()
 
 
 def distributed_ttf(days_to_fault):

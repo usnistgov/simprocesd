@@ -1,3 +1,8 @@
+''' Expected parts produced: 1438
+M1 average quality: ~55%
+M2 average quality: ~67%
+M3 average quality: ~43%
+'''
 import random
 
 from ..model import System

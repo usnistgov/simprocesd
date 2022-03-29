@@ -2,26 +2,52 @@ from .machine import Machine
 
 
 class Buffer(Machine):
-    ''' Buffers store parts that are waiting for processing at a downstream machine.'''
+    ''' A Buffer can store parts from upstream and pass them downstream
+    in the order they were received.
 
-    def __init__(self, name = None, capacity = float('inf'), **kwargs):
-        assert int(capacity) >= 1, 'Capacity has to be at least 1.'
-        super().__init__(name, cycle_time = 0, **kwargs)
+    Arguments:
+    name -- name of the Buffer.
+    upstream -- list of upstream machines.
+    time_to_receive_part -- how long it takes for a part to be received
+        before it can be passed downstream.
+    capacity -- maximum number of parts that can be stored in the Buffer
+        at once. Minimum capacity is 2, see MachineBase for explanation.
+    value -- starting value of the Buffer.
+    '''
+
+    def __init__(self, name = None, upstream = [], time_to_receive_part = 0,
+                 capacity = float('inf'), value = 0):
+        assert int(capacity) >= 2, 'Capacity has to be at least 2.'
+        super().__init__(name, upstream, time_to_receive_part, value = value)
 
         self._capacity = capacity
         self._buffer = []
 
-    def _get_part_from_upstream(self):
-        if len(self._buffer) < self._capacity:
-            super()._get_part_from_upstream()
-
     def _finish_processing_part(self):
         super()._finish_processing_part()
-        self._buffer.append(Machine._take_part(self))
+        if self._output:
+            self._buffer.append(self._output)
+            self._output = None
 
-    def _take_part(self):
-        if not self.is_operational or len(self._buffer) < 1:
-            return None
-        if len(self._buffer) == self._capacity:
-            self._schedule_get_part_from_upstream()
-        return self._buffer.pop(0)
+    def notify_upstream_of_available_space(self):
+        parts_count = len(self._buffer) + 1 if self._part != None else 0
+        if parts_count < self._capacity:
+            super().notify_upstream_of_available_space()
+
+    def _pass_part_downstream(self):
+        if not self.is_operational(): return
+
+        # Try to pass parts to downstream machines.
+        for dwn in self._downstream:
+            while len(self._buffer) > 0 and dwn.give_part(self._buffer[0]):
+                self._buffer.pop(0)
+
+        if len(self._buffer) < self._capacity:
+            self.notify_upstream_of_available_space()
+        if len(self._buffer) > 0:
+            self._waiting_for_space_availability = True
+
+    def give_part(self, part):
+        if len(self._buffer) >= self._capacity:
+            return False
+        return super().give_part(part)

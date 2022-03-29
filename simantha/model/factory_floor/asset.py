@@ -1,10 +1,10 @@
-from ..system import Environment
 from ...utils import assert_is_instance
+from ..system import Environment
 
 
 class Asset:
-    '''Base class for all assets in the system. All simulated objects should
-    extend this class.
+    '''Base class for all assets in the system. All simulated objects
+    should extend this class.
     '''
 
     _id_counter = 0
@@ -40,9 +40,23 @@ class Asset:
         self._env = env
 
     def add_value(self, label, value):
+        ''' Add to the value of the asset and record the change in
+        value_history - (label, time, value).
+
+        Arguments:
+        label -- label to explain change in value.
+        value -- how much to increase the value by.
+        '''
         self.value_history.append((label, self._env.now, value))
         self._value += value
 
     def add_cost(self, label, cost):
+        ''' Decrease the value of the asset and record the change in
+        value_history - (label, time, value).
+
+        Arguments:
+        label -- label to explain change in value.
+        value -- how much to decrease the value by.
+        '''
         self.add_value(label, -cost)
 

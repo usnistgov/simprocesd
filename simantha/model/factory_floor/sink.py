@@ -2,36 +2,61 @@ from .machine import Machine
 
 
 class Sink(Machine):
+    ''' A machine that can receive any number of Parts but not pass
+    those parts.
+
+    Arguments:
+    name -- machine name.
+    upstream -- machines that can pass parts to this Sink.
+    time_between_receiving_parts -- minimum time between receiving
+        parts.
+    collect_parts -- if True then received parts are stored in the
+        attribute 'collected_parts' as a list in the order they were
+        received.
+    '''
 
     def __init__(self,
                  name = None,
-                 time_to_receive_part = 0,
-                 collect_parts = False,
-                 **kwargs):
-        super().__init__(name, cycle_time = time_to_receive_part, value = 0, **kwargs)
+                 upstream = [],
+                 time_between_receiving_parts = 0,
+                 collect_parts = False):
+        super().__init__(name, upstream, cycle_time = time_between_receiving_parts, value = 0)
 
         self._collect_parts = collect_parts
         self.collected_parts = []
         self._received_parts_count = 0
+        self._value_of_received_parts = 0
+
+    def _add_downstream(self, downstream):
+        raise RuntimeError('Sink cannot have any downstreams.')
 
     @property
     def received_parts_count(self):
+        ''' Returns the count of the received parts.
+        '''
         return self._received_parts_count
 
     @property
     def value_of_received_parts(self):
-        return self.value
+        ''' Returns the summed value of the received parts.
+        '''
+        return self._value_of_received_parts
 
-    def _get_part_from_upstream(self):
-        super()._get_part_from_upstream()
+    def _on_received_new_part(self):
+        self._received_parts_count += 1
+        self._value_of_received_parts += self._part.value
+        self.add_value(f'collected_part', self._part.value)
+        self._env.add_datapoint('collected_part', self.name,
+                                (self._env.now, self._part.quality, self._part.value))
+        if self._collect_parts:
+            self.collected_parts.append(self._part)
 
-        if self._part != None:
-            self._received_parts_count += 1
-            self.add_value(f'collected_part', self._part.value)
-            if self._collect_parts:
-                self.collected_parts.append(self._part)
+        super()._on_received_new_part()
 
     def _finish_processing_part(self):
         super()._finish_processing_part()
-        self._output_part = None
-        self._schedule_get_part_from_upstream()
+        self._output = None
+
+    def _schedule_pass_part_downstream(self):
+        pass  # Sink does not pass parts anywhere.
+

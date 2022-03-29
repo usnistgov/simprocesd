@@ -1,18 +1,28 @@
-from .asset import Asset
-from ..simulation import EventType
 from ...utils.utils import assert_is_instance, assert_callable
+from ..simulation import EventType
+from .machine_base import MachineBase
 
 
-class Machine(Asset):
-    '''Base class for machine assets in the system.'''
+class Machine(MachineBase):
+    ''' Machine that has a state and a configurable cycle time.
+
+    WARNING: This machine can hold up to 2 parts, 1 processed part and
+    one input part that will not begin to be processed until the
+    processed part is passed downstream.
+    Possible scenarios of parts held by Machine:
+        - 1 part being processed
+        - 1 processed part (ready for downstream)
+        - 1 processed part and 1 input part not being processed
+    '''
 
     def __init__(self,
                  name = None,
                  upstream = [],
-                 cycle_time = 1.0,
+                 cycle_time = 0,
                  status_tracker = None,
-                 **kwargs):
-        super().__init__(name, **kwargs)
+                 value = 0):
+        assert cycle_time >= 0, 'Cycle time cannot be negative.'
+        super().__init__(name, upstream, value)
 
         if status_tracker == None:
             status_tracker = MachineStatusTracker()
@@ -20,146 +30,94 @@ class Machine(Asset):
             assert_is_instance(status_tracker, MachineStatusTracker)
         self.status_tracker = status_tracker
 
-        self._downstream = []
-        self._upstream = []  # Needed for the setter to work
-        self.upstream = upstream
         self._cycle_time = cycle_time
 
-        self._part = None
-        self._waiting_for_part_availability = False
-        self._output_part = None
-        self._env = None
+        self._is_part_processed = False
         self._is_shut_down = False
-        self._receive_part_callbacks = []
+        self._received_part_callbacks = []
         self._finish_processing_callbacks = []
         self._failed_callbacks = []
         self._restored_callbacks = []
 
-    @property
     def is_operational(self):
         return not self._is_shut_down and self.status_tracker.is_operational()
 
-    @property
-    def upstream(self):
-        return self._upstream
-
-    @upstream.setter
-    def upstream(self, upstream):
-        assert_is_instance(upstream, list)
-        for up in self._upstream:
-            up._remove_downstream(self)
-
-        self._upstream = upstream
-        for up in self._upstream:
-            assert_is_instance(up, Machine)
-            up._add_downstream(self)
-
     def initialize(self, env):
         super().initialize(env)
-
         self.status_tracker.initialize(self, env)
-        self._schedule_get_part_from_upstream();
-
-    def _add_downstream(self, downstream):
-        assert_is_instance(downstream, Machine)
-        self._downstream.append(downstream)
-
-    def _remove_downstream(self, downstream):
-        assert_is_instance(downstream, Machine)
-        self._downstream.remove(downstream)
-
-    def _schedule_get_part_from_upstream(self, time = None):
-        self._waiting_for_part_availability = False
-        self._env.schedule_event(time if time != None else self._env.now, self.id,
-                                 self._get_part_from_upstream, EventType.GET_PART)
-
-    def _get_part_from_upstream(self):
-        if not self.is_operational: return
-        assert self._part == None, \
-               f'Bad state, a part is already present:{self._part.name}.'
-        assert self._output_part == None, \
-               f'Bad state, a part is already present in output:{self._part.name}.'
-
-        for ups in self._upstream:
-            self._part = ups._take_part()
-            if self._part != None:
-                self._on_received_new_part()
-                return
-        # Could not get a part from upstream.
-        self._waiting_for_part_availability = True
 
     def _on_received_new_part(self):
-        self._part.routing_history.append(self.name)
-        self._schedule_finish_processing_part()
-
-        for c in self._receive_part_callbacks:
+        self._env.add_datapoint('received_parts', self.name, (self._env.now, self._part.quality))
+        super()._on_received_new_part()
+        for c in self._received_part_callbacks:
             c(self._part)
 
-    def _schedule_finish_processing_part(self, time = None):
+    def _try_move_part_to_output(self):
+        if self._part != None and self._output == None:
+            self._schedule_finish_processing_part()
+
+    def _schedule_finish_processing_part(self):
         self._env.schedule_event(
-            time if time != None else self._env.now + self._cycle_time,
+            self._env.now + self._cycle_time,
             self.id,
             self._finish_processing_part,
-            EventType.FINISH_PROCESSING
+            EventType.FINISH_PROCESSING,
+            f'By {self.name}'
         )
 
     def _finish_processing_part(self):
-        if not self.is_operational: return
-        assert self._output_part == None, \
-              f'Bad state, there should not be an output {self._output_part.name}.'
-        assert self._part != None, 'Bad state, part should be available.'
+        if not self.is_operational(): return
+        assert self._part != None, f'Input part is missing.'
+        assert self._output == None, f'Output part slot is already full.'
 
-        self._output_part = self._part
+        self._output = self._part
+        self._schedule_pass_part_downstream()
         self._part = None
-        self._notify_downstream_of_available_part()
-
+        self.notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
-            c(self._output_part)
+            c(self._output)
+        self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
 
-    def _notify_downstream_of_available_part(self):
-        for down in self._downstream:
-            down._part_available_upstream()
+    def schedule_failure(self, time, message):
+        ''' Schedule a failure for this machine.
 
-    def _part_available_upstream(self):
-        if self.is_operational and self._waiting_for_part_availability:
-            self._schedule_get_part_from_upstream()
+        Arguments:
+        time -- when the failure will be scheduled to occur.
+        message -- message that will be associated with the event.
+            Useful for debugging.
+        '''
+        self._env.schedule_event(time, self.id, self._fail, EventType.FAIL, message)
 
-    def _take_part(self):
-        if not self.is_operational or self._output_part == None:
-            return None
-
-        temp = self._output_part
-        self._output_part = None
-        self._schedule_get_part_from_upstream()
-        return temp
-
-    def schedule_failure(self, time = None):
-        self._env.schedule_event(time if time != None else self._env.now,
-                                 self.id,
-                                 self.fail,
-                                 EventType.FAIL)
-
-    def fail(self):
-        self._part = None  # part being processed is lost
-        self._waiting_for_part_availability = self._output_part == None
+    def _fail(self):
+        # Processed part (_output) is not lost but input part is.
+        self._part = None
         self._env.cancel_matching_events(asset_id = self.id)
         for c in self._failed_callbacks:
             c()
 
     def shutdown(self):
-        '''Make sure not to call in the middle of another Machine
+        ''' Make sure not to call in the middle of another Machine
         operation, safest way is to schedule it as a separate event.
+
+        WARNING: Part being processed will pause and resume when
+        machine is restored.
         '''
         self._is_shut_down = True
         self._env.pause_matching_events(asset_id = self.id)
 
     def restore_functionality(self):
+        ''' Restore machine to an operational state after a shutdown()
+        or after a maintained/repaired failure. If status tracker is not
+        operational nothing will be done.
+        '''
         if not self.status_tracker.is_operational():
             return
         self._is_shut_down = False
         self._env.unpause_matching_events(asset_id = self.id)
-        if self._waiting_for_part_availability:
-            self._schedule_get_part_from_upstream()
+        if self._output != None:
+            self._schedule_pass_part_downstream()
+        if self._part == None:
+            self.notify_upstream_of_available_space()
 
         for c in self._restored_callbacks:
             c()
@@ -169,7 +127,7 @@ class Machine(Asset):
         callback(part)
         '''
         assert_callable(callback)
-        self._receive_part_callbacks.append(callback)
+        self._received_part_callbacks.append(callback)
 
     def add_finish_processing_callback(self, callback):
         '''Accepts one argument: part
@@ -194,6 +152,8 @@ class Machine(Asset):
 
 
 class MachineStatusTracker:
+    ''' Base class for representing the status of the machine
+    '''
 
     def __init__(self):
         self._machine = None
@@ -201,6 +161,8 @@ class MachineStatusTracker:
 
     @property
     def machine(self):
+        ''' Machine whose status this represents.
+        '''
         return self._machine
 
     def initialize(self, machine, env):
@@ -208,13 +170,32 @@ class MachineStatusTracker:
         self._env = env
 
     def maintain(self, maintenance_tag):
+        ''' Perform maintenance.
+
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
         pass
 
-    def get_time_to_repair(self, fault_name):
-        pass
+    def get_time_to_maintain(self, maintenance_tag):
+        ''' Return how long it will take to perform the maintenance.
 
-    def get_capacity_to_repair(self, fault_name):
-        pass
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
+        return 0
+
+    def get_capacity_to_maintain(self, maintenance_tag):
+        ''' Return how much maintenance capacity is needed to perform
+        the maintenance.
+
+        Arguments:
+        maintenance_tag -- maintenance identifier.
+        '''
+        return 0
 
     def is_operational(self):
+        ''' Return True if the status of the machine does not prevent it
+        from operating, False otherwise.
+        '''
         return True

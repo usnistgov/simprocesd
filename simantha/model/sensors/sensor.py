@@ -1,4 +1,4 @@
-from ..factory_floor.machine import Machine
+from ..factory_floor import Asset
 from ..simulation import EventType
 from ...utils import assert_is_instance, assert_callable
 
@@ -23,20 +23,19 @@ class AttributeProbe(Probe):
                          target)
 
 
-class Sensor(Machine):
+class Sensor(Asset):
 
     def __init__(self,
                  target,
                  probes,
+                 name = None,
                  data_capacity = 10000,
-                 **kwargs):
-        super().__init__(**kwargs)
+                 value = 0):
+        super().__init__(name, value)
 
         assert target != None, 'Target cannot be None.'
         self._target = target
         self.data = {}
-        # can be used to store additional values between sensing events
-        self.user_data = object()
         self._data_capacity = data_capacity
         self._on_sense = []
 
@@ -48,6 +47,9 @@ class Sensor(Machine):
             self.data[p] = []
 
     def add_on_sense_callback(self, callback):
+        ''' callback(target_machine, sense_data)
+        sense_data -- list of probe data [probe1_data, probe2_data,...]
+        '''
         assert_callable(callback)
         self._on_sense.append(callback)
 
@@ -62,7 +64,7 @@ class Sensor(Machine):
     def sense(self):
         self._collect_data()
         for c in self._on_sense:
-            c(self.user_data, self.last_sense)
+            c(self._target, self.last_sense)
 
     @property
     def last_sense(self):
@@ -78,8 +80,11 @@ class PeriodicSensor(Sensor):
                  target,
                  interval,
                  probes,
-                 **kwargs):
-        super().__init__(target, probes, **kwargs)
+                 name = None,
+                 data_capacity = 10000,
+                 value = 0
+                 ):
+        super().__init__(target, probes, name, data_capacity, value)
 
         self._interval = interval
 
