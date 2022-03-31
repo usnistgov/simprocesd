@@ -1,6 +1,6 @@
+from ...utils import assert_is_instance, assert_callable
 from ..factory_floor import Asset
 from ..simulation import EventType
-from ...utils import assert_is_instance, assert_callable
 
 
 class Probe:
@@ -47,7 +47,8 @@ class Sensor(Asset):
             self.data[p] = []
 
     def add_on_sense_callback(self, callback):
-        ''' callback(target_machine, sense_data)
+        ''' callback(target_machine, time, sense_data)
+        time -- current simulation time.
         sense_data -- list of probe data [probe1_data, probe2_data,...]
         '''
         assert_callable(callback)
@@ -64,7 +65,7 @@ class Sensor(Asset):
     def sense(self):
         self._collect_data()
         for c in self._on_sense:
-            c(self._target, self.last_sense)
+            c(self._target, self._env.now, self.last_sense)
 
     @property
     def last_sense(self):
@@ -86,13 +87,15 @@ class PeriodicSensor(Sensor):
                  ):
         super().__init__(target, probes, name, data_capacity, value)
 
+        self.data['time'] = []
         self._interval = interval
 
     def initialize(self, env):
         super().initialize(env)
-        self.schedule_next_sense()
+        self._periodic_sense()
 
     def _periodic_sense(self):
+        self.data['time'].append(self._env.now)
         self.sense()
         self.schedule_next_sense()
 

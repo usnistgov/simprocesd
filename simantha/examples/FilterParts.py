@@ -1,17 +1,14 @@
-''' Expected parts produced: 999-1000
-Processor should have received 999-1000 parts (same as parts produced).
-PartFixer should have received about 750 parts
-Processor average output part quality should be around 0.5
+''' Expected parts received by sink: 999-1000
+Processor should have received 1000 parts.
+PartFixer should have received about 750 parts.
+Processor average output part quality should be around 0.51
 PartFixer average output part quality should be around 0.96
 '''
 import random
 
 from ..model import System
 from ..model.factory_floor import Source, Machine, Sink, Filter
-from ..model.sensors import OutputPartSensor, AttributeProbe
-from ..utils import print_machines_that_received_parts
-
-part_quality_data = {}
+from ..utils import DataStorageType, print_produced_parts_and_average_quality
 
 
 def process_part(part):
@@ -20,12 +17,6 @@ def process_part(part):
 
 def improve_part(part):
     part.quality = min(1, part.quality + 0.75)
-
-
-def record_quality(machine, data):
-    if machine.name not in part_quality_data.keys():
-        part_quality_data[machine.name] = []
-    part_quality_data[machine.name].append(data[0])
 
 
 def main():
@@ -44,25 +35,10 @@ def main():
 
     sink = Sink(upstream = [filter1], collect_parts = True)
 
-    # Using sensors to collect part quality data after each machine.
-    sensor1 = OutputPartSensor(M1, [AttributeProbe('quality', M1)])
-    sensor1.add_on_sense_callback(record_quality)
-    sensor2 = OutputPartSensor(M2, [AttributeProbe('quality', M2)])
-    sensor2.add_on_sense_callback(record_quality)
-
-    system = System([source, sink, M1, M2, filter1, filter2, sensor1, sensor2])
+    system = System([source, sink, M1, M2, filter1, filter2], DataStorageType.MEMORY)
     random.seed(1)
     system.simulate(simulation_time = 1000)
-
-    # Automatically named machine names start with '<'
-    print_machines_that_received_parts(sink.collected_parts, [M1, M2])
-
-    for machine_name, data in part_quality_data.items():
-        quality_sum = 0
-        for quality in data:
-            quality_sum += quality
-        average_quality = quality_sum / len(data)
-        print(f'Machine {machine_name} average output part quality is {average_quality:.2}')
+    print_produced_parts_and_average_quality(system, [M1, M2])
 
 
 if __name__ == '__main__':

@@ -33,6 +33,7 @@ class BufferTestCase(TestCase):
         self.assertEqual(buffer.name, 'name')
         self.assertEqual(buffer.upstream, self.upstream)
         self.assertEqual(buffer.value, 20)
+        self.assertEqual(buffer.level(), 0)
 
     def test_give_pass_part(self):
         part = Part()
@@ -40,17 +41,21 @@ class BufferTestCase(TestCase):
         buffer.initialize(self.env)
         buffer._add_downstream(self.downstream)
 
+        self.assertEqual(buffer.level(), 0)
         self.assertTrue(buffer.give_part(part))
+        self.assertEqual(buffer.level(), 1)
         self.assert_last_scheduled_event(3 + 5, buffer.id, buffer._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
         self.env.now = 8
         buffer._finish_processing_part()
+        self.assertEqual(buffer.level(), 1)
         self.assert_last_scheduled_event(8, buffer.id, buffer._pass_part_downstream,
                                          EventType.PASS_PART)
 
         buffer._pass_part_downstream()
         self.downstream.give_part.assert_called_once_with(part)
+        self.assertEqual(buffer.level(), 0)
 
     def test_give_pass_many_parts(self):
         buffer = Buffer('name', self.upstream, 1, 4)
@@ -63,12 +68,15 @@ class BufferTestCase(TestCase):
             if len(parts) <= 4:
                 self.assertTrue(buffer.give_part(parts[i]))
                 buffer._finish_processing_part()
+                self.assertEqual(buffer.level(), i + 1)
             else:
                 self.assertFalse(buffer.give_part(parts[i]))
+                self.assertEqual(buffer.level(), 4)
         for u in self.upstream:
             self.assertEqual(len(u.space_available_downstream.call_args_list), 4)
         # One call will attempt to pass all the parts it can.
         buffer._pass_part_downstream()
+        self.assertEqual(buffer.level(), 0)
         for u in self.upstream:
             self.assertEqual(len(u.space_available_downstream.call_args_list), 5)
         # Downstream should have been given all 4 parts, the mock was

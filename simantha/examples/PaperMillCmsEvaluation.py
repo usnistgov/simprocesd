@@ -35,7 +35,7 @@ def main():
 
 class CustomCms(CmsEmulator):
 
-    def on_sense(self, sensor, data):
+    def on_sense(self, sensor, time, data):
         ''' data[0] is p1 data: part quality
         data[1] is p2 data: dictionary of machine's active faults indexed by fault name
         '''

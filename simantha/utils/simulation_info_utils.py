@@ -1,25 +1,6 @@
 from matplotlib import pyplot
 
 
-def print_machines_that_received_parts(parts, machines):
-    ''' Prints machines through which the given parts have passed and
-    how many times the following parts passed through those machines.
-
-    Arguments:
-    parts -- parts which passed through machines.
-    machines -- list of Machine objects.
-    '''
-    machine_names = [m.name for m in machines]
-    part_counter = {mn: 0 for mn in machine_names}
-    for p in parts:
-        for r in p.routing_history:
-            if r in machine_names:
-                part_counter[r] += 1
-
-    for name, count in part_counter.items():
-        print(f'Machine {name} received {count} of the parts.')
-
-
 def print_produced_parts_and_average_quality(system, machines):
     ''' Prints number of parts produced by all machines or machines in
     the list if provided. Also prints average quality of produced parts.
@@ -33,9 +14,12 @@ def print_produced_parts_and_average_quality(system, machines):
         quality_sum = 0
         for d in machine_production_data:
             quality_sum += d[1]
-        average_quality = quality_sum / len(machine_production_data)
+        try:
+            average_quality = round(quality_sum / len(machine_production_data), 4)
+        except ZeroDivisionError:
+            average_quality = 'N/A'
         print(f'Machine {machine.name} produced {len(machine_production_data)} parts with average '
-              +f'quality of {average_quality:.4}')
+              +f'quality of {average_quality}')
 
 
 def plot_throughput(system, machines):
@@ -74,7 +58,7 @@ def plot_damage(system, machines):
     system -- System object used in the simulation.
     machines -- list of Machine objects.
     '''
-    figure, graph = pyplot.subplots(figsize = (10, 5))
+    figure, graph = pyplot.subplots()
     for machine in machines:
         damage_data = system.simulation_data['damage_update'].get(machine.name, [])
         graph.step([d[0] for d in damage_data],
@@ -112,4 +96,15 @@ def plot_value(assets):
               ylabel = 'Value',
               title = 'Machine Value')
     graph.legend()
+    pyplot.show()
+
+
+def simple_plot(x, y, title = '', xlabel = '', ylabel = ''):
+    figure, graph = pyplot.subplots()
+    graph.plot(x, y)
+    figure.canvas.manager.set_window_title('Close window to continue.')
+    graph.set(xlabel = xlabel,
+              ylabel = ylabel,
+              title = title,
+              xlim = [0, x[-1]])
     pyplot.show()

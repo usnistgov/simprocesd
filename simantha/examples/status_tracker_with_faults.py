@@ -1,9 +1,9 @@
 import random
 
-from ..utils import assert_callable
-from ..model.simulation import EventType
-from ..model.factory_floor import MachineStatusTracker
 from ..model.cms.cms import Cms
+from ..model.factory_floor import MachineStatusTracker
+from ..model.simulation import EventType
+from ..utils import assert_callable
 
 
 class StatusTrackerWithFaults(MachineStatusTracker):
@@ -218,7 +218,7 @@ class CmsEmulator(Cms):
         # How many false alerts are buffered.
         self.fa_buffer = {}
 
-    def on_sense(self, sensor, data):
+    def on_sense(self, sensor, time, data):
         raise NotImplementedError('on_sense needs to be implemented or'
                                   +' CustomCms will not do anything.')
 
