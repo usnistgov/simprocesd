@@ -54,7 +54,7 @@ class SystemTestCase(TestCase):
 
         self.env_mock.run.assert_called_once_with(1, trace = False)
         self.assertEqual(stdout_mock.getvalue(),
-                         'Simulation finished in 1.00s\nParts produced: 56\n')
+                         'Simulation finished in 1.00s\nParts received by sink/s: 56\n')
 
     def test_get_net_value(self):
         sink = Sink()

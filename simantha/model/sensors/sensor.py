@@ -38,6 +38,7 @@ class Sensor(Asset):
         self.data = {}
         self._data_capacity = data_capacity
         self._on_sense = []
+        self._last_sense = []
 
         assert_is_instance(probes, list)
         assert len(probes) > 0, 'No probes were specified.'
@@ -55,8 +56,11 @@ class Sensor(Asset):
         self._on_sense.append(callback)
 
     def _collect_data(self):
+        self._last_sense = []
         for p in self._probes:
-            self.data[p].append(p.probe())
+            new_data = p.probe()
+            self.data[p].append(new_data)
+            self._last_sense.append(new_data)
 
         if len(self.data[self._probes[0]]) > self._data_capacity:
             for p in self._probes:
@@ -65,14 +69,11 @@ class Sensor(Asset):
     def sense(self):
         self._collect_data()
         for c in self._on_sense:
-            c(self._target, self._env.now, self.last_sense)
+            c(self._env.now, self.last_sense)
 
     @property
     def last_sense(self):
-        rtn = []
-        for p in self._probes:
-            rtn.append(self.data[p][-1])
-        return rtn
+        return self._last_sense
 
 
 class PeriodicSensor(Sensor):

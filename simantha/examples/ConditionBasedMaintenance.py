@@ -60,11 +60,11 @@ def main():
 
     p1 = AttributeProbe('damage', status1)
     sensor1 = PeriodicSensor(M1, 1, [p1], name = 'M1 Sensor')
-    sensor1.add_on_sense_callback(lambda m, time, data: cms.on_sense_damage(m, data[0]))
+    sensor1.add_on_sense_callback(lambda time, data: cms.on_sense_damage(M1, data[0]))
     cms.add_sensor(sensor1)
     p2 = AttributeProbe('damage', status2)
     sensor2 = PeriodicSensor(M2, 1, [p2], name = 'M2 Sensor')
-    sensor2.add_on_sense_callback(lambda m, time, data: cms.on_sense_damage(m, data[0]))
+    sensor2.add_on_sense_callback(lambda time, data: cms.on_sense_damage(M2, data[0]))
     cms.add_sensor(sensor2)
 
     system = System(objects = [source, M1, B1, M2, sink, cms])
