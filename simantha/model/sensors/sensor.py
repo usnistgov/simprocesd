@@ -75,6 +75,10 @@ class Sensor(Asset):
     def last_sense(self):
         return self._last_sense
 
+    @property
+    def probes(self):
+        return self._probes.copy()
+
 
 class PeriodicSensor(Sensor):
 
