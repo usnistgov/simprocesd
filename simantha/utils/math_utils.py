@@ -12,6 +12,8 @@ def geometric_distribution_sample(probability, target_successes):
     assert probability >= 0 and probability <= 1, 'probability must be 0 to 1'
     if probability == 0:
         return float('inf')
+    elif probability == 1:
+        return target_successes
 
     trials = 0
     while target_successes > 0:

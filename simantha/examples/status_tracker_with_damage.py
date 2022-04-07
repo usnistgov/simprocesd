@@ -1,6 +1,6 @@
 from ..model.factory_floor import MachineStatusTracker
 from ..model.simulation import EventType
-from ..utils import geometric_distribution_sample
+from ..utils import geometric_distribution_sample, assert_callable
 
 
 class StatusTrackerWithDamage(MachineStatusTracker):
@@ -12,25 +12,22 @@ class StatusTrackerWithDamage(MachineStatusTracker):
                  damage_to_fail = float('inf'),
                  get_time_to_maintain = lambda damage: 0,
                  get_capacity_to_maintain = lambda damage: 0,
-                 get_cost_to_maintain = lambda damage: 0,
-                 receive_part_callback = None):
+                 get_cost_to_maintain = lambda damage: 0):
         super().__init__()
-        self._damage = 0  # represents wear and tear on the machine
+        self._damage = 0
         self._period_to_degrade = period_to_degrade
         self._damage_on_degrade = damage_on_degrade
         self._damage_to_fail = damage_to_fail
         self._probability_to_degrade = probability_to_degrade
-        # callback(machine_damage)
         self._get_time_to_maintain = get_time_to_maintain
-        # callback(machine_damage)
         self._get_capacity_to_maintain = get_capacity_to_maintain
-        # callback(machine_damage)
         self._get_cost_to_maintain = get_cost_to_maintain
-        # callback(part, machine_damage)
-        self._receive_part_callback = receive_part_callback
+        self._on_degrade_callbacks = []
 
     @property
     def damage(self):
+        ''' Represents accrued wear and tear on the machine.
+        '''
         return self._damage
 
     @damage.setter
@@ -42,9 +39,6 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         super().initialize(machine, env)
         self.damage = 0  # records initial datapoint
         self._prepare_next_degrade_event()
-        if self._receive_part_callback != None:
-            self._machine.add_receive_part_callback(
-                    lambda p: self._receive_part_callback(p, self.damage))
 
     def _prepare_next_degrade_event(self):
         if self._probability_to_degrade <= 0: return
@@ -64,6 +58,8 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         else:
             self._machine.schedule_failure(self._env.now,
                     f'{self._machine.name} failed from wear and tear degradation.')
+        for c in self._on_degrade_callbacks:
+            c(self.damage)
 
     def maintain(self, maintenance_tag):
         was_operational = self.is_operational()
@@ -82,4 +78,13 @@ class StatusTrackerWithDamage(MachineStatusTracker):
 
     def is_operational(self):
         return self.damage < self._damage_to_fail
+
+    def add_on_degrade_callback(self, callback):
+        ''' Adds a callback to be called when status degrades.
+
+        Arguments:
+        callback -- function with a signature callback(damage)
+        '''
+        assert_callable(callback)
+        self._on_degrade_callbacks.append(callback)
 
