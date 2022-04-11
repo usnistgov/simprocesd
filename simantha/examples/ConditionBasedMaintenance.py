@@ -1,7 +1,8 @@
 '''
 Example of a condition-based maintenance policy. The CBM threshold determines the health
 index level at which a machine requests maintenance.
-Expected parts produced: around 4400.
+Expected parts received by sink: around 4400.
+Each machine should have been maintained about 300 times.
 '''
 import random
 
@@ -9,7 +10,7 @@ from ..model import System
 from ..model.cms import Cms
 from ..model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
 from ..model.sensors import PeriodicSensor, AttributeProbe
-from ..utils import geometric_distribution_sample
+from ..utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
 from .status_tracker_with_damage import StatusTrackerWithDamage
 
 
@@ -24,10 +25,10 @@ def time_to_maintain(damage):
 
 class CustomCms(Cms):
 
-    def on_sense_damage(self, machine, damage):
-        if damage >= 3:
+    def on_sense(self, sensor, time, data):
+        if data[0] >= 3:
             # Request preventative maintenance
-            self.maintainer.request_maintenance(machine)
+            self.maintainer.request_maintenance(sensor.probes[0].target.machine)
 
 
 def main():
@@ -60,18 +61,18 @@ def main():
 
     p1 = AttributeProbe('damage', status1)
     sensor1 = PeriodicSensor(M1, 1, [p1], name = 'M1 Sensor')
-    sensor1.add_on_sense_callback(lambda m, data: cms.on_sense_damage(m, data[0]))
     cms.add_sensor(sensor1)
     p2 = AttributeProbe('damage', status2)
     sensor2 = PeriodicSensor(M2, 1, [p2], name = 'M2 Sensor')
-    sensor2.add_on_sense_callback(lambda m, data: cms.on_sense_damage(m, data[0]))
     cms.add_sensor(sensor2)
 
-    system = System(objects = [source, M1, B1, M2, sink, cms])
+    system = System([source, M1, B1, M2, sink, cms], DataStorageType.MEMORY)
 
     random.seed(1)
     # If time units are minutes then simulation period is a week.
     system.simulate(simulation_time = 60 * 24 * 7)
+
+    print_maintenance_counts(system)
 
 
 if __name__ == '__main__':

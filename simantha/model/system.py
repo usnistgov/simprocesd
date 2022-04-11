@@ -49,7 +49,7 @@ class System:
             from .factory_floor.sink import Sink  # Late import to avoid circular dependency.
             producedParts = sum(
                 x.received_parts_count for x in self._objects if isinstance(x, Sink))
-            print(f'Parts produced: {producedParts}')
+            print(f'Parts received by sink/s: {producedParts}')
 
     def get_net_value_of_objects(self):
         ''' Calculates and returns the net value of objects provided

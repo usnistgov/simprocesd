@@ -1,7 +1,8 @@
-''' Expected parts produced: 97
-M01 and M02 should receive 97 parts.
+''' Expected parts received by sink: 97
+M01 should receive 100 parts.
+M02 should receive 99 parts.
 M03 and M04 should not receive any parts.
-M05, M06, and M07 should each receive 33, 32, and 32 parts respectively.
+M05, M06, and M07 should each receive 33, 33, and 32 parts respectively.
 M08, M09, and M10 use random distribution will and likely have similar
 received part counts. Change n in random.seed(n) to get a different
 random distribution.
@@ -10,10 +11,11 @@ import random
 
 from ..model import System
 from ..model.factory_floor import Source, Machine, Sink, PartHandlingDevice, FlowOrder
-from ..utils import print_machines_that_received_parts
+from ..utils import DataStorageType, print_produced_parts_and_average_quality
 
 
 def main():
+    random.seed(5)
     source = Source()
 
     M1 = Machine('M01', upstream = [source], cycle_time = 1)
@@ -41,11 +43,10 @@ def main():
     sink = Sink(upstream = stage_3, collect_parts = True)
 
     machines = [M1] + stage_1 + stage_2 + stage_3
-    system = System([source, sink, phd1, phd2, phd3] + machines)
-    random.seed(5)
+    system = System([source, sink, phd1, phd2, phd3] + machines, DataStorageType.MEMORY)
     system.simulate(simulation_time = 100)
 
-    print_machines_that_received_parts(sink.collected_parts, machines)
+    print_produced_parts_and_average_quality(system, machines)
 
 
 if __name__ == '__main__':

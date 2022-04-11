@@ -23,6 +23,11 @@ class Buffer(Machine):
         self._capacity = capacity
         self._buffer = []
 
+    def level(self):
+        ''' Return how many parts are currently held by the buffer.
+        '''
+        return len(self._buffer) + (1 if self._part != None else 0)
+
     def _finish_processing_part(self):
         super()._finish_processing_part()
         if self._output:

@@ -1,6 +1,6 @@
+from ...utils import assert_is_instance, assert_callable
 from ..factory_floor import Asset
 from ..simulation import EventType
-from ...utils import assert_is_instance, assert_callable
 
 
 class Probe:
@@ -38,6 +38,7 @@ class Sensor(Asset):
         self.data = {}
         self._data_capacity = data_capacity
         self._on_sense = []
+        self._last_sense = []
 
         assert_is_instance(probes, list)
         assert len(probes) > 0, 'No probes were specified.'
@@ -47,15 +48,19 @@ class Sensor(Asset):
             self.data[p] = []
 
     def add_on_sense_callback(self, callback):
-        ''' callback(target_machine, sense_data)
+        ''' callback(target_machine, time, sense_data)
+        time -- current simulation time.
         sense_data -- list of probe data [probe1_data, probe2_data,...]
         '''
         assert_callable(callback)
         self._on_sense.append(callback)
 
     def _collect_data(self):
+        self._last_sense = []
         for p in self._probes:
-            self.data[p].append(p.probe())
+            new_data = p.probe()
+            self.data[p].append(new_data)
+            self._last_sense.append(new_data)
 
         if len(self.data[self._probes[0]]) > self._data_capacity:
             for p in self._probes:
@@ -64,14 +69,15 @@ class Sensor(Asset):
     def sense(self):
         self._collect_data()
         for c in self._on_sense:
-            c(self._target, self.last_sense)
+            c(self._env.now, self.last_sense)
 
     @property
     def last_sense(self):
-        rtn = []
-        for p in self._probes:
-            rtn.append(self.data[p][-1])
-        return rtn
+        return self._last_sense
+
+    @property
+    def probes(self):
+        return self._probes.copy()
 
 
 class PeriodicSensor(Sensor):
@@ -86,13 +92,15 @@ class PeriodicSensor(Sensor):
                  ):
         super().__init__(target, probes, name, data_capacity, value)
 
+        self.data['time'] = []
         self._interval = interval
 
     def initialize(self, env):
         super().initialize(env)
-        self.schedule_next_sense()
+        self._periodic_sense()
 
     def _periodic_sense(self):
+        self.data['time'].append(self._env.now)
         self.sense()
         self.schedule_next_sense()
 

@@ -65,8 +65,8 @@ class MaintainerTestCase(TestCase):
         # Get time should only get called once the maintenance began.
         self.machines[0].status_tracker.get_time_to_maintain.assert_not_called()
         self.machines[0].shutdown.assert_not_called()
-        # Execute scheduled event.
-        mt._shutdown_and_repair(mt._active_requests[-1])
+        # Execute last scheduled event.
+        self.env.schedule_event.call_args[0][2]()
         self.assertEqual(mt.available_capacity, 5 - 1)
         # Time to fix is configured in setUp.
         self.assert_last_scheduled_event(self.env.now + 10, mt.id, None, EventType.RESTORE)
@@ -74,8 +74,8 @@ class MaintainerTestCase(TestCase):
         self.machines[0].shutdown.assert_called_once()
         self.machines[0].restore_functionality.assert_not_called()
         self.machines[0].status_tracker.maintain.assert_not_called()
-        # Execute scheduled event.
-        mt._restore_machine(mt._active_requests[-1])
+        # Execute last scheduled event.
+        self.env.schedule_event.call_args[0][2]()
         self.assertEqual(mt.available_capacity, 5)
         self.machines[0].restore_functionality.assert_called_once()
         self.machines[0].status_tracker.maintain.assert_called_once_with(tag)
@@ -105,6 +105,23 @@ class MaintainerTestCase(TestCase):
         self.assertFalse(mt.request_maintenance(self.machines[0], 'tag1'))
         self.assertTrue(mt.request_maintenance(self.machines[0], 'tag2'))
         self.assertTrue(mt.request_maintenance(self.machines[1], 'tag1'))
+
+    def test_work_multiple_pending_requests(self):
+        mt = Maintainer(capacity = 1)
+        mt.initialize(self.env)
+        # Add requests.
+        for m in self.machines:
+            m.status_tracker.get_capacity_to_maintain.return_value = 1
+            self.assertTrue(mt.request_maintenance(m))
+        # Make sure only one of the requests was scheduled to be worked.
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
+        # Execute next 2 events which will finish processing 1st request.
+        last_action = None
+        while last_action != self.env.schedule_event.call_args[0][2]:
+            last_action = self.env.schedule_event.call_args[0][2]
+            last_action()
+        for m in self.machines:
+            m.status_tracker.maintain.assert_called_once()
 
 
 if __name__ == '__main__':
