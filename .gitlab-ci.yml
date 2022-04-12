@@ -1,0 +1,3 @@
+run_unit_tests:
+    script:
+        - python -m unittest
