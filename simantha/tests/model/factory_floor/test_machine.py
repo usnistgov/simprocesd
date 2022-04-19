@@ -181,6 +181,21 @@ class MachineTestCase(TestCase):
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
         self.assertEqual(machine._output, None)
 
+    def test_changing_cycle_time(self):
+        machine = Machine(cycle_time = 5, upstream = self.upstream)
+        machine.initialize(self.env)
+        machine.give_part(Part())
+        self.assert_last_scheduled_event(self.env.now + 5, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+        machine.cycle_time = 12
+        self.env.now += 5
+        machine._finish_processing_part()
+        machine._output = None  # Simulate passing part downstream.
+
+        machine.give_part(Part())
+        self.assert_last_scheduled_event(self.env.now + 12, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
 
 if __name__ == '__main__':
     unittest.main()
