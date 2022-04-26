@@ -53,12 +53,6 @@ class PartHandlingDevice(MachineBase):
                               }[flow_order]
         self._next_round_robin_index = 0
 
-    @property
-    def downstream(self):
-        ''' Returns the list of current downstream Machines.
-        '''
-        return self._downstream
-
     def set_downstream_order(self, downstream):
         ''' Sets the downstream list of machines. Used for setting the order
         of downstream machines.

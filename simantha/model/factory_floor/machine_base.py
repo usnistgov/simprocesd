@@ -34,7 +34,10 @@ class MachineBase(Asset):
 
     @property
     def upstream(self):
-        return self._upstream
+        ''' List of upstream machines, machines that can provide parts
+        to this one.
+        '''
+        return self._upstream.copy()
 
     @upstream.setter
     def upstream(self, upstream):
@@ -46,6 +49,16 @@ class MachineBase(Asset):
         for up in self._upstream:
             assert_is_instance(up, MachineBase)
             up._add_downstream(self)
+
+    @property
+    def downstream(self):
+        ''' List of downstream machines, machines that receive parts
+        from this one.
+
+        The list is dependent on upstream and cannot be set or modified
+        directly.
+        '''
+        return self._downstream.copy()
 
     def _add_downstream(self, downstream):
         self._downstream.append(downstream)
@@ -77,7 +90,7 @@ class MachineBase(Asset):
             up.space_available_downstream()
 
     def space_available_downstream(self):
-        ''' Notify this machine that dowstream now can accept a part.
+        ''' Notify this machine that downstream now can accept a part.
         This does not guarantee that this machine will pass a part
         downstream because other machines could pass their parts first.
         '''

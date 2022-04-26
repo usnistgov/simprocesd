@@ -32,19 +32,19 @@ class MachineBaseTestCase(TestCase):
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 10)
         self.assertEqual(machine.upstream, self.upstream)
-        self.assertEqual(machine._downstream, [])
+        self.assertEqual(machine.downstream, [])
         self.assertTrue(machine.is_operational)
 
     def test_set_upstream(self):
         machine = MachineBase(upstream = self.upstream)
-        self.assertEqual(self.upstream[0]._downstream, [machine])
-        self.assertEqual(self.upstream[1]._downstream, [machine])
+        self.assertEqual(self.upstream[0].downstream, [machine])
+        self.assertEqual(self.upstream[1].downstream, [machine])
 
         new_upstream = [MachineBase()]
         machine.upstream = new_upstream
-        self.assertEqual(self.upstream[0]._downstream, [])
-        self.assertEqual(self.upstream[1]._downstream, [])
-        self.assertEqual(new_upstream[0]._downstream, [machine])
+        self.assertEqual(self.upstream[0].downstream, [])
+        self.assertEqual(self.upstream[1].downstream, [])
+        self.assertEqual(new_upstream[0].downstream, [machine])
 
     def test_notify_upstream_of_available_space(self):
         mocked_upstream = mock_wrap(self.upstream)
