@@ -34,6 +34,7 @@ class MachineBaseTestCase(TestCase):
         self.assertEqual(machine.upstream, self.upstream)
         self.assertEqual(machine.downstream, [])
         self.assertTrue(machine.is_operational)
+        self.assertEqual(machine.waiting_for_part_start_time, 0)
 
     def test_set_upstream(self):
         machine = MachineBase(upstream = self.upstream)
@@ -66,6 +67,7 @@ class MachineBaseTestCase(TestCase):
         self.env.schedule_event.assert_called_once()
         machine._pass_part_downstream()
         self.env.schedule_event.assert_called_once()
+        self.assertEqual(machine.waiting_for_part_start_time, self.env.now)
         machine.space_available_downstream()
         # Schedule event was called once through give_part, check now
         # that it has been called a total of 2 times.

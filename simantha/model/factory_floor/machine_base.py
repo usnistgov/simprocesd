@@ -24,6 +24,7 @@ class MachineBase(Asset):
         self._part = None
         self._output = None
         self._waiting_for_space_availability = False
+        self._waiting_for_part_since = 0
         self._env = None
 
     def is_operational(self):
@@ -60,6 +61,15 @@ class MachineBase(Asset):
         '''
         return self._downstream.copy()
 
+    @property
+    def waiting_for_part_start_time(self):
+        ''' Returns the simulation time of when this machine started
+        waiting for the next Part or returns None if the machine is not
+        currently waiting for a Part.
+        Value is reset every time a new part is received.
+        '''
+        return self._waiting_for_part_since
+
     def _add_downstream(self, downstream):
         self._downstream.append(downstream)
 
@@ -82,10 +92,21 @@ class MachineBase(Asset):
         # Could not pass part downstream
         self._waiting_for_space_availability = True
 
+    def _set_waiting_for_part(self, is_waiting = True):
+        if is_waiting == False:
+            self._waiting_for_part_since = None
+        else:
+            if self._waiting_for_part_since != None:
+                # Do nothing if machine was already waiting for a part.
+                return
+            else:
+                self._waiting_for_part_since = self._env.now
+
     def notify_upstream_of_available_space(self):
         ''' Communicate to all immediate upstream machines that this
         machine can accept a new part.
         '''
+        self._set_waiting_for_part(True)
         for up in self._upstream:
             up.space_available_downstream()
 
@@ -107,6 +128,7 @@ class MachineBase(Asset):
 
         self._part = part
         self._part.routing_history.append(self.name)
+        self._set_waiting_for_part(False)
         self._on_received_new_part()
         return True
 

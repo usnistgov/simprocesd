@@ -42,14 +42,17 @@ class BufferTestCase(TestCase):
         buffer._add_downstream(self.downstream)
 
         self.assertEqual(buffer.level(), 0)
+        self.assertEqual(buffer.waiting_for_part_start_time, 0)
         self.assertTrue(buffer.give_part(part))
         self.assertEqual(buffer.level(), 1)
+        self.assertEqual(buffer.waiting_for_part_start_time, None)
         self.assert_last_scheduled_event(3 + 5, buffer.id, buffer._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
         self.env.now = 8
         buffer._finish_processing_part()
         self.assertEqual(buffer.level(), 1)
+        self.assertEqual(buffer.waiting_for_part_start_time, 8)
         self.assert_last_scheduled_event(8, buffer.id, buffer._pass_part_downstream,
                                          EventType.PASS_PART)
 
