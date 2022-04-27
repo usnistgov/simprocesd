@@ -47,25 +47,26 @@ class EventTestCase(TestCase):
 
         action.assert_not_called()
 
-    def test_event_sorting(self):
+    def test_less_than(self):
+        # Event only defines a less-than operator, __lt__, for sorting.
         action = MagicMock()
-        e1 = Event(1, 1, action, EventType.OTHER_HIGH)
-        e2 = Event(2, 1, action, EventType.OTHER_HIGH)
-        e3 = Event(1, 1, action, EventType.OTHER_LOW)
-        e4 = Event(2, 1, action, EventType.OTHER_LOW)
-        e5 = Event(1, 2, action, EventType.OTHER_HIGH)
-        e6 = Event(2, 2, action, EventType.OTHER_HIGH)
-        e7 = Event(1, 2, action, EventType.OTHER_LOW)
-        e8 = Event(2, 2, action, EventType.OTHER_LOW)
-        expected = [e1, e5, e3, e7, e2, e6, e4, e8]
+        e1 = Event(1, 1, action, EventType.FAIL)
+        e1.random_weight = 0.5
+        e2 = Event(1, 1, action, EventType.FAIL)
+        e2.random_weight = 0.5
+        self.assertFalse(e1 < e2 or e2 < e1)
 
-        random.seed(1)
-        for i in range(10):
-            new_list = expected.copy()
-            while new_list == expected:  # ensure lists are different
-                random.shuffle(new_list)
-            new_list = sorted(new_list)
-            self.assertListEqual(new_list, expected, f'i = {i}')
+        e1.asset_id = 0
+        self.assertLess(e1, e2)
+
+        e2.random_weight = 0
+        self.assertLess(e2, e1)
+
+        e1.event_type = EventType.OTHER_HIGH
+        self.assertLess(e1, e2)
+
+        e2.time = 0
+        self.assertLess(e2, e1)
 
 
 if __name__ == '__main__':
