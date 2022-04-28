@@ -84,13 +84,16 @@ class MachineBase(Asset):
     def _pass_part_downstream(self):
         if not self.is_operational() or self._output == None: return
 
-        for dwn in self._downstream:
+        for dwn in self._priority_sorted_downstream():
             if dwn.give_part(self._output):
                 self._output = None
                 self._try_move_part_to_output()
                 return
         # Could not pass part downstream
         self._waiting_for_space_availability = True
+
+    def _priority_sorted_downstream(self):
+        return sorted(self._downstream, key = lambda d: d.waiting_for_part_start_time)
 
     def _set_waiting_for_part(self, is_waiting = True):
         if is_waiting == False:

@@ -126,12 +126,14 @@ class MachineBaseTestCase(TestCase):
         for u in mocked_upstream:
             u.space_available_downstream.assert_called_once()
 
-    def test_pass_part_downstream_multiple_downstreams(self):
+    def test_pass_part_downstream_when_one_downstream_blocked(self):
         part = Part()
         mocked_upstream = mock_wrap(self.upstream)
         machine = MachineBase(upstream = mocked_upstream)
         machine.initialize(self.env)
+
         downstream1 = MagicMock(spec = MachineBase)
+        downstream1.waiting_for_part_start_time = 0
         machine._add_downstream(downstream1)
         downstream1.give_part.return_value = False
         # No valid downstream to pass part to.
@@ -140,11 +142,43 @@ class MachineBaseTestCase(TestCase):
         downstream1.give_part.assert_called_once_with(part)
         # New downstream available that can accept the part.
         downstream2 = MagicMock(spec = MachineBase)
+        downstream2.waiting_for_part_start_time = 0
         machine._add_downstream(downstream2)
         machine._pass_part_downstream()
         calls = [call(part), call(part)]
         downstream1.give_part.assert_has_calls(calls)
         downstream2.give_part.assert_called_once_with(part)
+
+    def test_pass_part_downstream_order(self):
+        machine = MachineBase()
+        machine.initialize(self.env)
+        downstreams = []
+        for i in range(3):
+            downstreams.append(MagicMock(spec = MachineBase))
+            downstreams[-1].give_part.return_value = True
+            downstreams[-1].waiting_for_part_start_time = i
+            machine._add_downstream(downstreams[-1])
+
+        machine.give_part(Part())
+        machine._pass_part_downstream()
+        self.assertEqual(len(downstreams[0].give_part.call_args_list), 1)
+        self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
+        self.assertEqual(len(downstreams[2].give_part.call_args_list), 0)
+
+        downstreams[0].waiting_for_part_start_time = 4
+        downstreams[1].waiting_for_part_start_time = 6
+        machine.give_part(Part())
+        machine._pass_part_downstream()
+        self.assertEqual(len(downstreams[0].give_part.call_args_list), 1)
+        self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
+        self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
+
+        downstreams[2].waiting_for_part_start_time = 10
+        machine.give_part(Part())
+        machine._pass_part_downstream()
+        self.assertEqual(len(downstreams[0].give_part.call_args_list), 2)
+        self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
+        self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
 
 
 if __name__ == '__main__':
