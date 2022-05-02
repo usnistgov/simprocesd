@@ -33,6 +33,7 @@ class Buffer(Machine):
         if self._output:
             self._buffer.append(self._output)
             self._output = None
+            self.notify_upstream_of_available_space()
 
     def notify_upstream_of_available_space(self):
         parts_count = len(self._buffer) + 1 if self._part != None else 0

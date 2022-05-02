@@ -13,13 +13,9 @@ class Machine(MachineBase):
     status_tracker -- optional object for tracking operational status of
         the machine.
 
-    WARNING: This machine can hold up to 2 parts, 1 processed part and
-    one input part that will not begin to be processed until the
-    processed part is passed downstream.
-    Possible scenarios of parts held by Machine:
-        - 1 part being processed
-        - 1 processed part (ready for downstream)
-        - 1 processed part and 1 input part not being processed
+    If machine fails with a part that hasn't been fully processed then
+    the part is lost. Lost part can be captured by using
+    add_failed_callback.
     '''
 
     def __init__(self,
@@ -93,7 +89,6 @@ class Machine(MachineBase):
         self._output = self._part
         self._schedule_pass_part_downstream()
         self._part = None
-        self.notify_upstream_of_available_space()
         for c in self._finish_processing_callbacks:
             c(self._output)
         self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
@@ -110,10 +105,12 @@ class Machine(MachineBase):
 
     def _fail(self):
         # Processed part (_output) is not lost but input part is.
+        lost_part = self._part
         self._part = None
         self._env.cancel_matching_events(asset_id = self.id)
+        self._set_waiting_for_part(False)
         for c in self._failed_callbacks:
-            c()
+            c(lost_part)
 
     def shutdown(self):
         ''' Make sure not to call in the middle of another Machine
@@ -124,6 +121,7 @@ class Machine(MachineBase):
         '''
         self._is_shut_down = True
         self._env.pause_matching_events(asset_id = self.id)
+        self._set_waiting_for_part(False)
 
     def restore_functionality(self):
         ''' Restore machine to an operational state after a shutdown()
@@ -136,35 +134,37 @@ class Machine(MachineBase):
         self._env.unpause_matching_events(asset_id = self.id)
         if self._output != None:
             self._schedule_pass_part_downstream()
-        if self._part == None:
+        elif self._part == None:
             self.notify_upstream_of_available_space()
 
         for c in self._restored_callbacks:
             c()
 
     def add_receive_part_callback(self, callback):
-        '''Accepts one argument: part
+        '''Accepts one argument: received part.
         callback(part)
         '''
         assert_callable(callback)
         self._received_part_callbacks.append(callback)
 
     def add_finish_processing_callback(self, callback):
-        '''Accepts one argument: part
+        '''Accepts one argument: part that has just been processed.
         callback(part)
         '''
         assert_callable(callback)
         self._finish_processing_callbacks.append(callback)
 
     def add_failed_callback(self, callback):
-        '''Accepts no arguments
-        callback()
+        '''Accepts one argument: part in the machine that has not been
+        processed yet or None if there is no such part in the machine.
+        The part is removed from the machine when machine fails.
+        callback(part)
         '''
         assert_callable(callback)
         self._failed_callbacks.append(callback)
 
     def add_restored_callback(self, callback):
-        '''Accepts no arguments
+        '''Accepts no arguments.
         callback()
         '''
         assert_callable(callback)

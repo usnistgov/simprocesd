@@ -11,8 +11,7 @@ import statistics
 from matplotlib import pyplot
 
 from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Maintainer, PartHandlingDevice, \
-    FlowOrder, Part
+from ..model.factory_floor import Source, Machine, Sink, Maintainer, Part
 from ..utils import DataStorageType
 from .status_tracker_with_damage import StatusTrackerWithDamage
 
@@ -114,12 +113,11 @@ def run_experiment(damage_threshold):
     maintainer = Maintainer(capacity = maintainer_capacity)
 
     source = Source('Source', Part(quality = 1), 1)
-    phd = PartHandlingDevice(upstream = [source], flow_order = FlowOrder.ROUND_ROBIN)
-    M1 = generate_machine('M1', [phd], damage_threshold, maintainer)
-    M2 = generate_machine('M2', [phd], damage_threshold, maintainer)
-    M3 = generate_machine('M3', [phd], damage_threshold, maintainer)
-    M4 = generate_machine('M4', [phd], damage_threshold, maintainer)
-    M5 = generate_machine('M5', [phd], damage_threshold, maintainer)
+    M1 = generate_machine('M1', [source], damage_threshold, maintainer)
+    M2 = generate_machine('M2', [source], damage_threshold, maintainer)
+    M3 = generate_machine('M3', [source], damage_threshold, maintainer)
+    M4 = generate_machine('M4', [source], damage_threshold, maintainer)
+    M5 = generate_machine('M5', [source], damage_threshold, maintainer)
     all_machines = [M1, M2, M3, M4, M5]
     sink = Sink('Sink', all_machines, collect_parts = True)
 

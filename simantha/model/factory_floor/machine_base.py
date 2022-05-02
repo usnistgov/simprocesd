@@ -6,26 +6,24 @@ from .asset import Asset
 class MachineBase(Asset):
     ''' Base class for machine assets in the system.
 
-    WARNING: This machine can hold up to 2 parts, 1 processed part and
-    one input part that will not begin to be processed until the
-    processed part is passed downstream.
-    Possible scenarios of parts held by MachineBase:
-        - 1 processed part (ready for downstream)
-        - 1 processed part and 1 input part not being processed
+    Arguments:
+    name -- name of the machine.
+    upstream -- machines that can pass parts to this one.
+    value -- value of the machine.
     '''
 
     def __init__(self, name = None, upstream = [], value = 0):
         super().__init__(name, value)
 
         self._downstream = []
-        self._upstream = []  # Needed for the setter to work
-        self.upstream = upstream
-
+        self._upstream = []
         self._part = None
         self._output = None
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
         self._env = None
+
+        self.upstream = upstream
 
     def is_operational(self):
         ''' Returns True is the machine can perform its part handling
@@ -49,7 +47,14 @@ class MachineBase(Asset):
         self._upstream = upstream.copy()
         for up in self._upstream:
             assert_is_instance(up, MachineBase)
+            # When passing a part, the part is in the _output of the
+            # machine so it would never accept the part from itself
+            # because it is already holding a part (same part).
+            assert up != self, 'Machine\'s upstream cannot point directly to itself.'
             up._add_downstream(self)
+        # Reset waiting time if MachineBase was already waiting for a part.
+        if self.waiting_for_part_start_time != None:
+            self._set_waiting_for_part(True, True)
 
     @property
     def downstream(self):
@@ -87,22 +92,24 @@ class MachineBase(Asset):
         for dwn in self._priority_sorted_downstream():
             if dwn.give_part(self._output):
                 self._output = None
-                self._try_move_part_to_output()
+                if self._part == None:
+                    self.notify_upstream_of_available_space()
                 return
         # Could not pass part downstream
         self._waiting_for_space_availability = True
 
     def _priority_sorted_downstream(self):
-        return sorted(self._downstream, key = lambda d: d.waiting_for_part_start_time)
+        return sorted(self._downstream, key = lambda d: d.waiting_for_part_start_time \
+                      if d.waiting_for_part_start_time != None else float('inf'))
 
-    def _set_waiting_for_part(self, is_waiting = True):
+    def _set_waiting_for_part(self, is_waiting = True, reset = False):
         if is_waiting == False:
             self._waiting_for_part_since = None
         else:
-            if self._waiting_for_part_since != None:
+            if self._waiting_for_part_since != None and not reset:
                 # Do nothing if machine was already waiting for a part.
                 return
-            else:
+            elif self._env != None:
                 self._waiting_for_part_since = self._env.now
 
     def notify_upstream_of_available_space(self):
@@ -126,7 +133,7 @@ class MachineBase(Asset):
         Returns True if part has been accepted, otherwise False.
         '''
         assert part != None, 'Cannot give part=None.'
-        if not self.is_operational() or self._part != None:
+        if not self.is_operational() or self._part != None or self._output != None:
             return False
 
         self._part = part
@@ -145,6 +152,5 @@ class MachineBase(Asset):
         self._output = self._part
         self._part = None
         self._schedule_pass_part_downstream()
-        self.notify_upstream_of_available_space()
         return
 

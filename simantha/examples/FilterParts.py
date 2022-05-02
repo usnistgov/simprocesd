@@ -1,8 +1,8 @@
 ''' Expected parts received by sink: 999-1000
 Processor should have received 1000 parts.
 PartFixer should have received about 750 parts.
-Processor average output part quality should be around 0.51
-PartFixer average output part quality should be around 0.96
+Processor average output part quality should be around 0.5
+PartFixer average output part quality should be between 0.9 and 1
 '''
 import random
 

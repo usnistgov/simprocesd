@@ -97,10 +97,12 @@ class MachineTestCase(TestCase):
         fail_cb = MagicMock()
         machine.add_failed_callback(fail_cb)
         machine.initialize(self.env)
+        part = Part()
+        machine.give_part(part)
 
         fail_cb.assert_not_called()
         machine._fail()
-        fail_cb.assert_called_once()
+        fail_cb.assert_called_once_with(part)
 
     def test_restore_callbacks(self):
         machine = Machine()
@@ -127,14 +129,15 @@ class MachineTestCase(TestCase):
         machine = Machine()
         machine.initialize(self.env)
         machine.give_part(part1)
-        machine._finish_processing_part()
-        machine.give_part(part2)
 
-        self.assertEqual(machine._part, part2)
-        self.assertEqual(machine._output, part1)
         machine._fail()
         self.assertEqual(machine._part, None)
-        self.assertEqual(machine._output, part1)
+
+        machine.restore_functionality()
+        machine.give_part(part2)
+        machine._finish_processing_part()
+        machine._fail()
+        self.assertEqual(machine._output, part2)
 
     def test_receive_part(self):
         machine = Machine(cycle_time = 3)
@@ -165,8 +168,6 @@ class MachineTestCase(TestCase):
         self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
         self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)
-        for u in self.upstream:
-            u.space_available_downstream.assert_called_once()
 
     def test_process_part_when_not_operational(self):
         mst_mock = MagicMock(spec = MachineStatusTracker)
