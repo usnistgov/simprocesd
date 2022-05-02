@@ -24,6 +24,7 @@ class MachineBase(Asset):
         self._part = None
         self._output = None
         self._waiting_for_space_availability = False
+        self._waiting_for_part_since = 0
         self._env = None
 
     def is_operational(self):
@@ -34,7 +35,10 @@ class MachineBase(Asset):
 
     @property
     def upstream(self):
-        return self._upstream
+        ''' List of upstream machines, machines that can provide parts
+        to this one.
+        '''
+        return self._upstream.copy()
 
     @upstream.setter
     def upstream(self, upstream):
@@ -46,6 +50,25 @@ class MachineBase(Asset):
         for up in self._upstream:
             assert_is_instance(up, MachineBase)
             up._add_downstream(self)
+
+    @property
+    def downstream(self):
+        ''' List of downstream machines, machines that receive parts
+        from this one.
+
+        The list is dependent on upstream and cannot be set or modified
+        directly.
+        '''
+        return self._downstream.copy()
+
+    @property
+    def waiting_for_part_start_time(self):
+        ''' Returns the simulation time of when this machine started
+        waiting for the next Part or returns None if the machine is not
+        currently waiting for a Part.
+        Value is reset every time a new part is received.
+        '''
+        return self._waiting_for_part_since
 
     def _add_downstream(self, downstream):
         self._downstream.append(downstream)
@@ -61,7 +84,7 @@ class MachineBase(Asset):
     def _pass_part_downstream(self):
         if not self.is_operational() or self._output == None: return
 
-        for dwn in self._downstream:
+        for dwn in self._priority_sorted_downstream():
             if dwn.give_part(self._output):
                 self._output = None
                 self._try_move_part_to_output()
@@ -69,15 +92,29 @@ class MachineBase(Asset):
         # Could not pass part downstream
         self._waiting_for_space_availability = True
 
+    def _priority_sorted_downstream(self):
+        return sorted(self._downstream, key = lambda d: d.waiting_for_part_start_time)
+
+    def _set_waiting_for_part(self, is_waiting = True):
+        if is_waiting == False:
+            self._waiting_for_part_since = None
+        else:
+            if self._waiting_for_part_since != None:
+                # Do nothing if machine was already waiting for a part.
+                return
+            else:
+                self._waiting_for_part_since = self._env.now
+
     def notify_upstream_of_available_space(self):
         ''' Communicate to all immediate upstream machines that this
         machine can accept a new part.
         '''
+        self._set_waiting_for_part(True)
         for up in self._upstream:
             up.space_available_downstream()
 
     def space_available_downstream(self):
-        ''' Notify this machine that dowstream now can accept a part.
+        ''' Notify this machine that downstream now can accept a part.
         This does not guarantee that this machine will pass a part
         downstream because other machines could pass their parts first.
         '''
@@ -94,6 +131,7 @@ class MachineBase(Asset):
 
         self._part = part
         self._part.routing_history.append(self.name)
+        self._set_waiting_for_part(False)
         self._on_received_new_part()
         return True
 

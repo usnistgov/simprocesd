@@ -6,6 +6,13 @@ from .machine_base import MachineBase
 class Machine(MachineBase):
     ''' Machine that has a state and a configurable cycle time.
 
+    Arguments:
+    name -- name of the machine.
+    upstream -- machines that can pass parts to this one.
+    cycle_time -- how long it takes to complete one process cycle.
+    status_tracker -- optional object for tracking operational status of
+        the machine.
+
     WARNING: This machine can hold up to 2 parts, 1 processed part and
     one input part that will not begin to be processed until the
     processed part is passed downstream.
@@ -30,7 +37,7 @@ class Machine(MachineBase):
             assert_is_instance(status_tracker, MachineStatusTracker)
         self.status_tracker = status_tracker
 
-        self._cycle_time = cycle_time
+        self.cycle_time = cycle_time
 
         self._is_part_processed = False
         self._is_shut_down = False
@@ -38,6 +45,19 @@ class Machine(MachineBase):
         self._finish_processing_callbacks = []
         self._failed_callbacks = []
         self._restored_callbacks = []
+
+    @property
+    def cycle_time(self):
+        ''' How long it takes to complete one process cycle.
+
+        Setting a new cycle time will affect all future process cycles.
+        An already started process cycle will not be affected.
+        '''
+        return self._cycle_time
+
+    @cycle_time.setter
+    def cycle_time(self, new_value):
+        self._cycle_time = new_value
 
     def is_operational(self):
         return not self._is_shut_down and self.status_tracker.is_operational()
@@ -58,7 +78,7 @@ class Machine(MachineBase):
 
     def _schedule_finish_processing_part(self):
         self._env.schedule_event(
-            self._env.now + self._cycle_time,
+            self._env.now + self.cycle_time,
             self.id,
             self._finish_processing_part,
             EventType.FINISH_PROCESSING,

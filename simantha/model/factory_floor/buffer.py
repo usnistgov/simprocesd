@@ -43,7 +43,7 @@ class Buffer(Machine):
         if not self.is_operational(): return
 
         # Try to pass parts to downstream machines.
-        for dwn in self._downstream:
+        for dwn in self._priority_sorted_downstream():
             while len(self._buffer) > 0 and dwn.give_part(self._buffer[0]):
                 self._buffer.pop(0)
 

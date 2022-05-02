@@ -2,6 +2,7 @@ import bisect
 from enum import IntEnum, unique, auto
 import json
 import os
+import random
 
 from ..utils import DataStorageType, assert_is_instance, assert_callable
 
@@ -44,6 +45,7 @@ class Event:
         self.event_type = event_type
         self.message = message
         self.status = ''
+        self.random_weight = random.random()
 
         self.paused_at = None
         self.cancelled = False
@@ -64,10 +66,13 @@ class Event:
         return (
             self.time,
             self.event_type,
-            self.asset_id  # IDs are unique and can be used as a tie-breaker.
+            self.random_weight,
+            # A reliable tie-breaker because asset IDs are unique
+            self.asset_id
         ) < (
             other.time,
             other.event_type,
+            other.random_weight,
             other.asset_id
         )
 
