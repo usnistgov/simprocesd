@@ -3,6 +3,7 @@ machines accrue damage over time which negatively impacts the quality of
 the parts those machines produce. Simulation data is then reviewed.
 '''
 import random
+import sys
 
 from . import StatusTrackerWithDamage
 from ..model import System
@@ -30,7 +31,7 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
     return machine
 
 
-def main():
+def main(is_test = False):
     maintainer = Maintainer(capacity = 1)
 
     source = Source('source', Part('Part', value = 1, quality = 0), time_to_produce_part = 1)
@@ -51,16 +52,18 @@ def main():
     # Print information to console.
     print(f'\nFinal net value of machines: {round(system.get_net_value_of_objects(), 2)}')
     print_produced_parts_and_average_quality(system, [M1, M2, M3])
-    # Show graphs.
-    plot_throughput(system, [M1, M2, M3])
-    plot_damage(system, [M1, M2, M3])
-    # Source produces parts and reduces its own value by the value of produced parts.
-    # Sink collects parts and increases its own value by the value of collected parts.
-    plot_value([source, sink])
-    # Show data from custom sensor.
-    simple_plot(sensor.data['time'], sensor.data[level_probe],
-                "Parts in Buffer", 'time', 'parts')
+
+    if not is_test:
+        # Show graphs.
+        plot_throughput(system, [M1, M2, M3])
+        plot_damage(system, [M1, M2, M3])
+        # Source produces parts and reduces its own value by the value of produced parts.
+        # Sink collects parts and increases its own value by the value of collected parts.
+        plot_value([source, sink])
+        # Show data from custom sensor.
+        simple_plot(sensor.data['time'], sensor.data[level_probe],
+                    "Parts in Buffer", 'time', 'parts')
 
 
 if __name__ == '__main__':
-    main()
+    main(len(sys.argv) > 1 and sys.argv[1] == 'testing')

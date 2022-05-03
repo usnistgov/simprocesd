@@ -6,6 +6,7 @@ Expected yearly operational profit of using a CMS is: about $130,000
 '''
 
 import random
+import sys
 
 from ..model import System
 from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
@@ -21,7 +22,12 @@ dulling_name = 'Dulling'
 ma_name = 'Misalignment'
 
 
-def main():
+def main(is_test = False):
+    global operating_time_per_day
+    if is_test:
+        # Reduce example runtime.
+        operating_time_per_day = operating_time_per_day / 60
+
     random.seed(1)
     # Working year; 5 days a week and 50 weeks a year.
     duration = operating_time_per_day * 5 * 50
@@ -119,4 +125,4 @@ def default_part_processing(part):
 
 
 if __name__ == '__main__':
-    main()
+    main(len(sys.argv) > 1 and sys.argv[1] == 'testing')

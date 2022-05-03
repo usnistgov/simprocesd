@@ -1,3 +1,14 @@
 run_unit_tests:
     script:
         - python -m unittest
+
+run_examples:
+    script:
+        - |
+           for f in simantha/examples/*.py
+             do g="${f##*/}"
+             h="${g%.*}"
+             if [[ $h = [A-Z]* ]]
+               then python -m simantha.examples.$h testing || exit 1
+             fi
+           done

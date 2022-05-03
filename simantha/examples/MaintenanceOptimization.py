@@ -8,6 +8,7 @@ min_acceptable_quality and higher are considered good/acceptable.
 '''
 import random
 import statistics
+import sys
 from matplotlib import pyplot
 
 from ..model import System
@@ -29,7 +30,12 @@ simulation_time = 60 * 12 * 7
 iterations = 10
 
 
-def main():
+def main(is_test = False):
+    global iterations
+    if is_test:
+        # Reduce example runtime.
+        iterations = 1
+
     random.seed(1)
     # Damage thresholds to test and plot.
     thresholds = [x * d_magnitude for x in range(1, round((d_fail / d_magnitude)) + 1)]
@@ -78,7 +84,9 @@ def main():
     g2.plot(thresholds, quality_good_parts, lw = 3, color = 'g', marker = 'o',
             label = f'quality >= {min_acceptable_quality}')
     g2.legend()
-    pyplot.show()
+
+    if not is_test:
+        pyplot.show()
 
 
 def generate_machine(name, upstream, damage_threshold, maintainer):
@@ -128,4 +136,4 @@ def run_experiment(damage_threshold):
 
 
 if __name__ == '__main__':
-    main()
+    main(len(sys.argv) > 1 and sys.argv[1] == 'testing')
