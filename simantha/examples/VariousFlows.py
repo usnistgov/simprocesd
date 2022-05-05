@@ -1,7 +1,7 @@
 ''' This example sets up machines in series and in parallel. The example
 also shows how one machine can be used in multiple places of the
 process flow.
-See image VariousFlowsDiagram.jpg for a visual representation  of the
+See image various_flows_diagram.jpg for a visual representation  of the
 setup. Top diagram in the image shows M2 in 2 locations while the bottom
 diagram shows the actual Simantha setup to represent it.
 '''

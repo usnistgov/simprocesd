@@ -32,6 +32,7 @@ class SinkTestCase(TestCase):
         self.assertEqual(sink.received_parts_count, 0)
         self.assertEqual(sink.value_of_received_parts, 0)
         self.assertEqual(sink.collected_parts, [])
+        self.assertEqual(sink.waiting_for_part_start_time, 0)
 
     def test_add_downstream(self):
         sink = Sink()
@@ -64,11 +65,13 @@ class SinkTestCase(TestCase):
         self.assertEqual(sink.received_parts_count, 1)
         self.assertEqual(sink.value_of_received_parts, 2.5)
         self.assertCountEqual(sink.collected_parts, [part])
+        self.assertEqual(sink.waiting_for_part_start_time, None)
         # Second part should not be accepted yet.
         self.assertFalse(sink.give_part(Part()))
 
         sink._finish_processing_part()
         upstream[0].space_available_downstream.assert_called_once()
+        self.assertEqual(sink.waiting_for_part_start_time, 3)
         self.assertTrue(sink.give_part(Part()))
 
     def test_receive_many_parts(self):

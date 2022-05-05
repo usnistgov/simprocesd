@@ -77,12 +77,10 @@ class Source(Machine):
     def _pass_part_downstream(self):
         output_before = self._output
         super()._pass_part_downstream()
-        if self._output == None:
+        if output_before != None and self._output == None:
+            self._produced_parts += 1
             self._env.add_datapoint('supplied_new_part', self.name, self._env.now)
+            self.add_cost('supplied_part', output_before.value)
+            self._cost_of_produced_parts += output_before.value
             self._schedule_prepare_next_part()
-            if output_before != None:
-                # Part was passed downstream.
-                self._cost_of_produced_parts += output_before.value
-                self._produced_parts += 1
-                self.add_cost('supplied_part', output_before.value)
 

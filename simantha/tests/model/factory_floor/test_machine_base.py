@@ -38,14 +38,28 @@ class MachineBaseTestCase(TestCase):
 
     def test_set_upstream(self):
         machine = MachineBase(upstream = self.upstream)
+        machine.initialize(self.env)
         self.assertEqual(self.upstream[0].downstream, [machine])
         self.assertEqual(self.upstream[1].downstream, [machine])
+        self.assertEqual(machine.waiting_for_part_start_time, 0)
 
+        self.env.now = 10
         new_upstream = [MachineBase()]
         machine.upstream = new_upstream
+
         self.assertEqual(self.upstream[0].downstream, [])
         self.assertEqual(self.upstream[1].downstream, [])
         self.assertEqual(new_upstream[0].downstream, [machine])
+        self.assertEqual(machine.waiting_for_part_start_time, 10)
+
+    def test_set_bad_upstreams(self):
+        self.assertRaises(TypeError, lambda: MachineBase(upstream = [Part()]))
+        machine = MachineBase()
+
+        def test_helper():
+            machine.upstream = [machine]
+
+        self.assertRaises(AssertionError, test_helper)
 
     def test_notify_upstream_of_available_space(self):
         mocked_upstream = mock_wrap(self.upstream)
@@ -65,28 +79,25 @@ class MachineBaseTestCase(TestCase):
 
         machine.give_part(Part())
         self.env.schedule_event.assert_called_once()
+        # Part will not be passed because downstream was not defined.
         machine._pass_part_downstream()
-        self.env.schedule_event.assert_called_once()
-        self.assertEqual(machine.waiting_for_part_start_time, self.env.now)
+        self.assertEqual(machine.waiting_for_part_start_time, None)
+
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
         machine.space_available_downstream()
-        # Schedule event was called once through give_part, check now
-        # that it has been called a total of 2 times.
         self.assertEqual(len(self.env.schedule_event.call_args_list), 2)
         self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)
 
     def test_give_part(self):
-        part1, part2, part3 = Part(), Part(), Part()
+        part1, part2 = Part(), Part()
         machine = MachineBase(upstream = self.upstream)
         machine.initialize(self.env)
-        # MachineBase will immediately move 1 part to output and accept
-        # a second part in the input but will not accept a third part.
+        # MachineBase can only hold 1 part at a time.
         self.assertTrue(machine.give_part(part1))
         self.assertEqual(part1.routing_history, [machine.name])
-        self.assertTrue(machine.give_part(part2))
-        self.assertEqual(part2.routing_history, [machine.name])
-        self.assertFalse(machine.give_part(part3))
-        self.assertEqual(part3.routing_history, [])
+        self.assertFalse(machine.give_part(part2))
+        self.assertEqual(part2.routing_history, [])
 
     def test_give_part_when_not_operational(self):
         part = Part()
@@ -121,7 +132,7 @@ class MachineBaseTestCase(TestCase):
             u.space_available_downstream.assert_called_once()
 
         machine._pass_part_downstream()
-        # Check that the part does not get passed a second time.
+        # Check that a part does not get passed a second time.
         downstream.give_part.assert_called_once()
         for u in mocked_upstream:
             u.space_available_downstream.assert_called_once()
@@ -178,6 +189,13 @@ class MachineBaseTestCase(TestCase):
         machine._pass_part_downstream()
         self.assertEqual(len(downstreams[0].give_part.call_args_list), 2)
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
+        self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
+        # None means machine is not marked as waiting for parts yet.
+        downstreams[0].waiting_for_part_start_time = None
+        machine.give_part(Part())
+        machine._pass_part_downstream()
+        self.assertEqual(len(downstreams[0].give_part.call_args_list), 2)
+        self.assertEqual(len(downstreams[1].give_part.call_args_list), 1)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
 
 

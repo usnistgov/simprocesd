@@ -12,8 +12,7 @@ from scipy.optimize import minimize
 
 from . import StatusTrackerWithDamage
 from ..model import System
-from ..model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer, \
-    PartHandlingDevice, FlowOrder
+from ..model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
 from ..utils import DataStorageType, geometric_distribution_sample, \
     print_produced_parts_and_average_quality
 
@@ -32,7 +31,7 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade,
                                      get_capacity_to_maintain = capacity_to_maintain)
     machine = Machine(name, upstream, cycle_time, status)
     machine.add_finish_processing_callback(lambda p: process_part(p, quality_distribution, status))
-    machine.add_failed_callback(lambda: maintainer.request_maintenance(machine))
+    machine.add_failed_callback(lambda p, m = machine: maintainer.request_maintenance(m))
     return machine
 
 
@@ -43,24 +42,21 @@ def main():
     M1 = new_machine('M1', [source], 1, 0.02, lambda: random.uniform(0, 0.01), maintainer)
     stage1 = [M1]
     B1 = Buffer('B1', stage1, capacity = 20)
-    phd1 = PartHandlingDevice(upstream = [B1], flow_order = FlowOrder.RANDOM)
-    M2 = new_machine('M2', [phd1], 1, 0.02, lambda: random.uniform(0, 0.01), maintainer)
-    M3 = new_machine('M3', [phd1], 1, 0.02, lambda: random.uniform(0, 0.02), maintainer)
+    M2 = new_machine('M2', [B1], 1, 0.02, lambda: random.uniform(0, 0.01), maintainer)
+    M3 = new_machine('M3', [B1], 1, 0.02, lambda: random.uniform(0, 0.02), maintainer)
     stage2 = [M2, M3]
     B2 = Buffer('B2', stage2, capacity = 10)
-    phd2 = PartHandlingDevice(upstream = [B2], flow_order = FlowOrder.RANDOM)
-    M4 = new_machine('M4', [phd2], 1, 0.02, lambda: random.uniform(0.01, 0.02), maintainer)
-    M5 = new_machine('M5', [phd2], 1, 0.05, lambda: random.uniform(0.025, 0.05), maintainer)
+    M4 = new_machine('M4', [B2], 1, 0.02, lambda: random.uniform(0.01, 0.02), maintainer)
+    M5 = new_machine('M5', [B2], 1, 0.05, lambda: random.uniform(0.025, 0.05), maintainer)
     stage3 = [M4, M5]
     B3 = Buffer('B3', stage3, capacity = 10)
-    phd3 = PartHandlingDevice(upstream = [B3], flow_order = FlowOrder.RANDOM)
-    M6 = new_machine('M6', [phd3], 1, 0.02, lambda: random.uniform(0, 0.02), maintainer)
-    M7 = new_machine('M7', [phd3], 1, 0.02, lambda: random.uniform(0.01, 0.02), maintainer)
+    M6 = new_machine('M6', [B3], 1, 0.02, lambda: random.uniform(0, 0.02), maintainer)
+    M7 = new_machine('M7', [B3], 1, 0.02, lambda: random.uniform(0.01, 0.02), maintainer)
     stage4 = [M6, M7]
     sink = Sink('Sink', stage4, collect_parts = True)
 
     system = System([maintainer, source, B1, B2, B3, M1, M2, M3, M4, M5, M6, M7,
-                     phd1, phd2, phd3, sink], DataStorageType.MEMORY)
+                     sink], DataStorageType.MEMORY)
     random.seed(3)  # Setting seed ensures same results every run.
     system.simulate(simulation_time = 2000)
 

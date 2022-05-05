@@ -57,10 +57,11 @@ class BufferTestCase(TestCase):
                                          EventType.PASS_PART)
 
         buffer._pass_part_downstream()
+        self.assertEqual(buffer.waiting_for_part_start_time, 8)
         self.downstream.give_part.assert_called_once_with(part)
         self.assertEqual(buffer.level(), 0)
 
-    def test_give_pass_many_parts(self):
+    def test_give_many_parts(self):
         buffer = Buffer('name', self.upstream, 1, 4)
         buffer.initialize(self.env)
         buffer._add_downstream(self.downstream)

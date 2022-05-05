@@ -56,6 +56,7 @@ class Sink(Machine):
     def _finish_processing_part(self):
         super()._finish_processing_part()
         self._output = None
+        self.notify_upstream_of_available_space()
 
     def _schedule_pass_part_downstream(self):
         pass  # Sink does not pass parts anywhere.

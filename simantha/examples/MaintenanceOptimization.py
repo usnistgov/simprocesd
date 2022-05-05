@@ -8,11 +8,11 @@ min_acceptable_quality and higher are considered good/acceptable.
 '''
 import random
 import statistics
+import sys
 from matplotlib import pyplot
 
 from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Maintainer, PartHandlingDevice, \
-    FlowOrder, Part
+from ..model.factory_floor import Source, Machine, Sink, Maintainer, Part
 from ..utils import DataStorageType
 from .status_tracker_with_damage import StatusTrackerWithDamage
 
@@ -30,7 +30,12 @@ simulation_time = 60 * 12 * 7
 iterations = 10
 
 
-def main():
+def main(is_test = False):
+    global iterations
+    if is_test:
+        # Reduce example runtime.
+        iterations = 1
+
     random.seed(1)
     # Damage thresholds to test and plot.
     thresholds = [x * d_magnitude for x in range(1, round((d_fail / d_magnitude)) + 1)]
@@ -79,7 +84,9 @@ def main():
     g2.plot(thresholds, quality_good_parts, lw = 3, color = 'g', marker = 'o',
             label = f'quality >= {min_acceptable_quality}')
     g2.legend()
-    pyplot.show()
+
+    if not is_test:
+        pyplot.show()
 
 
 def generate_machine(name, upstream, damage_threshold, maintainer):
@@ -114,12 +121,11 @@ def run_experiment(damage_threshold):
     maintainer = Maintainer(capacity = maintainer_capacity)
 
     source = Source('Source', Part(quality = 1), 1)
-    phd = PartHandlingDevice(upstream = [source], flow_order = FlowOrder.ROUND_ROBIN)
-    M1 = generate_machine('M1', [phd], damage_threshold, maintainer)
-    M2 = generate_machine('M2', [phd], damage_threshold, maintainer)
-    M3 = generate_machine('M3', [phd], damage_threshold, maintainer)
-    M4 = generate_machine('M4', [phd], damage_threshold, maintainer)
-    M5 = generate_machine('M5', [phd], damage_threshold, maintainer)
+    M1 = generate_machine('M1', [source], damage_threshold, maintainer)
+    M2 = generate_machine('M2', [source], damage_threshold, maintainer)
+    M3 = generate_machine('M3', [source], damage_threshold, maintainer)
+    M4 = generate_machine('M4', [source], damage_threshold, maintainer)
+    M5 = generate_machine('M5', [source], damage_threshold, maintainer)
     all_machines = [M1, M2, M3, M4, M5]
     sink = Sink('Sink', all_machines, collect_parts = True)
 
@@ -130,4 +136,4 @@ def run_experiment(damage_threshold):
 
 
 if __name__ == '__main__':
-    main()
+    main(len(sys.argv) > 1 and sys.argv[1] == 'testing')
