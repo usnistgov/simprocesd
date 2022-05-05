@@ -12,12 +12,22 @@ class Part(Asset):
         self._counter = 0
         self.quality = quality
 
-        self.routing_history = []
+        self._routing_history = []
+
+    @property
+    def routing_history(self):
+        ''' Contains an ordered list of devices that the part passed
+        through. First entry is usually a Source.
+        NOTE: Devices may not be configured to add themselves to the
+        routing_history and would then not appear in any part's
+        routing_history.
+        '''
+        return self._routing_history
 
     def copy(self):
         ''' Creates and returns a new and unique Part with same
         attributes as this part.
-        New Part will not have the same id and routing_history will
+        New Part will not have the same id and new routing_history will
         start empty.
         '''
         self._counter += 1

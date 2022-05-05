@@ -71,7 +71,7 @@ class Source(Machine):
 
         self._output = self._sample_part.copy()
         self._output.initialize(self._env)
-        self._output.routing_history.append(self.name)
+        self._output.routing_history.append(self)
         self._schedule_pass_part_downstream()
 
     def _pass_part_downstream(self):

@@ -20,8 +20,8 @@ def main():
     M3 = Machine('M3', upstream = [M2, M5], cycle_time = 0.5)
     # Filters look on the routing history of the part to determine how
     # it got to M2, this determines which way the part is allowed to go.
-    F1 = Filter(lambda part: part.routing_history[-2] == M2.name, 'F1', [M3])
-    F2 = Filter(lambda part: part.routing_history[-2] == M5.name, 'F2', [M3])
+    F1 = Filter(lambda part: part.routing_history[-2] == M2, 'F1', [M3])
+    F2 = Filter(lambda part: part.routing_history[-2] == M5, 'F2', [M3])
     M6 = Machine('M6', upstream = [F2], cycle_time = 5)
     M4 = Machine('M4', upstream = [F1, M6], cycle_time = 2)
     machines = [M1, M2, M3, M4, M5, M6]

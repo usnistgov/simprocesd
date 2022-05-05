@@ -137,7 +137,7 @@ class MachineBase(Asset):
             return False
 
         self._part = part
-        self._part.routing_history.append(self.name)
+        self._part.routing_history.append(self)
         self._set_waiting_for_part(False)
         self._on_received_new_part()
         return True

@@ -73,7 +73,7 @@ def main():
     collected_part_data = []
     unique_paths = []
     for part in sink.collected_parts:
-        routing_path = [m for m in part.routing_history if m in unique_machine_names]
+        routing_path = [m.name for m in part.routing_history if m.name in unique_machine_names]
         if routing_path not in unique_paths:
             unique_paths.append(routing_path)
         path_index = unique_paths.index(routing_path)

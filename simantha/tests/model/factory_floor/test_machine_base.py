@@ -95,7 +95,7 @@ class MachineBaseTestCase(TestCase):
         machine.initialize(self.env)
         # MachineBase can only hold 1 part at a time.
         self.assertTrue(machine.give_part(part1))
-        self.assertEqual(part1.routing_history, [machine.name])
+        self.assertEqual(part1.routing_history, [machine])
         self.assertFalse(machine.give_part(part2))
         self.assertEqual(part2.routing_history, [])
 

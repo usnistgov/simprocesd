@@ -59,7 +59,7 @@ class SinkTestCase(TestCase):
         self.assertTrue(sink.give_part(part))
         self.assert_last_scheduled_event(3 + 4, sink.id, sink._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
-        self.assertEqual(part.routing_history, [sink.name])
+        self.assertEqual(part.routing_history, [sink])
         upstream[0].space_available_downstream.assert_not_called()
         self.assertEqual(sink.value, 2.5)
         self.assertEqual(sink.received_parts_count, 1)

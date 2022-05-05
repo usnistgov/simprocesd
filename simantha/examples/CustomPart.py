@@ -40,7 +40,7 @@ def main():
     print('\nAverage final quality of the parts that passed through each machine:')
     for machine in [M1, M2, M3]:
         machine_parts = [
-            part for part in sink.collected_parts if machine.name in part.routing_history
+            part for part in sink.collected_parts if machine in part.routing_history
         ]
         average_quality = (
             sum([part.quality for part in machine_parts]) / len(machine_parts)
