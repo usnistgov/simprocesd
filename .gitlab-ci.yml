@@ -1,3 +1,5 @@
+# This file contains GitLab configurations for the project.
+
 run_unit_tests:
     script:
         - python -m unittest
@@ -5,10 +7,11 @@ run_unit_tests:
 run_examples:
     script:
         - |
-           for f in simantha/examples/*.py
-             do g="${f##*/}"
-             h="${g%.*}"
-             if [[ $h = [A-Z]* ]]
+           for f in simantha/examples/*.py    # List all example.
+             do g="${f##*/}"                  # Remove last / and everything before.
+             h="${g%.*}"                      # Remove file extension.
+             if [[ $h = [A-Z]* ]]             # Check if name starts with a capital letter.
+               # Run example with 'testing' flag. If test exits with non-zero value then raise an error.
                then python -m simantha.examples.$h testing || exit 1
              fi
            done
