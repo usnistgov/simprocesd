@@ -1,11 +1,11 @@
-''' Expected parts produced: around 7000
+''' Expected parts produced: around 6500-7000
 '''
 import random
 
-from simantha.examples import StatusTrackerWithFaults
-from simantha.model import System
-from simantha.model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
-from simantha.utils import geometric_distribution_sample
+from simprocesd.examples import StatusTrackerWithFaults
+from simprocesd.model import System
+from simprocesd.model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
+from simprocesd.utils import geometric_distribution_sample
 
 
 def main():

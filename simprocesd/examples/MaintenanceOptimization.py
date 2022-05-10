@@ -12,10 +12,10 @@ import sys
 
 from matplotlib import pyplot
 
-from simantha.examples import StatusTrackerWithDamage
-from simantha.model import System
-from simantha.model.factory_floor import Source, Machine, Sink, Maintainer, Part
-from simantha.utils import DataStorageType
+from simprocesd.examples import StatusTrackerWithDamage
+from simprocesd.model import System
+from simprocesd.model.factory_floor import Source, Machine, Sink, Maintainer, Part
+from simprocesd.utils import DataStorageType
 
 # Setup parameters
 capacity_to_repair = 1
@@ -36,9 +36,8 @@ damage_threshold = 0
 def main(is_test = False):
     global iterations, damage_threshold
     if is_test:
-        # Reduce example runtime.
+        # Reduce example runtime during testing.
         iterations = 1
-    random.seed(1)
 
     system = System(DataStorageType.MEMORY)
     # Setup the experiment.

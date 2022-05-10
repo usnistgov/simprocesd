@@ -3,12 +3,12 @@ also shows how one machine can be used in multiple places of the
 process flow.
 See image various_flows_diagram.jpg for a visual representation  of the
 setup. Top diagram in the image shows M2 in 2 locations while the bottom
-diagram shows the actual Simantha setup to represent it.
+diagram shows the actual Sim-PROCESD setup to represent it.
 '''
 
-from simantha.model import System
-from simantha.model.factory_floor import Source, Machine, Sink, Filter
-from simantha.utils import DataStorageType, print_produced_parts_and_average_quality
+from simprocesd.model import System
+from simprocesd.model.factory_floor import Source, Machine, Sink, Filter
+from simprocesd.utils import DataStorageType, print_produced_parts_and_average_quality
 
 
 def main():

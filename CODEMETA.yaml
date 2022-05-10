@@ -1,0 +1,12 @@
+# Full list of categories and themes can be found at https://github.com/usnistgov/opensource-repo/blob/main/CODEMETA.yaml
+
+---
+categories:
+  # - ai-ml
+  - simulation
+
+themes:
+  - Manufacturing
+      - Factory operations planning and control
+      - Manufacturing systems design and analysis
+      - Process improvement

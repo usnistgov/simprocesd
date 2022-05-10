@@ -5,6 +5,8 @@
 validation/
 logs/
 simenv/
+dist/
+*.egg-info/
 
 setup.py
 

@@ -31,7 +31,8 @@ class EventType(IntEnum):
 
 
 class Event:
-    ''' Simulation event class. Works together with the Environment class.
+    ''' Simulation event class. Works together with the Environment
+    class.
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = ''):
@@ -84,10 +85,8 @@ class Event:
 
 class Environment:
     '''
-    The main simulation environment for Simantha. This is designed to be an environment
-    specifically for use with Simantha objects and is not intended to be a general
-    simulation engine. In general, users of Simantha should not need to instantiate an
-    Environment object.
+    The main simulation environment for Sim-PROCESD. By default,
+    Environment objects are instantiated automatically by the System.
     '''
 
     def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE):

@@ -5,11 +5,11 @@ the parts those machines produce. Simulation data is then reviewed.
 import random
 import sys
 
-from simantha.examples import StatusTrackerWithDamage
-from simantha.model import System
-from simantha.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
-from simantha.model.sensors import PeriodicSensor, Probe
-from simantha.utils import DataStorageType, geometric_distribution_sample, plot_throughput, \
+from simprocesd.examples import StatusTrackerWithDamage
+from simprocesd.model import System
+from simprocesd.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
+from simprocesd.model.sensors import PeriodicSensor, Probe
+from simprocesd.utils import DataStorageType, geometric_distribution_sample, plot_throughput, \
     plot_damage, plot_value, print_produced_parts_and_average_quality, simple_plot
 
 

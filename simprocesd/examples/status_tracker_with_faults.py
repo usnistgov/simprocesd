@@ -1,9 +1,9 @@
 import random
 
-from simantha.model.cms.cms import Cms
-from simantha.model.factory_floor import MachineStatusTracker
-from simantha.model.simulation import EventType
-from simantha.utils import assert_callable
+from simprocesd.model.cms.cms import Cms
+from simprocesd.model.factory_floor import MachineStatusTracker
+from simprocesd.model.simulation import EventType
+from simprocesd.utils import assert_callable
 
 
 class StatusTrackerWithFaults(MachineStatusTracker):

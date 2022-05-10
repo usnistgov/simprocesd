@@ -1,7 +1,7 @@
 ''' Expected parts produced: 10074
 '''
-from simantha.model import System
-from simantha.model.factory_floor import Source, Machine, Sink
+from simprocesd.model import System
+from simprocesd.model.factory_floor import Source, Machine, Sink
 
 
 def main():

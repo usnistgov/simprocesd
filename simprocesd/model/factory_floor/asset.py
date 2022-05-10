@@ -54,6 +54,10 @@ class Asset:
     def value(self):
         return self._value
 
+    @property
+    def env(self):
+        return self._env
+
     def add_value(self, label, value):
         ''' Add to the value of the asset and record the change in
         value_history - (label, time, value).

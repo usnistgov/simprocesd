@@ -26,7 +26,7 @@ class SystemTestCase(TestCase):
 
     def test_initialize(self):
         sys = System(DataStorageType.MEMORY)
-        assets = [Asset()]
+        assets = [Asset()]  # Adds to System automatically.
 
         self.assertEqual(sys._assets, assets)
         self.assertEqual(sys._env._simulation_data_storage_type, DataStorageType.MEMORY)
@@ -51,7 +51,7 @@ class SystemTestCase(TestCase):
         self.env_mock.run.assert_called_once_with(1, trace = False)
         # Net received parts does not change so it is 0.
         self.assertEqual(stdout_mock.getvalue(),
-                         'Simulation finished in 1.00s\nParts received by sink/s: 0\n')
+                'Simulation finished in 1.00s\nParts received by sink/s: 0\n')
 
     @patch('sys.stdout', new_callable = StringIO)
     def test_simulate_no_print(self, stdout_mock):
