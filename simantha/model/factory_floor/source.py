@@ -30,6 +30,14 @@ class Source(Machine):
         self._cost_of_produced_parts = 0
         self._produced_parts = 0
 
+    def initialize(self, env):
+        super().initialize(env)
+        self._sample_part.initialize(env)
+        self._cost_of_produced_parts = 0
+        self._produced_parts = 0
+
+        self._schedule_prepare_next_part()
+
     @property
     def upstream(self):
         return self._upstream
@@ -52,10 +60,6 @@ class Source(Machine):
         this Source and passed downstream.
         '''
         return self._produced_parts
-
-    def initialize(self, env):
-        super().initialize(env)
-        self._schedule_prepare_next_part()
 
     def _schedule_prepare_next_part(self):
         self._env.schedule_event(

@@ -11,7 +11,7 @@ class BufferTestCase(TestCase):
 
     def setUp(self):
         self.env = MagicMock(spec = Environment)
-        self.env.now = 3
+        self.env.now = 0
         self.upstream = [mock_wrap(Machine()), mock_wrap(Machine())]
         for u in self.upstream:
             u.initialize(self.env)
@@ -28,9 +28,24 @@ class BufferTestCase(TestCase):
         if message != None:
             self.assertEqual(args[4], message)
 
-    def test_init(self):
+    def test_initialize(self):
         buffer = Buffer('name', self.upstream, 5, 10, 20)
+        buffer.initialize(self.env)
         self.assertEqual(buffer.name, 'name')
+        self.assertEqual(buffer.upstream, self.upstream)
+        self.assertEqual(buffer.value, 20)
+        self.assertEqual(buffer.level(), 0)
+
+    def test_re_initialize(self):
+        buffer = Buffer('name', self.upstream, 5, 10, 20)
+        buffer.initialize(self.env)
+
+        buffer.give_part(Part())
+        buffer.add_cost('', 3)
+        self.assertEqual(buffer.level(), 1)
+        self.assertEqual(buffer.value, 20 - 3)
+
+        buffer.initialize(self.env)
         self.assertEqual(buffer.upstream, self.upstream)
         self.assertEqual(buffer.value, 20)
         self.assertEqual(buffer.level(), 0)
@@ -46,7 +61,7 @@ class BufferTestCase(TestCase):
         self.assertTrue(buffer.give_part(part))
         self.assertEqual(buffer.level(), 1)
         self.assertEqual(buffer.waiting_for_part_start_time, None)
-        self.assert_last_scheduled_event(3 + 5, buffer.id, buffer._finish_processing_part,
+        self.assert_last_scheduled_event(5, buffer.id, buffer._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
         self.env.now = 8

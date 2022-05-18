@@ -60,10 +60,10 @@ def main():
     cms = CustomCms(maintainer, name = 'CMS')
 
     p1 = AttributeProbe('damage', status1)
-    sensor1 = PeriodicSensor(M1, 1, [p1], name = 'M1 Sensor')
+    sensor1 = PeriodicSensor(1, [p1], name = 'M1 Sensor')
     cms.add_sensor(sensor1)
     p2 = AttributeProbe('damage', status2)
-    sensor2 = PeriodicSensor(M2, 1, [p2], name = 'M2 Sensor')
+    sensor2 = PeriodicSensor(1, [p2], name = 'M2 Sensor')
     cms.add_sensor(sensor2)
 
     system = System([source, M1, B1, M2, sink, cms], DataStorageType.MEMORY)

@@ -29,24 +29,39 @@ simulation_time = 60 * 12 * 7
 # Iterations per threshold.
 iterations = 10
 
+damage_threshold = 0
+
 
 def main(is_test = False):
-    global iterations
+    global iterations, damage_threshold
     if is_test:
         # Reduce example runtime.
         iterations = 1
-
     random.seed(1)
+
+    # Setup the experiment.
+    maintainer = Maintainer(capacity = maintainer_capacity)
+    source = Source('Source', Part(quality = 1), 1)
+    M1 = generate_machine('M1', [source], maintainer)
+    M2 = generate_machine('M2', [source], maintainer)
+    M3 = generate_machine('M3', [source], maintainer)
+    M4 = generate_machine('M4', [source], maintainer)
+    M5 = generate_machine('M5', [source], maintainer)
+    all_machines = [M1, M2, M3, M4, M5]
+    sink = Sink('Sink', all_machines, collect_parts = True)
+    system = System(all_machines + [source, sink, maintainer], DataStorageType.MEMORY)
+
+    print('Running simulations...')
+    results = []
     # Damage thresholds to test and plot.
     thresholds = [x * d_magnitude for x in range(1, round((d_fail / d_magnitude)) + 1)]
-    print(f'Simulating {len(thresholds)} configuartion/s: ', end = '')
-    results = []
-    for damage_threshold in thresholds:
-        print('.', end = '')
+    for current_threshold in thresholds:
+        damage_threshold = current_threshold
         results.append([])
         for i in range(iterations):
-            results[-1].append(run_experiment(damage_threshold))
-    print('\n')
+            system.simulate(simulation_time = simulation_time, print_summary = False)
+            results[-1].append([x.quality for x in sink.collected_parts])
+            system.simulate(simulation_time = 0, print_summary = False, reset = True)
 
     # Prepare data for graphing.
     all_parts_per_dt = []
@@ -86,10 +101,13 @@ def main(is_test = False):
     g2.legend()
 
     if not is_test:
+        print('Showing graphs in a separate window.')
         pyplot.show()
+    else:
+        print('Simulation finished')
 
 
-def generate_machine(name, upstream, damage_threshold, maintainer):
+def generate_machine(name, upstream, maintainer):
     ''' Create and configure a part processing machine for this
     experiment.
     '''
@@ -113,26 +131,6 @@ def generate_machine(name, upstream, damage_threshold, maintainer):
     new_machine.add_finish_processing_callback(finish_processing)
     st.add_on_degrade_callback(on_status_degrade)
     return new_machine
-
-
-def run_experiment(damage_threshold):
-    ''' Returns a list of every produced part's quality in the Sink.
-    '''
-    maintainer = Maintainer(capacity = maintainer_capacity)
-
-    source = Source('Source', Part(quality = 1), 1)
-    M1 = generate_machine('M1', [source], damage_threshold, maintainer)
-    M2 = generate_machine('M2', [source], damage_threshold, maintainer)
-    M3 = generate_machine('M3', [source], damage_threshold, maintainer)
-    M4 = generate_machine('M4', [source], damage_threshold, maintainer)
-    M5 = generate_machine('M5', [source], damage_threshold, maintainer)
-    all_machines = [M1, M2, M3, M4, M5]
-    sink = Sink('Sink', all_machines, collect_parts = True)
-
-    system = System(all_machines + [source, sink, maintainer], DataStorageType.MEMORY)
-    system.simulate(simulation_time = simulation_time, print_summary = False)
-
-    return [x.quality for x in sink.collected_parts]
 
 
 if __name__ == '__main__':

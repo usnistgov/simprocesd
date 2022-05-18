@@ -19,23 +19,31 @@ class AttributeProbe(Probe):
     def __init__(self, attribute_name, target):
         assert_is_instance(attribute_name, str)
         self._attribute_name = attribute_name
-        super().__init__(lambda t: getattr(t, self._attribute_name, None),
-                         target)
+        super().__init__(lambda t: getattr(t, self._attribute_name, None), target)
 
 
 class Sensor(Asset):
+    ''' Sensor uses provided probes to collect data and store it under
+    the data attribute. data attribute is a dictionary of lists filled
+    with probe data and the dictionary is indexed by probe.
+
+    Arguments:
+    probes -- list of probes to use.
+    name -- name of the sensor.
+    data_capacity -- number of most recent entries to store. Helps limit
+        sensor's memory usage for very long simulation.
+    value -- value of the sensor.
+
+    '''
 
     def __init__(self,
-                 target,
                  probes,
                  name = None,
-                 data_capacity = 10000,
+                 data_capacity = float('inf'),
                  value = 0):
         super().__init__(name, value)
 
-        assert target != None, 'Target cannot be None.'
-        self._target = target
-        self.data = {}
+        assert data_capacity >= 1, 'Data capacity cannot be less than 1.'
         self._data_capacity = data_capacity
         self._on_sense = []
         self._last_sense = []
@@ -44,11 +52,23 @@ class Sensor(Asset):
         assert len(probes) > 0, 'No probes were specified.'
         self._probes = probes
 
+        self.data = {}
+        for p in self._probes:
+            self.data[p] = []
+
+    def initialize(self, env):
+        super().initialize(env)
+
+        self._last_sense = []
+
+        self.data = {}
         for p in self._probes:
             self.data[p] = []
 
     def add_on_sense_callback(self, callback):
         ''' callback(target_machine, time, sense_data)
+
+        Arguments:
         time -- current simulation time.
         sense_data -- list of probe data [probe1_data, probe2_data,...]
         '''
@@ -83,20 +103,19 @@ class Sensor(Asset):
 class PeriodicSensor(Sensor):
 
     def __init__(self,
-                 target,
                  interval,
                  probes,
                  name = None,
                  data_capacity = 10000,
                  value = 0
                  ):
-        super().__init__(target, probes, name, data_capacity, value)
+        super().__init__(probes, name, data_capacity, value)
 
-        self.data['time'] = []
         self._interval = interval
 
     def initialize(self, env):
         super().initialize(env)
+        self.data['time'] = []
         self._periodic_sense()
 
     def _periodic_sense(self):
@@ -110,5 +129,5 @@ class PeriodicSensor(Sensor):
             self.id,
             self._periodic_sense,
             EventType.SENSOR,
-            f'{self._target.name}'
+            f'Periodic sense by {self.name}'
         )

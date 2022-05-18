@@ -95,7 +95,15 @@ class Environment:
         self._simulation_data_storage_type = simulation_data_storage_type
         if self._simulation_data_storage_type == DataStorageType.FILE:
             raise NotImplementedError('Storing to file/disk is not supported yet.')
+        self.reset()
 
+    def reset(self):
+        ''' Reset the Environment to its initial state. This will clear
+        out all scheduled and paused events and make a new
+        simulation_data table.
+        Reference to the previous simulation_data table can be saved
+        before calling reset to preserve the data.
+        '''
         self.now = 0
         self.simulation_data = {}
         self._events = []
@@ -109,21 +117,19 @@ class Environment:
         ''' Simulate the system for a limited duration.
 
         Arguments:
-        simulation_time -- How long to simulate for. Time is measured
-            in simulation's time rather than real time.
-        trace -- if true then each event is recorded and at the end
-            exported to {self.name)_trace.json in Downloads.
-
-        Raises RuntimeError if called more than once.
+        simulation_time -- for how long to run the simulation measured
+            in simulation time.
+        trace -- if True then events will be recorded and exported to
+            a file. Otherwise (default) trace is not recorded.
         '''
-        if self._terminated:
-            raise RuntimeError('Cannot run simulation more than once on the same environment.')
         self._trace = trace
-        self.schedule_event(simulation_time, -1, self._terminate, EventType.TERMINATE)
+
+        self.schedule_event(self.now + simulation_time, -1, self._terminate, EventType.TERMINATE)
 
         try:
             while self._events and not self._terminated:
                 self.step()
+            self._terminated = False
         finally:
             if self._trace:
                 self._export_trace()

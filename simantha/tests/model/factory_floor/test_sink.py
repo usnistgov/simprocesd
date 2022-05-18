@@ -11,7 +11,7 @@ class SinkTestCase(TestCase):
 
     def setUp(self):
         self.env = MagicMock(spec = Environment)
-        self.env.now = 3
+        self.env.now = 0
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
         args, kwargs = self.env.schedule_event.call_args_list[-1]
@@ -23,9 +23,10 @@ class SinkTestCase(TestCase):
         if message != None:
             self.assertEqual(args[4], message)
 
-    def test_init(self):
+    def test_initialize(self):
         upstream = [Machine()]
         sink = Sink('name', upstream, 4, True)
+        sink.initialize(self.env)
         self.assertEqual(sink.name, 'name')
         self.assertEqual(sink.upstream, upstream)
         self.assertEqual(sink.value, 0)
@@ -33,6 +34,24 @@ class SinkTestCase(TestCase):
         self.assertEqual(sink.value_of_received_parts, 0)
         self.assertEqual(sink.collected_parts, [])
         self.assertEqual(sink.waiting_for_part_start_time, 0)
+
+    def test_re_initialize(self):
+        upstream = [Machine()]
+        sink = Sink('name', upstream, 4, True)
+        sink.initialize(self.env)
+
+        part = Part(value = 10)
+        sink.give_part(part)
+        self.assertEqual(sink.value, 10)
+        self.assertEqual(sink.received_parts_count, 1)
+        self.assertEqual(sink.value_of_received_parts, 10)
+        self.assertEqual(sink.collected_parts, [part])
+
+        sink.initialize(self.env)
+        self.assertEqual(sink.value, 0)
+        self.assertEqual(sink.received_parts_count, 0)
+        self.assertEqual(sink.value_of_received_parts, 0)
+        self.assertEqual(sink.collected_parts, [])
 
     def test_add_downstream(self):
         sink = Sink()
@@ -57,7 +76,7 @@ class SinkTestCase(TestCase):
         sink.initialize(self.env)
 
         self.assertTrue(sink.give_part(part))
-        self.assert_last_scheduled_event(3 + 4, sink.id, sink._finish_processing_part,
+        self.assert_last_scheduled_event(4, sink.id, sink._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
         self.assertEqual(part.routing_history, [sink])
         upstream[0].space_available_downstream.assert_not_called()
@@ -69,6 +88,7 @@ class SinkTestCase(TestCase):
         # Second part should not be accepted yet.
         self.assertFalse(sink.give_part(Part()))
 
+        self.env.now = 3
         sink._finish_processing_part()
         upstream[0].space_available_downstream.assert_called_once()
         self.assertEqual(sink.waiting_for_part_start_time, 3)

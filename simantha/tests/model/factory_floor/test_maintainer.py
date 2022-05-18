@@ -31,25 +31,23 @@ class MaintainerTestCase(TestCase):
         if message != None:
             self.assertEqual(args[4], message)
 
-    def test_init(self):
-        mt = Maintainer('m', 7, (100, 5000), -20000)
+    def test_initialize(self):
+        mt = Maintainer('m', 7, -20000)
+        mt.initialize(self.env)
         self.assertEqual(mt.name, 'm')
         self.assertEqual(mt.total_capacity, 7)
         self.assertEqual(mt.available_capacity, 7)
         self.assertEqual(mt.value, -20000)
 
-    def test_periodic_cost(self):
-        mt = Maintainer('m', 7, (100, 5000), -20000)
+    def test_re_initialize(self):
+        mt = Maintainer('m', 7, -20000)
         mt.initialize(self.env)
-        self.assertEqual(mt.value, -20000 - 100)
-        self.assert_last_scheduled_event(self.env.now + 5000, mt.id, mt._add_periodic_cost,
-            EventType.OTHER_HIGH)
+        self.assertTrue(mt.request_maintenance(self.machines[0], 'tag'))
 
-        self.env.now += 5000
-        mt._add_periodic_cost()
-        self.assertEqual(mt.value, -20000 - 200)
-        self.assert_last_scheduled_event(self.env.now + 5000, mt.id, mt._add_periodic_cost,
-            EventType.OTHER_HIGH)
+        self.assertEqual(mt.available_capacity, 7 - 1)
+        mt.initialize(self.env)
+        self.assertEqual(mt.available_capacity, 7)
+        self.assertEqual(mt._request_queue, [])
 
     def test_request_lifecycle(self):
         mt = Maintainer(capacity = 5)

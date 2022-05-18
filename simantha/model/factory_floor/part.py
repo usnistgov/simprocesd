@@ -4,15 +4,25 @@ from .asset import Asset
 class Part(Asset):
     ''' Basic part with attributes to be passed between machines in the
     simulation.
+
+    Arguments:
+    name -- name of the part.
+    value -- starting value of the part.
+    quality -- starting quality of the part.
     '''
 
     def __init__(self, name = None, value = 0.0, quality = 1.0):
         super().__init__(name, value)
 
         self._counter = 0
-        self.quality = quality
-
+        self.quality = self._initial_quality = quality
         self._routing_history = []
+
+    def initialize(self, env):
+        super().initialize(env)
+        self.quality = self._initial_quality
+        self._routing_history = []
+        self._counter = 0
 
     @property
     def routing_history(self):

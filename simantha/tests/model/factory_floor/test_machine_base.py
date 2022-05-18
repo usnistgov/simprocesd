@@ -29,12 +29,33 @@ class MachineBaseTestCase(TestCase):
 
     def test_initialize(self):
         machine = MachineBase('mb', self.upstream, 10)
+        machine.initialize(self.env)
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 10)
         self.assertEqual(machine.upstream, self.upstream)
         self.assertEqual(machine.downstream, [])
         self.assertTrue(machine.is_operational)
         self.assertEqual(machine.waiting_for_part_start_time, 0)
+
+    def test_re_initialize(self):
+        machine = MachineBase('mb', self.upstream, 10)
+        machine.initialize(self.env)
+
+        for i in range(5):
+            part = Part()
+            machine.give_part(part)
+            machine.add_value('', 3)
+            machine.upstream = []
+            self.assertEqual(machine._output, part)
+            self.assertEqual(machine.value, 10 + 3)
+            self.assertEqual(machine.upstream, [])
+            self.assertEqual(machine.waiting_for_part_start_time, None)
+
+            machine.initialize(self.env)
+            self.assertEqual(machine._output, None)
+            self.assertEqual(machine.value, 10)
+            self.assertEqual(machine.upstream, self.upstream)
+            self.assertEqual(machine.waiting_for_part_start_time, 0)
 
     def test_set_upstream(self):
         machine = MachineBase(upstream = self.upstream)

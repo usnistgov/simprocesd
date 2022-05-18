@@ -11,7 +11,7 @@ class SourceTestCase(TestCase):
 
     def setUp(self):
         self.env = MagicMock(spec = Environment)
-        self.env.now = 2
+        self.env.now = 0
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
         args, kwargs = self.env.schedule_event.call_args_list[-1]
@@ -34,16 +34,39 @@ class SourceTestCase(TestCase):
     def test_initialize(self):
         source = Source(time_to_produce_part = 6, sample_part = Part(value = 5))
         source.initialize(self.env)
-        self.assert_last_scheduled_event(2 + 6, source.id, source._prepare_next_part,
+        self.assert_last_scheduled_event(6, source.id, source._prepare_next_part,
                                          EventType.FINISH_PROCESSING)
 
+        self.env.now = 6
         source._prepare_next_part()
-        # Parts aren't counted until they are passed downstream.
         self.assertEqual(source.value, 0)
         self.assertEqual(source.produced_parts, 0)
         self.assertEqual(source.cost_of_produced_parts, 0)
-        self.assert_last_scheduled_event(2, source.id, source._pass_part_downstream,
+        self.assert_last_scheduled_event(6, source.id, source._pass_part_downstream,
                                          EventType.PASS_PART)
+
+    def test_re_initialize(self):
+        source = Source('name', Part(value = 5), 0, 15)
+        downstream = MagicMock(spec = Machine)
+        downstream.give_part.return_value = True
+        source._add_downstream(downstream)
+        source.initialize(self.env)
+
+        source._prepare_next_part()
+        source._pass_part_downstream()
+        self.assertEqual(source.value, -5)
+        self.assertEqual(source.produced_parts, 1)
+        self.assertEqual(source.cost_of_produced_parts, 5)
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 3)
+
+        source.initialize(self.env)
+        self.assertEqual(source.value, 0)
+        self.assertEqual(source.produced_parts, 0)
+        self.assertEqual(source.cost_of_produced_parts, 0)
+        # One new scheduled event due to initialize.
+        self.assertEqual(len(self.env.schedule_event.call_args_list), 3 + 1)
+        self.assert_last_scheduled_event(0, source.id, source._prepare_next_part,
+                                         EventType.FINISH_PROCESSING)
 
     def test_upstream(self):
         # Source is not allowed to have upstream machines.

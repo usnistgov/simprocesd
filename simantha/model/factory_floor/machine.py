@@ -12,6 +12,7 @@ class Machine(MachineBase):
     cycle_time -- how long it takes to complete one process cycle.
     status_tracker -- optional object for tracking operational status of
         the machine.
+    value -- starting value of the machine.
 
     If machine fails with a part that hasn't been fully processed then
     the part is lost. Lost part can be captured by using
@@ -33,7 +34,7 @@ class Machine(MachineBase):
             assert_is_instance(status_tracker, MachineStatusTracker)
         self.status_tracker = status_tracker
 
-        self.cycle_time = cycle_time
+        self.cycle_time = self._initial_cycle_time = cycle_time
 
         self._is_part_processed = False
         self._is_shut_down = False
@@ -61,6 +62,9 @@ class Machine(MachineBase):
     def initialize(self, env):
         super().initialize(env)
         self.status_tracker.initialize(self, env)
+        self.cycle_time = self._initial_cycle_time
+        self._is_part_processed = False
+        self._is_shut_down = False
 
     def _on_received_new_part(self):
         self._env.add_datapoint('received_parts', self.name, (self._env.now, self._part.quality))
@@ -172,7 +176,7 @@ class Machine(MachineBase):
 
 
 class MachineStatusTracker:
-    ''' Base class for representing the status of the machine
+    ''' Base class for representing the status of the machine.
     '''
 
     def __init__(self):
@@ -190,10 +194,11 @@ class MachineStatusTracker:
         self._env = env
 
     def maintain(self, maintenance_tag):
-        ''' Perform maintenance.
+        ''' Perform maintenance. Called by Maintainer when it performs
+        maintenance on the associated Machine.
 
         Arguments:
-        maintenance_tag -- maintenance identifier.
+        maintenance_tag -- maintenance identifier. Supports any type.
         '''
         pass
 
@@ -201,7 +206,7 @@ class MachineStatusTracker:
         ''' Return how long it will take to perform the maintenance.
 
         Arguments:
-        maintenance_tag -- maintenance identifier.
+        maintenance_tag -- maintenance identifier. Supports any type.
         '''
         return 0
 
@@ -210,7 +215,7 @@ class MachineStatusTracker:
         the maintenance.
 
         Arguments:
-        maintenance_tag -- maintenance identifier.
+        maintenance_tag -- maintenance identifier. Supports any type.
         '''
         return 0
 
