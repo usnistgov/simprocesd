@@ -22,14 +22,10 @@ class Maintainer(Asset):
     name -- name of the maintainer.
     capacity -- capacity of the maintainer. Units need to be consistent
         with MachineStatusTracker.get_capacity_to_maintain.
-    cost_per_period -- (cost, period) set if the maintainer has a
-        periodic cost. Maintainer will incur the cost at the beginning
-        of every period.
-    value -- initial value/cost of the maintainer.
+    value -- starting value/cost of the maintainer.
     '''
 
-    def __init__(self, name = 'maintainer', capacity = float('inf'), cost_per_period = (0, 0),
-                 value = 0):
+    def __init__(self, name = 'maintainer', capacity = float('inf'), value = 0):
         super().__init__(name, value)
 
         self._capacity = capacity
@@ -37,9 +33,6 @@ class Maintainer(Asset):
         self._env = None
         self._request_queue = []
         self._active_requests = []
-        assert cost_per_period[0] == 0 or cost_per_period[1] > 0, \
-                'Period cannot be 0 if cost is not 0.'
-        self._cost_per_period = cost_per_period
 
     @property
     def total_capacity(self):
@@ -55,15 +48,16 @@ class Maintainer(Asset):
 
     def initialize(self, env):
         super().initialize(env)
-        # Cost of 0 means there is no need to schedule a recurring cost.
-        if self._cost_per_period[0] != 0:
-            self._add_periodic_cost()
+        self._utilization = 0
+        self._request_queue = []
+        self._active_requests = []
 
     def request_maintenance(self, machine, maintenance_tag = None):
         ''' Enter maintenance request into the queue, see class
         description for more details on the queue.
-        Returns True if request was added to the queue and False if it
-        was rejected. Request will be rejected if the same request is
+
+        Returns: True if the request was added to the queue and False if
+        it was rejected. Request will be rejected if the same request is
         already in the queue or is already being worked.
 
         Arguments:
@@ -136,17 +130,4 @@ class Maintainer(Asset):
                                 (self._env.now, request.machine.name, request.maintenance_tag))
 
         self.try_working_requests()
-
-    def _add_periodic_cost(self):
-        self.add_cost('maintainer_periodic_expense', self._cost_per_period[0])
-        self._schedule_next_periodic_cost()
-
-    def _schedule_next_periodic_cost(self):
-        self._env.schedule_event(
-            self._env.now + self._cost_per_period[1],
-            self.id,
-            self._add_periodic_cost,
-            EventType.OTHER_HIGH,
-            f'{self.name} periodic cost.'
-        )
 

@@ -18,8 +18,10 @@ class StatusTrackerWithFaults(MachineStatusTracker):
         return self._active_faults
 
     def initialize(self, machine, env):
+        first_call = self._env == None
         super().initialize(machine, env)
-        self._machine.add_receive_part_callback(self._receive_part)
+        if first_call:
+            self._machine.add_receive_part_callback(self._receive_part)
 
         for n, f in self._possible_faults.items():
             f.initialize(self)
@@ -195,6 +197,10 @@ class RecurringMachineFault:
 
     def initialize(self, machine_status):
         self._machine_status = machine_status
+        self.scheduled_fault_time = None
+        self.remaining_time_to_fault = None
+        self.operations_since_last_fix = 0
+        self.operations_to_fault = None
 
 
 class CmsEmulator(Cms):

@@ -34,10 +34,20 @@ class AssetTestCase(TestCase):
         a.initialize(env)
         self.assertEqual(a._env, env)
 
-    def test_initialize_called_twice(self):
-        a = Asset()
-        a.initialize(Environment())
-        self.assertRaises(AssertionError, lambda: a.initialize(Environment()))
+    def test_re_initialize(self):
+        a = Asset(name = 'asset', value = 10)
+        id = a.id
+        env = Environment()
+        a.initialize(env)
+
+        a.add_cost('', 5)
+        self.assertEqual(a.name, 'asset')
+        self.assertEqual(a.value, 10 - 5)
+
+        a.initialize(env)
+        self.assertEqual(a.id, id)
+        self.assertEqual(a.name, 'asset')
+        self.assertEqual(a.value, 10)
 
     def test_add_value(self):
         a = Asset(value = 10)

@@ -42,7 +42,7 @@ def main(is_test = False):
     sink = Sink('sink', [M1, M2, M3])
     # Add a custom sensor to buffer with a single probe that measures buffer level.
     level_probe = Probe(lambda target: target.level(), buffer)
-    sensor = PeriodicSensor(buffer, 2.5, [level_probe])
+    sensor = PeriodicSensor(2.5, [level_probe])
 
     system = System([maintainer, source, buffer, M1, M2, M3, sink, sensor],
                     DataStorageType.MEMORY)

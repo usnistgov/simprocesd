@@ -23,14 +23,13 @@ ma_name = 'Misalignment'
 
 
 def main(is_test = False):
-    global operating_time_per_day
-    if is_test:
-        # Reduce example runtime.
-        operating_time_per_day = operating_time_per_day / 60
-
-    random.seed(1)
     # Working year; 5 days a week and 50 weeks a year.
     duration = operating_time_per_day * 5 * 50
+    if is_test:
+        # Reduce example runtime for test.
+        duration /= 100
+
+    random.seed(1)
 
     no_cms_net = sample(duration, False)
     print(f'Net value without CMS: ${no_cms_net}')
@@ -65,7 +64,7 @@ def sample(duration, with_cms):
     M1.add_finish_processing_callback(default_part_processing)
     M1.status_tracker.add_recurring_fault(
         name = dulling_name,
-        # Failure rate of 100 days.
+        # Failure rate of once in 100 days.
         get_time_to_fault = lambda: distributed_ttf(100),
         get_cost_to_fix = lambda: 100,
         get_false_alert_cost = lambda: 85,
@@ -74,7 +73,7 @@ def sample(duration, with_cms):
     )
     M1.status_tracker.add_recurring_fault(
         name = ma_name,
-        # Failure rate 99% per day.
+        # Failure rate of ~99% per day.
         get_time_to_fault = lambda: distributed_ttf(1.01),
         get_cost_to_fix = lambda: 75,
         get_false_alert_cost = lambda: 85,
@@ -97,7 +96,7 @@ def sample(duration, with_cms):
                                    0.001 if with_cms else 1,
                                    0.01 if with_cms else 0)
 
-    # target will be overwritten by OutputPartSensor
+    # Probe target will be overwritten by OutputPartSensor
     p1 = AttributeProbe('quality', None)
     p2 = Probe(lambda t: M1.status_tracker.active_faults, None)
     sensor = OutputPartSensor(M1, [p1, p2], name = 'M1 Sensor')

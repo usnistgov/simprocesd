@@ -23,6 +23,10 @@ class Buffer(Machine):
         self._capacity = capacity
         self._buffer = []
 
+    def initialize(self, env):
+        super().initialize(env)
+        self._buffer = []
+
     def level(self):
         ''' Return how many parts are currently held by the buffer.
         '''

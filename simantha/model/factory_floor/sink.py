@@ -27,6 +27,12 @@ class Sink(Machine):
         self._received_parts_count = 0
         self._value_of_received_parts = 0
 
+    def initialize(self, env):
+        super().initialize(env)
+        self.collected_parts = []
+        self._received_parts_count = 0
+        self._value_of_received_parts = 0
+
     def _add_downstream(self, downstream):
         raise RuntimeError('Sink cannot have any downstreams.')
 

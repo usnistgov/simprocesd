@@ -26,7 +26,25 @@ class MachineTestCase(TestCase):
     def test_initialize(self):
         status_tracker = MachineStatusTracker()
         machine = Machine('mb', self.upstream, 2, status_tracker, 15)
+        machine.initialize(self.env)
         self.assertEqual(machine.name, 'mb')
+        self.assertEqual(machine.value, 15)
+        self.assertEqual(machine.upstream, self.upstream)
+        self.assertEqual(machine.status_tracker, status_tracker)
+
+    def test_re_initialize(self):
+        status_tracker = MachineStatusTracker()
+        machine = Machine('mb', self.upstream, 2, status_tracker, 15)
+        machine.initialize(self.env)
+
+        part = Part()
+        machine.give_part(part)
+        machine.add_value('', 20)
+        self.assertEqual(machine._part, part)
+        self.assertEqual(machine.value, 15 + 20)
+
+        machine.initialize(self.env)
+        self.assertEqual(machine._part, None)
         self.assertEqual(machine.value, 15)
         self.assertEqual(machine.upstream, self.upstream)
         self.assertEqual(machine.status_tracker, status_tracker)

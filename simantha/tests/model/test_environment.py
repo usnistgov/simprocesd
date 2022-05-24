@@ -24,20 +24,21 @@ class EnvironmentTestCase(TestCase):
         add_side_effect_to_class_method(self, __name__ + '.Event.execute',
                                         Event.execute, self.execute_side_effect)
 
-    def schedule_events(self):
+    def schedule_events(self, time_offset = 0):
         ''' Schedules 4 events with self.env.
         '''
         # WARNING: changing parameters may break tests.
-        self.env.schedule_event(45, 0, MagicMock(), EventType.FAIL)
-        self.env.schedule_event(50, 1, MagicMock(), EventType.OTHER_LOW)
-        self.env.schedule_event(15, 2, MagicMock(), EventType.FAIL)
-        self.env.schedule_event(20, 2, MagicMock(), EventType.RESTORE)
-        self.env.schedule_event(50, 3, MagicMock(), EventType.FAIL)
+        self.env.schedule_event(45 + time_offset, 0, MagicMock(), EventType.FAIL)
+        self.env.schedule_event(50 + time_offset, 1, MagicMock(), EventType.OTHER_LOW)
+        self.env.schedule_event(15 + time_offset, 2, MagicMock(), EventType.FAIL)
+        self.env.schedule_event(20 + time_offset, 2, MagicMock(), EventType.RESTORE)
+        self.env.schedule_event(50 + time_offset, 3, MagicMock(), EventType.FAIL)
 
     def test_initialize(self):
         self.assertEqual(self.env.simulation_data, {})
         self.assertEqual(self.env.name, 'env')
         self.assertEqual(self.env.now, 0)
+        self.assertEqual(self.env._paused_events, [])
 
     def test_file_storage(self):
         self.assertRaises(NotImplementedError,
@@ -88,8 +89,32 @@ class EnvironmentTestCase(TestCase):
         # Ensure the execution order is correct, ignore terminate event.
         for i in range(len(self.execution_order) - 1):
             self.assertEqual(self.execution_order[i], events[i])
-        # Calling run more than once throws an error.
-        self.assertRaises(RuntimeError, lambda: self.env.run(10))
+
+    def test_continuing_simulation(self):
+        self.schedule_events()
+        # +1 because run() adds a terminate event
+        event_count = len(self.env._events) + 1
+        self.env.run(self.env._events[-1].time)
+        self.assertEqual(len(self.execution_order), event_count)
+
+        self.schedule_events(time_offset = self.env.now)
+        # +1 because run() adds a terminate event
+        event_count += len(self.env._events) + 1
+        self.env.run(self.env._events[-1].time)
+        self.assertEqual(len(self.execution_order), event_count)
+
+    def test_resetting_simulation(self):
+        self.schedule_events()
+        expected_finish_time = self.env._events[-1].time
+        self.env.run(self.env._events[-1].time)
+        self.assertEqual(self.env.now, expected_finish_time)
+
+        self.env.reset()
+        self.test_initialize()
+
+        self.schedule_events()
+        self.env.run(self.env._events[-1].time)
+        self.assertEqual(self.env.now, expected_finish_time)
 
     def test_event_scheduled_after_simulation_end(self):
         self.schedule_events()

@@ -9,7 +9,7 @@ class MachineBase(Asset):
     Arguments:
     name -- name of the machine.
     upstream -- machines that can pass parts to this one.
-    value -- value of the machine.
+    value -- starting value of the machine.
     '''
 
     def __init__(self, name = None, upstream = [], value = 0):
@@ -24,6 +24,19 @@ class MachineBase(Asset):
         self._env = None
 
         self.upstream = upstream
+
+    def initialize(self, env):
+        if self._env == None:
+            # Runs only the first time initialize is called.
+            self._initial_upstream = self.upstream
+        else:
+            self.upstream = self._initial_upstream
+
+        super().initialize(env)
+        self._part = None
+        self._output = None
+        self._waiting_for_space_availability = False
+        self._waiting_for_part_since = self._env.now
 
     def is_operational(self):
         ''' Returns True is the machine can perform its part handling
@@ -137,7 +150,7 @@ class MachineBase(Asset):
             return False
 
         self._part = part
-        self._part.routing_history.append(self.name)
+        self._part.routing_history.append(self)
         self._set_waiting_for_part(False)
         self._on_received_new_part()
         return True
