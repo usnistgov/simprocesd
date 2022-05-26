@@ -5,13 +5,13 @@ from unittest.mock import MagicMock, call
 from ... import mock_wrap, add_side_effect_to_class_method
 from ....model import Environment, EventType
 from ....model.factory_floor import Part
-from ....model.factory_floor.machine_base import MachineBase
+from ....model.factory_floor.device import Device
 
 
-class MachineBaseTestCase(TestCase):
+class DeviceTestCase(TestCase):
 
     def setUp(self):
-        self.upstream = [MachineBase(), MachineBase()]
+        self.upstream = [Device(), Device()]
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
         for m in self.upstream:
@@ -28,131 +28,131 @@ class MachineBaseTestCase(TestCase):
             self.assertEqual(args[4], message)
 
     def test_initialize(self):
-        machine = MachineBase('mb', self.upstream, 10)
-        machine.initialize(self.env)
-        self.assertEqual(machine.name, 'mb')
-        self.assertEqual(machine.value, 10)
-        self.assertEqual(machine.upstream, self.upstream)
-        self.assertEqual(machine.downstream, [])
-        self.assertTrue(machine.is_operational)
-        self.assertEqual(machine.waiting_for_part_start_time, 0)
+        device = Device('mb', self.upstream, 10)
+        device.initialize(self.env)
+        self.assertEqual(device.name, 'mb')
+        self.assertEqual(device.value, 10)
+        self.assertEqual(device.upstream, self.upstream)
+        self.assertEqual(device.downstream, [])
+        self.assertTrue(device.is_operational)
+        self.assertEqual(device.waiting_for_part_start_time, 0)
 
     def test_re_initialize(self):
-        machine = MachineBase('mb', self.upstream, 10)
-        machine.initialize(self.env)
+        device = Device('mb', self.upstream, 10)
+        device.initialize(self.env)
 
         for i in range(5):
             part = Part()
-            machine.give_part(part)
-            machine.add_value('', 3)
-            machine.upstream = []
-            self.assertEqual(machine._output, part)
-            self.assertEqual(machine.value, 10 + 3)
-            self.assertEqual(machine.upstream, [])
-            self.assertEqual(machine.waiting_for_part_start_time, None)
+            device.give_part(part)
+            device.add_value('', 3)
+            device.upstream = []
+            self.assertEqual(device._output, part)
+            self.assertEqual(device.value, 10 + 3)
+            self.assertEqual(device.upstream, [])
+            self.assertEqual(device.waiting_for_part_start_time, None)
 
-            machine.initialize(self.env)
-            self.assertEqual(machine._output, None)
-            self.assertEqual(machine.value, 10)
-            self.assertEqual(machine.upstream, self.upstream)
-            self.assertEqual(machine.waiting_for_part_start_time, 0)
+            device.initialize(self.env)
+            self.assertEqual(device._output, None)
+            self.assertEqual(device.value, 10)
+            self.assertEqual(device.upstream, self.upstream)
+            self.assertEqual(device.waiting_for_part_start_time, 0)
 
     def test_set_upstream(self):
-        machine = MachineBase(upstream = self.upstream)
-        machine.initialize(self.env)
-        self.assertEqual(self.upstream[0].downstream, [machine])
-        self.assertEqual(self.upstream[1].downstream, [machine])
-        self.assertEqual(machine.waiting_for_part_start_time, 0)
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
+        self.assertEqual(self.upstream[0].downstream, [device])
+        self.assertEqual(self.upstream[1].downstream, [device])
+        self.assertEqual(device.waiting_for_part_start_time, 0)
 
         self.env.now = 10
-        new_upstream = [MachineBase()]
-        machine.upstream = new_upstream
+        new_upstream = [Device()]
+        device.upstream = new_upstream
 
         self.assertEqual(self.upstream[0].downstream, [])
         self.assertEqual(self.upstream[1].downstream, [])
-        self.assertEqual(new_upstream[0].downstream, [machine])
-        self.assertEqual(machine.waiting_for_part_start_time, 10)
+        self.assertEqual(new_upstream[0].downstream, [device])
+        self.assertEqual(device.waiting_for_part_start_time, 10)
 
     def test_set_bad_upstreams(self):
-        self.assertRaises(TypeError, lambda: MachineBase(upstream = [Part()]))
-        machine = MachineBase()
+        self.assertRaises(TypeError, lambda: Device(upstream = [Part()]))
+        device = Device()
 
         def test_helper():
-            machine.upstream = [machine]
+            device.upstream = [device]
 
         self.assertRaises(AssertionError, test_helper)
 
     def test_notify_upstream_of_available_space(self):
         mocked_upstream = mock_wrap(self.upstream)
-        machine = MachineBase(upstream = mocked_upstream)
-        machine.initialize(self.env)
-        machine.notify_upstream_of_available_space()
+        device = Device(upstream = mocked_upstream)
+        device.initialize(self.env)
+        device.notify_upstream_of_available_space()
 
         for u in mocked_upstream:
             u.space_available_downstream.assert_called_once()
 
     def test_space_available_downstream(self):
-        machine = MachineBase(upstream = self.upstream)
-        machine.initialize(self.env)
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
 
-        machine.space_available_downstream()
+        device.space_available_downstream()
         self.env.schedule_event.assert_not_called()
 
-        machine.give_part(Part())
+        device.give_part(Part())
         self.env.schedule_event.assert_called_once()
         # Part will not be passed because downstream was not defined.
-        machine._pass_part_downstream()
-        self.assertEqual(machine.waiting_for_part_start_time, None)
+        device._pass_part_downstream()
+        self.assertEqual(device.waiting_for_part_start_time, None)
 
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
-        machine.space_available_downstream()
+        device.space_available_downstream()
         self.assertEqual(len(self.env.schedule_event.call_args_list), 2)
-        self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
+        self.assert_last_scheduled_event(self.env.now, device.id, device._pass_part_downstream,
                                     EventType.PASS_PART)
 
     def test_give_part(self):
         part1, part2 = Part(), Part()
-        machine = MachineBase(upstream = self.upstream)
-        machine.initialize(self.env)
-        # MachineBase can only hold 1 part at a time.
-        self.assertTrue(machine.give_part(part1))
-        self.assertEqual(part1.routing_history, [machine])
-        self.assertFalse(machine.give_part(part2))
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
+        # Device can only hold 1 part at a time.
+        self.assertTrue(device.give_part(part1))
+        self.assertEqual(part1.routing_history, [device])
+        self.assertFalse(device.give_part(part2))
         self.assertEqual(part2.routing_history, [])
 
     def test_give_part_when_not_operational(self):
         part = Part()
-        machine = MachineBase(upstream = self.upstream)
-        machine.initialize(self.env)
-        # Make machine return that it is not operational.
-        add_side_effect_to_class_method(self, __name__ + '.MachineBase.is_operational',
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
+        # Make device return that it is not operational.
+        add_side_effect_to_class_method(self, __name__ + '.Device.is_operational',
                                         lambda s: False)
 
-        self.assertFalse(machine.give_part(part))
+        self.assertFalse(device.give_part(part))
         self.assertEqual(part.routing_history, [])
 
     def test_pass_part_downstream(self):
         part = Part()
         mocked_upstream = mock_wrap(self.upstream)
-        machine = MachineBase(upstream = mocked_upstream)
-        machine.initialize(self.env)
-        downstream = MagicMock(spec = MachineBase)
-        machine._add_downstream(downstream)
+        device = Device(upstream = mocked_upstream)
+        device.initialize(self.env)
+        downstream = MagicMock(spec = Device)
+        device._add_downstream(downstream)
 
-        machine._pass_part_downstream()
+        device._pass_part_downstream()
         # Check pass part when no part available.
         downstream.give_part.assert_not_called()
         for u in mocked_upstream:
             u.space_available_downstream.assert_not_called()
 
-        machine.give_part(part)
-        machine._pass_part_downstream()
+        device.give_part(part)
+        device._pass_part_downstream()
         # Check that a part is passed when a part is available.
         downstream.give_part.assert_called_once_with(part)
         for u in mocked_upstream:
             u.space_available_downstream.assert_called_once()
 
-        machine._pass_part_downstream()
+        device._pass_part_downstream()
         # Check that a part does not get passed a second time.
         downstream.give_part.assert_called_once()
         for u in mocked_upstream:
@@ -161,60 +161,60 @@ class MachineBaseTestCase(TestCase):
     def test_pass_part_downstream_when_one_downstream_blocked(self):
         part = Part()
         mocked_upstream = mock_wrap(self.upstream)
-        machine = MachineBase(upstream = mocked_upstream)
-        machine.initialize(self.env)
+        device = Device(upstream = mocked_upstream)
+        device.initialize(self.env)
 
-        downstream1 = MagicMock(spec = MachineBase)
+        downstream1 = MagicMock(spec = Device)
         downstream1.waiting_for_part_start_time = 0
-        machine._add_downstream(downstream1)
+        device._add_downstream(downstream1)
         downstream1.give_part.return_value = False
         # No valid downstream to pass part to.
-        machine.give_part(part)
-        machine._pass_part_downstream()
+        device.give_part(part)
+        device._pass_part_downstream()
         downstream1.give_part.assert_called_once_with(part)
         # New downstream available that can accept the part.
-        downstream2 = MagicMock(spec = MachineBase)
+        downstream2 = MagicMock(spec = Device)
         downstream2.waiting_for_part_start_time = 0
-        machine._add_downstream(downstream2)
-        machine._pass_part_downstream()
+        device._add_downstream(downstream2)
+        device._pass_part_downstream()
         calls = [call(part), call(part)]
         downstream1.give_part.assert_has_calls(calls)
         downstream2.give_part.assert_called_once_with(part)
 
     def test_pass_part_downstream_order(self):
-        machine = MachineBase()
-        machine.initialize(self.env)
+        device = Device()
+        device.initialize(self.env)
         downstreams = []
         for i in range(3):
-            downstreams.append(MagicMock(spec = MachineBase))
+            downstreams.append(MagicMock(spec = Device))
             downstreams[-1].give_part.return_value = True
             downstreams[-1].waiting_for_part_start_time = i
-            machine._add_downstream(downstreams[-1])
+            device._add_downstream(downstreams[-1])
 
-        machine.give_part(Part())
-        machine._pass_part_downstream()
+        device.give_part(Part())
+        device._pass_part_downstream()
         self.assertEqual(len(downstreams[0].give_part.call_args_list), 1)
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 0)
 
         downstreams[0].waiting_for_part_start_time = 4
         downstreams[1].waiting_for_part_start_time = 6
-        machine.give_part(Part())
-        machine._pass_part_downstream()
+        device.give_part(Part())
+        device._pass_part_downstream()
         self.assertEqual(len(downstreams[0].give_part.call_args_list), 1)
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
 
         downstreams[2].waiting_for_part_start_time = 10
-        machine.give_part(Part())
-        machine._pass_part_downstream()
+        device.give_part(Part())
+        device._pass_part_downstream()
         self.assertEqual(len(downstreams[0].give_part.call_args_list), 2)
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 0)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
-        # None means machine is not marked as waiting for parts yet.
+        # None means device is not marked as waiting for parts yet.
         downstreams[0].waiting_for_part_start_time = None
-        machine.give_part(Part())
-        machine._pass_part_downstream()
+        device.give_part(Part())
+        device._pass_part_downstream()
         self.assertEqual(len(downstreams[0].give_part.call_args_list), 2)
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 1)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)

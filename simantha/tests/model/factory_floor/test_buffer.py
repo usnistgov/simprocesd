@@ -92,12 +92,13 @@ class BufferTestCase(TestCase):
                 self.assertFalse(buffer.give_part(parts[i]))
                 self.assertEqual(buffer.level(), 4)
         for u in self.upstream:
-            self.assertEqual(len(u.space_available_downstream.call_args_list), 4)
+            # Called after receiving first 3 (of 4) parts.
+            self.assertEqual(len(u.space_available_downstream.call_args_list), 3)
         # One call will attempt to pass all the parts it can.
         buffer._pass_part_downstream()
         self.assertEqual(buffer.level(), 0)
         for u in self.upstream:
-            self.assertEqual(len(u.space_available_downstream.call_args_list), 5)
+            self.assertEqual(len(u.space_available_downstream.call_args_list), 4)
         # Downstream should have been given all 4 parts, the mock was
         # configured to accept all parts.
         self.assertEqual(len(self.downstream.give_part.call_args_list), 4)

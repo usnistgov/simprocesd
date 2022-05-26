@@ -33,9 +33,9 @@ class System:
         simulation_time -- for how long to run the simulation measured
             in simulation time.
         reset -- if True then the simulation will be restarted from time
-            zero. States of all machines and other assets will be reset
-            to default initial states. If False the simulation will
-            continue from the current state for the specified duration.
+            zero. States of all devices and other assets will be reset
+            to initial states. If False the simulation will continue
+            from the current state for the specified duration.
         trace -- if True then events will be recorded and exported to
             a file. Otherwise the events will not be recorded or
             exported.

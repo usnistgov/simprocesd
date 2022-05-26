@@ -104,7 +104,7 @@ def main(is_test = False):
         print('Showing graphs in a separate window.')
         pyplot.show()
     else:
-        print('Simulation finished')
+        print('Simulation finished.')
 
 
 def generate_machine(name, upstream, maintainer):

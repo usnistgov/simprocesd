@@ -4,12 +4,12 @@ from ...utils import assert_is_instance
 
 
 class Source(Machine):
-    ''' A machine that produces copies of Parts for the simulation.
+    ''' A device that produces copies of Parts for the simulation.
     Source will not start producing next part until previous part is
     passed downstream.
 
     Arguments:
-    name -- machine name.
+    name -- device name.
     sample_part -- part which will be used to make copies. This part is
         never passed downstream, only copies of it will be passed.
     time_to_produce_part -- how long it takes to produce a part.

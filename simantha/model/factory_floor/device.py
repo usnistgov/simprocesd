@@ -3,13 +3,14 @@ from ..simulation import EventType
 from .asset import Asset
 
 
-class MachineBase(Asset):
-    ''' Base class for machine assets in the system.
+class Device(Asset):
+    ''' Base class for a production device. Contains the logic for
+    handing parts in a production line.
 
     Arguments:
-    name -- name of the machine.
-    upstream -- machines that can pass parts to this one.
-    value -- starting value of the machine.
+    name -- name of the device.
+    upstream -- devices that can pass parts to this one.
+    value -- starting value of the device.
     '''
 
     def __init__(self, name = None, upstream = [], value = 0):
@@ -39,14 +40,14 @@ class MachineBase(Asset):
         self._waiting_for_part_since = self._env.now
 
     def is_operational(self):
-        ''' Returns True is the machine can perform its part handling
+        ''' Returns True is the device can perform its part handling
         and processing functions, returns False otherwise.
         '''
         return True
 
     @property
     def upstream(self):
-        ''' List of upstream machines, machines that can provide parts
+        ''' List of upstream devices, devices that can provide parts
         to this one.
         '''
         return self._upstream.copy()
@@ -59,20 +60,20 @@ class MachineBase(Asset):
         # Use copy so changes to upstream don't affect self._upstream.
         self._upstream = upstream.copy()
         for up in self._upstream:
-            assert_is_instance(up, MachineBase)
-            # When passing a part, the part is in the _output of the
-            # machine so it would never accept the part from itself
-            # because it is already holding a part (same part).
-            assert up != self, 'Machine\'s upstream cannot point directly to itself.'
+            assert_is_instance(up, Device)
+            # When passing a part, a device can't pass to itself because
+            # it already contains a part. A 0 cycle time Device can be
+            # added in between to function as a buffer.
+            assert up != self, 'Device\'s upstream cannot point directly to itself.'
             up._add_downstream(self)
-        # Reset waiting time if MachineBase was already waiting for a part.
+        # Reset waiting time if Device was already waiting for a part.
         if self.waiting_for_part_start_time != None:
             self._set_waiting_for_part(True, True)
 
     @property
     def downstream(self):
-        ''' List of downstream machines, machines that receive parts
-        from this one.
+        ''' List of downstream devices, devices that receive parts from
+        this one.
 
         The list is dependent on upstream and cannot be set or modified
         directly.
@@ -81,8 +82,8 @@ class MachineBase(Asset):
 
     @property
     def waiting_for_part_start_time(self):
-        ''' Returns the simulation time of when this machine started
-        waiting for the next Part or returns None if the machine is not
+        ''' Returns the simulation time of when this device started
+        waiting for the next Part or returns None if the device is not
         currently waiting for a Part.
         Value is reset every time a new part is received.
         '''
@@ -120,30 +121,31 @@ class MachineBase(Asset):
             self._waiting_for_part_since = None
         else:
             if self._waiting_for_part_since != None and not reset:
-                # Do nothing if machine was already waiting for a part.
+                # Device was already waiting for a part.
                 return
             elif self._env != None:
                 self._waiting_for_part_since = self._env.now
 
     def notify_upstream_of_available_space(self):
-        ''' Communicate to all immediate upstream machines that this
-        machine can accept a new part.
+        ''' Communicate to all immediate upstream devices that this
+        device can accept a new part.
         '''
         self._set_waiting_for_part(True)
         for up in self._upstream:
             up.space_available_downstream()
 
     def space_available_downstream(self):
-        ''' Notify this machine that downstream now can accept a part.
-        This does not guarantee that this machine will pass a part
-        downstream because other machines could pass their parts first.
+        ''' Notify this device that downstream now can accept a part.
+        This does not guarantee that this device will pass a part
+        downstream because space could become unavailable before this
+        device gets the chance to pass its part.
         '''
         if self.is_operational() and self._waiting_for_space_availability:
             self._schedule_pass_part_downstream()
 
     def give_part(self, part):
-        ''' Try to pass a part to this machine.
-        Returns True if part has been accepted, otherwise False.
+        ''' Try to pass a part to this device.
+        Returns True if the part has been accepted, otherwise False.
         '''
         assert part != None, 'Cannot give part=None.'
         if not self.is_operational() or self._part != None or self._output != None:

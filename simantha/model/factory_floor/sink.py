@@ -2,12 +2,12 @@ from .machine import Machine
 
 
 class Sink(Machine):
-    ''' A machine that can receive any number of Parts but not pass
+    ''' A device that can receive any number of Parts but not pass
     those parts.
 
     Arguments:
-    name -- machine name.
-    upstream -- machines that can pass parts to this Sink.
+    name -- device name.
+    upstream -- list of upstream devices.
     time_between_receiving_parts -- minimum time between receiving
         parts.
     collect_parts -- if True then received parts are stored in the

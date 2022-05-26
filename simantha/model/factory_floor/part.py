@@ -2,7 +2,7 @@ from .asset import Asset
 
 
 class Part(Asset):
-    ''' Basic part with attributes to be passed between machines in the
+    ''' Basic part with attributes to be passed between devices in the
     simulation.
 
     Arguments:

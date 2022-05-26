@@ -1,14 +1,15 @@
 from ...utils.utils import assert_is_instance, assert_callable
 from ..simulation import EventType
-from .machine_base import MachineBase
+from .device import Device
 
 
-class Machine(MachineBase):
-    ''' Machine that has a state and a configurable cycle time.
+class Machine(Device):
+    ''' Machine is a Device that can process parts and has a state
+    represented by a status_tracker.
 
     Arguments:
     name -- name of the machine.
-    upstream -- machines that can pass parts to this one.
+    upstream -- list of upstream devices.
     cycle_time -- how long it takes to complete one process cycle.
     status_tracker -- optional object for tracking operational status of
         the machine.

@@ -1,7 +1,7 @@
-from .machine_base import MachineBase
+from .device import Device
 
 
-class Filter(MachineBase):
+class Filter(Device):
     ''' Allows to filter which parts can be passed between when upstream
     and downstream of this filter.
     Filter does not hold/buffer any parts.
@@ -9,9 +9,9 @@ class Filter(MachineBase):
     Arguments:
     should_pass_part -- a callable with signature func(part) that
         returns True if the part is allowed to be passed downstream or
-        False if the it is not allowed.
+        False if the part is not allowed.
     name -- name of the Filter.
-    upstream -- list of upstream machines.
+    upstream -- list of upstream devices.
     '''
 
     def __init__(self,
