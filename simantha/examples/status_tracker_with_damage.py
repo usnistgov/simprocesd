@@ -1,6 +1,6 @@
-from ..model.factory_floor import MachineStatusTracker
-from ..model.simulation import EventType
-from ..utils import geometric_distribution_sample, assert_callable
+from simantha.model.factory_floor import MachineStatusTracker
+from simantha.model.simulation import EventType
+from simantha.utils import geometric_distribution_sample, assert_callable
 
 
 class StatusTrackerWithDamage(MachineStatusTracker):

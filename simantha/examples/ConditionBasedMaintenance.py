@@ -6,12 +6,12 @@ Each machine should have been maintained about 300 times.
 '''
 import random
 
-from ..model import System
-from ..model.cms import Cms
-from ..model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
-from ..model.sensors import PeriodicSensor, AttributeProbe
-from ..utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
-from .status_tracker_with_damage import StatusTrackerWithDamage
+from simantha.examples import StatusTrackerWithDamage
+from simantha.model import System
+from simantha.model.cms import Cms
+from simantha.model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
+from simantha.model.sensors import PeriodicSensor, AttributeProbe
+from simantha.utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
 
 
 def time_to_maintain(damage):

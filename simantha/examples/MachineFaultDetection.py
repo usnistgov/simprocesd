@@ -10,10 +10,10 @@ import random
 import numpy
 from scipy.optimize import minimize
 
-from . import StatusTrackerWithDamage
-from ..model import System
-from ..model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
-from ..utils import DataStorageType, geometric_distribution_sample, \
+from simantha.examples import StatusTrackerWithDamage
+from simantha.model import System
+from simantha.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
+from simantha.utils import DataStorageType, geometric_distribution_sample, \
     print_produced_parts_and_average_quality
 
 

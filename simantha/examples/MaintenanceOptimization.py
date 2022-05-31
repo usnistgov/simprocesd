@@ -9,12 +9,13 @@ min_acceptable_quality and higher are considered good/acceptable.
 import random
 import statistics
 import sys
+
 from matplotlib import pyplot
 
-from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Maintainer, Part
-from ..utils import DataStorageType
-from .status_tracker_with_damage import StatusTrackerWithDamage
+from simantha.examples import StatusTrackerWithDamage
+from simantha.model import System
+from simantha.model.factory_floor import Source, Machine, Sink, Maintainer, Part
+from simantha.utils import DataStorageType
 
 # Setup parameters
 capacity_to_repair = 1

@@ -2,10 +2,10 @@
 '''
 import random
 
-from ..model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
-from ..model import System
-from ..utils import geometric_distribution_sample
-from .status_tracker_with_faults import StatusTrackerWithFaults
+from simantha.examples import StatusTrackerWithFaults
+from simantha.model import System
+from simantha.model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
+from simantha.utils import geometric_distribution_sample
 
 
 def main():

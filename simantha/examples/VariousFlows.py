@@ -6,9 +6,9 @@ setup. Top diagram in the image shows M2 in 2 locations while the bottom
 diagram shows the actual Simantha setup to represent it.
 '''
 
-from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Filter
-from ..utils import DataStorageType, print_produced_parts_and_average_quality
+from simantha.model import System
+from simantha.model.factory_floor import Source, Machine, Sink, Filter
+from simantha.utils import DataStorageType, print_produced_parts_and_average_quality
 
 
 def main():

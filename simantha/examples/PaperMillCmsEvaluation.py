@@ -8,10 +8,10 @@ Expected yearly operational profit of using a CMS is: about $130,000
 import random
 import sys
 
-from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Part, Maintainer
-from ..model.sensors import OutputPartSensor, AttributeProbe, Probe
-from .status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
+from simantha.examples.status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
+from simantha.model import System
+from simantha.model.factory_floor import Source, Machine, Sink, Part, Maintainer
+from simantha.model.sensors import OutputPartSensor, AttributeProbe, Probe
 
 count_per_part = 50  # set to 1 for more accurate results
 processing_rate = 10

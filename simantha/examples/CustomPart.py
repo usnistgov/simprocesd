@@ -5,8 +5,8 @@ M3 average quality: ~43%
 '''
 import random
 
-from ..model import System
-from ..model.factory_floor import Part, Source, Machine, Buffer, Sink
+from simantha.model import System
+from simantha.model.factory_floor import Part, Source, Machine, Buffer, Sink
 
 
 def update_quality(part, min_, max_, mac):

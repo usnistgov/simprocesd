@@ -6,9 +6,9 @@ PartFixer average output part quality should be between 0.9 and 1
 '''
 import random
 
-from ..model import System
-from ..model.factory_floor import Source, Machine, Sink, Filter
-from ..utils import DataStorageType, print_produced_parts_and_average_quality
+from simantha.model import System
+from simantha.model.factory_floor import Source, Machine, Sink, Filter
+from simantha.utils import DataStorageType, print_produced_parts_and_average_quality
 
 
 def process_part(part):
