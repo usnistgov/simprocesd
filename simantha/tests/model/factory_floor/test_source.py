@@ -3,13 +3,14 @@ import unittest
 from unittest.mock import MagicMock
 
 from ... import mock_wrap
-from ....model import Environment, EventType
+from ....model import Environment, EventType, System
 from ....model.factory_floor import Part, Machine, Source
 
 
 class SourceTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
 
@@ -30,6 +31,7 @@ class SourceTestCase(TestCase):
         self.assertEqual(source.upstream, [])
         self.assertEqual(source.produced_parts, 0)
         self.assertEqual(source.cost_of_produced_parts, 0)
+        self.assertIn(source, self.sys._assets)
 
     def test_initialize(self):
         source = Source(time_to_produce_part = 6, sample_part = Part(value = 5))

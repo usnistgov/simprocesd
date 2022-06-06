@@ -55,6 +55,8 @@ class CustomCms(CmsEmulator):
 
 
 def sample(duration, with_cms):
+    system = System()
+
     part = Part(f'{count_per_part}xPart', 0, 1)
     source = Source(sample_part = part)
 
@@ -102,10 +104,8 @@ def sample(duration, with_cms):
     sensor = OutputPartSensor(M1, [p1, p2], name = 'M1 Sensor')
     cms.add_sensor(sensor)
 
-    system = System([source, M1, sink, cms])
-
     system.simulate(duration)
-    return system.get_net_value_of_objects()
+    return system.get_net_value_of_assets()
 
 
 def distributed_ttf(days_to_fault):

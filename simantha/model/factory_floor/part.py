@@ -12,7 +12,7 @@ class Part(Asset):
     '''
 
     def __init__(self, name = None, value = 0.0, quality = 1.0):
-        super().__init__(name, value)
+        super().__init__(name, value, is_transitory = True)
 
         self._counter = 0
         self.quality = self._initial_quality = quality

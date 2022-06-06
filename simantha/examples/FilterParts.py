@@ -20,8 +20,9 @@ def improve_part(part):
 
 
 def main():
-    source = Source()
+    system = System(DataStorageType.MEMORY)
 
+    source = Source()
     M1 = Machine('Processor', upstream = [source], cycle_time = 1)
     M1.add_finish_processing_callback(process_part)
 
@@ -35,7 +36,6 @@ def main():
 
     sink = Sink(upstream = [filter1], collect_parts = True)
 
-    system = System([source, sink, M1, M2, filter1, filter2], DataStorageType.MEMORY)
     random.seed(1)
     system.simulate(simulation_time = 1000)
     print_produced_parts_and_average_quality(system, [M1, M2])

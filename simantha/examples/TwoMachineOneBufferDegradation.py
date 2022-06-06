@@ -14,6 +14,8 @@ def main():
     # Every time unit there is 10% chance to fix the machine.
     get_ttm = lambda: geometric_distribution_sample(.1, 1)
 
+    system = System()
+
     maintainer = Maintainer()
     schedule_repair = lambda f: maintainer.request_maintenance(
             f.machine, f.name)
@@ -32,9 +34,6 @@ def main():
                                           failed_callback = schedule_repair)
     sink = Sink(upstream = [M2])
 
-    system = System([source, M1, B1, M2, sink, maintainer])
-
-    random.seed()
     # If time units are minutes then simulation period is a week.
     system.simulate(simulation_time = 60 * 24 * 7)
 

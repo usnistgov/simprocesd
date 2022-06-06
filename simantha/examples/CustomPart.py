@@ -15,6 +15,8 @@ def update_quality(part, min_, max_, mac):
 
 
 def main():
+    system = System()
+
     source = Source(sample_part = Part(quality = 1.0))
     M1 = Machine('M1',
                  upstream = [source],
@@ -30,8 +32,6 @@ def main():
                  cycle_time = 2)
     M3.add_finish_processing_callback(lambda p: update_quality(p, 0.3, 0.6, 'M3'))
     sink = Sink(upstream = [M2, M3], collect_parts = True)
-
-    system = System([source, M1, B1, M2, M3, sink])
 
     random.seed(1)
     # If time units are minutes then simulation period is a day.

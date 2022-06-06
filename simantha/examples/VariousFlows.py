@@ -12,6 +12,8 @@ from simantha.utils import DataStorageType, print_produced_parts_and_average_qua
 
 
 def main():
+    system = System(DataStorageType.MEMORY)
+
     source = Source()
 
     M1 = Machine('M1', upstream = [source], cycle_time = 2)
@@ -27,7 +29,6 @@ def main():
     machines = [M1, M2, M3, M4, M5, M6]
     sink = Sink(upstream = [M4], collect_parts = True)
 
-    system = System([source, sink, F1, F2] + machines, DataStorageType.MEMORY)
     system.simulate(simulation_time = 1000)
     print_produced_parts_and_average_quality(system, machines)
 

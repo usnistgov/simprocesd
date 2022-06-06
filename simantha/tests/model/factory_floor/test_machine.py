@@ -2,13 +2,14 @@ from unittest import TestCase
 import unittest
 from unittest.mock import MagicMock
 
-from ....model import Environment, EventType
+from ....model import Environment, EventType, System
 from ....model.factory_floor import Part, Machine, MachineStatusTracker
 
 
 class MachineTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
         self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
@@ -26,6 +27,7 @@ class MachineTestCase(TestCase):
     def test_initialize(self):
         status_tracker = MachineStatusTracker()
         machine = Machine('mb', self.upstream, 2, status_tracker, 15)
+        self.assertIn(machine, self.sys._assets)
         machine.initialize(self.env)
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 15)

@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock, call
 
 from ... import mock_wrap, add_side_effect_to_class_method
-from ....model import Environment, EventType
+from ....model import Environment, EventType, System
 from ....model.factory_floor import Part
 from ....model.factory_floor.device import Device
 
@@ -11,6 +11,7 @@ from ....model.factory_floor.device import Device
 class DeviceTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.upstream = [Device(), Device()]
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
@@ -29,6 +30,7 @@ class DeviceTestCase(TestCase):
 
     def test_initialize(self):
         device = Device('mb', self.upstream, 10)
+        self.assertIn(device, self.sys._assets)
         device.initialize(self.env)
         self.assertEqual(device.name, 'mb')
         self.assertEqual(device.value, 10)

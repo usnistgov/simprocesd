@@ -32,6 +32,7 @@ class CustomCms(Cms):
 
 
 def main():
+    system = System(DataStorageType.MEMORY)
 
     status1 = StatusTrackerWithDamage(1, 0.1, 1, 4,
                                       get_time_to_maintain = time_to_maintain,
@@ -65,8 +66,6 @@ def main():
     p2 = AttributeProbe('damage', status2)
     sensor2 = PeriodicSensor(1, [p2], name = 'M2 Sensor')
     cms.add_sensor(sensor2)
-
-    system = System([source, M1, B1, M2, sink, cms], DataStorageType.MEMORY)
 
     random.seed(1)
     # If time units are minutes then simulation period is a week.

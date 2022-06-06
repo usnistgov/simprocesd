@@ -1,3 +1,4 @@
+import gc
 from io import StringIO
 from unittest import TestCase
 import unittest
@@ -12,7 +13,8 @@ from ...utils import DataStorageType
 class SystemTestCase(TestCase):
 
     def setUp(self):
-        self.sys = System([], DataStorageType.MEMORY)
+        System._instance = None
+        self.sys = System(DataStorageType.MEMORY)
         # Mock out the Environment class.
         self.env_mock = MagicMock(spec = Environment)
         self.env_mock.now = 0
@@ -23,10 +25,10 @@ class SystemTestCase(TestCase):
         self.time_mock.side_effect = [i for i in range(10)]
 
     def test_initialize(self):
-        objects = [Asset()]
-        sys = System(objects, DataStorageType.MEMORY)
+        sys = System(DataStorageType.MEMORY)
+        assets = [Asset()]
 
-        self.assertEqual(sys._objects, objects)
+        self.assertEqual(sys._assets, assets)
         self.assertEqual(sys._env._simulation_data_storage_type, DataStorageType.MEMORY)
 
     def test_simulation_data(self):
@@ -36,14 +38,14 @@ class SystemTestCase(TestCase):
             self.sys.simulation_data = {}
 
         # Test that trying to override simulation_data throws an error.
-        self.assertRaises(RuntimeError, override_simulation_data)
+        self.assertRaises(AttributeError, override_simulation_data)
         self.assertEqual(self.sys.simulation_data, self.env_mock.simulation_data)
 
     @patch('sys.stdout', new_callable = StringIO)
     def test_simulate(self, stdout_mock):
         sink = MagicMock(spec = Sink)
         sink.received_parts_count = 56
-        self.sys._objects.append(sink)
+        self.sys._assets.append(sink)
         self.sys.simulate(1, False, False, True)
 
         self.env_mock.run.assert_called_once_with(1, trace = False)
@@ -58,9 +60,14 @@ class SystemTestCase(TestCase):
         self.env_mock.run.assert_called_once_with(99, trace = True)
         self.assertEqual(stdout_mock.getvalue(), '')
 
+    @patch('sys.stdout', new_callable = StringIO)  # Consume print statements.
+    def test_simulate_old_system(self, stdout_mock):
+        sys = System()
+        self.assertRaises(RuntimeError, lambda: self.sys.simulate(1))
+
     def test_simulate_initialize(self):
         sink = MagicMock(spec = Sink)
-        self.sys._objects.append(sink)
+        self.sys._assets.append(sink)
 
         self.sys.simulate(5, print_summary = False)
         sink.initialize.assert_called_once_with(self.env_mock)
@@ -74,11 +81,10 @@ class SystemTestCase(TestCase):
     def test_get_net_value(self):
         sink = Sink()
         sink._value = 100
-        self.sys._objects.append(sink)
-        self.sys._objects.append(Asset(value = 50))
-        self.sys._objects.append(Asset(value = -33))
+        Asset(value = 50)
+        Asset(value = -33)
 
-        self.assertEqual(self.sys.get_net_value_of_objects(), 100 + 50 - 33)
+        self.assertEqual(self.sys.get_net_value_of_assets(), 100 + 50 - 33)
 
 
 if __name__ == '__main__':

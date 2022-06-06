@@ -5,6 +5,8 @@ from simantha.model.factory_floor import Source, Machine, Sink
 
 
 def main():
+    system = System()
+
     source = Source()
 
     M1 = Machine('M1', upstream = [source], cycle_time = 2)
@@ -20,8 +22,6 @@ def main():
     M7 = Machine('M7', upstream = second_stage, cycle_time = 2)
 
     sink = Sink(upstream = [M6, M7])
-
-    system = System([source, sink, M1, M2, M3, M4, M5, M6, M7])
 
     # If time units are minutes then simulation period is a week.
     system.simulate(simulation_time = 60 * 24 * 7)

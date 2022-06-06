@@ -2,11 +2,14 @@ from unittest import TestCase
 import unittest
 from unittest.mock import MagicMock
 
-from ....model import Environment
+from ....model import Environment, System
 from ....model.factory_floor import Asset
 
 
 class AssetTestCase(TestCase):
+
+    def setUp(self):
+        self.sys = System()
 
     def test_init_basic(self):
         asset = Asset('name', 99)
@@ -19,10 +22,11 @@ class AssetTestCase(TestCase):
         # Make 100 assets and ensure IDs are unique.
         for i in range(100):
             assets.append(Asset())
+            self.assertIn(assets[i], self.sys._assets)
             self.assertTrue(assets[i].id >= 0)
             self.assertNotIn(assets[i].id, ids)
             ids.append(assets[i].id)
-            self.assertRegex(assets[i].name, f'Asset\'>_{assets[i].id}')
+            self.assertEqual(assets[i].name, f'Asset_{assets[i].id}')
             self.assertEqual(assets[i].value, 0)
 
     def test_initialize(self):

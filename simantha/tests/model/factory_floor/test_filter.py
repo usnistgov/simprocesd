@@ -2,13 +2,14 @@ from unittest import TestCase
 import unittest
 from unittest.mock import MagicMock
 
-from ....model import Environment
+from ....model import Environment, System
 from ....model.factory_floor import Part, Machine, Filter
 
 
 class FilterTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
         self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
@@ -18,6 +19,7 @@ class FilterTestCase(TestCase):
 
     def test_initialize(self):
         filter_ = Filter(lambda: True, 'name', self.upstream)
+        self.assertIn(filter_, self.sys._assets)
         self.assertEqual(filter_.name, 'name')
         self.assertEqual(filter_.upstream, self.upstream)
         self.assertEqual(filter_.value, 0)

@@ -36,8 +36,9 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade,
 
 
 def main():
-    maintainer = Maintainer(capacity = 1)
+    system = System(DataStorageType.MEMORY)
 
+    maintainer = Maintainer(capacity = 1)
     source = Source('Source', Part('Part', 1, 2))
     M1 = new_machine('M1', [source], 1, 0.02, lambda: random.uniform(0, 0.01), maintainer)
     stage1 = [M1]
@@ -55,8 +56,6 @@ def main():
     stage4 = [M6, M7]
     sink = Sink('Sink', stage4, collect_parts = True)
 
-    system = System([maintainer, source, B1, B2, B3, M1, M2, M3, M4, M5, M6, M7,
-                     sink], DataStorageType.MEMORY)
     random.seed(3)  # Setting seed ensures same results every run.
     system.simulate(simulation_time = 2000)
 

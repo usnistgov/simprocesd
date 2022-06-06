@@ -40,6 +40,7 @@ def main(is_test = False):
         iterations = 1
     random.seed(1)
 
+    system = System(DataStorageType.MEMORY)
     # Setup the experiment.
     maintainer = Maintainer(capacity = maintainer_capacity)
     source = Source('Source', Part(quality = 1), 1)
@@ -50,7 +51,6 @@ def main(is_test = False):
     M5 = generate_machine('M5', [source], maintainer)
     all_machines = [M1, M2, M3, M4, M5]
     sink = Sink('Sink', all_machines, collect_parts = True)
-    system = System(all_machines + [source, sink, maintainer], DataStorageType.MEMORY)
 
     print('Running simulations...')
     results = []

@@ -3,13 +3,14 @@ import unittest
 from unittest.mock import MagicMock
 
 from ... import mock_wrap
-from ....model import Environment, EventType
+from ....model import Environment, EventType, System
 from ....model.factory_floor import Part, Machine, Sink
 
 
 class SinkTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
 
@@ -24,8 +25,9 @@ class SinkTestCase(TestCase):
             self.assertEqual(args[4], message)
 
     def test_initialize(self):
-        upstream = [Machine()]
+        upstream = [MagicMock(spec = Machine)]
         sink = Sink('name', upstream, 4, True)
+        self.assertIn(sink, self.sys._assets)
         sink.initialize(self.env)
         self.assertEqual(sink.name, 'name')
         self.assertEqual(sink.upstream, upstream)

@@ -3,13 +3,14 @@ import unittest
 from unittest.mock import MagicMock
 
 from ... import mock_wrap
-from ....model import Environment, EventType
+from ....model import Environment, EventType, System
 from ....model.factory_floor import Part, Machine, Buffer
 
 
 class BufferTestCase(TestCase):
 
     def setUp(self):
+        self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
         self.upstream = [mock_wrap(Machine()), mock_wrap(Machine())]
@@ -30,6 +31,7 @@ class BufferTestCase(TestCase):
 
     def test_initialize(self):
         buffer = Buffer('name', self.upstream, 5, 10, 20)
+        self.assertIn(buffer, self.sys._assets)
         buffer.initialize(self.env)
         self.assertEqual(buffer.name, 'name')
         self.assertEqual(buffer.upstream, self.upstream)

@@ -15,6 +15,8 @@ from simantha.utils import geometric_distribution_sample
 
 
 def main():
+    system = System()
+
     maintainer = Maintainer()
     source = Source()
     M1 = Machine('M1',
@@ -26,8 +28,6 @@ def main():
         get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1))
     M1.add_failed_callback(lambda p: maintainer.request_maintenance(M1, 'Fault'))
     sink = Sink(upstream = [M1])
-
-    system = System([source, M1, sink, maintainer])
 
     random.seed(1)
     # If time units are minutes then simulation period is a week.

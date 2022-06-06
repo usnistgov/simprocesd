@@ -1,5 +1,6 @@
 from unittest import TestCase
 import unittest
+from unittest.mock import MagicMock
 
 from ....model import Environment
 from ....model.factory_floor import Asset, Part, Machine
@@ -17,9 +18,10 @@ class PartTestCase(TestCase):
 
     def test_re_initialize(self):
         part = Part('name', 2, 5)
-        part.initialize(Environment())
+        env = Environment()
+        part.initialize(env)
 
-        machine = Machine()
+        machine = MagicMock(spec = Machine)
         part.add_cost('', 1)
         part.quality = 3.14
         part.routing_history.append(machine)
@@ -27,7 +29,8 @@ class PartTestCase(TestCase):
         self.assertEqual(part.quality, 3.14)
         self.assertEqual(part.routing_history, [machine])
 
-        part.initialize(Environment())
+        self.assertRaises(AssertionError, lambda: part.initialize(Environment()))
+        part.initialize(env)
         self.assertEqual(part.value, 2)
         self.assertEqual(part.quality, 5)
         self.assertEqual(part.routing_history, [])
@@ -35,7 +38,7 @@ class PartTestCase(TestCase):
     def test_copy(self):
         ids = []
         part = Part('name', 100, 3)
-        part.routing_history.append(Asset())
+        part.routing_history.append(MagicMock(spec = Asset))
         parts = [part]
         # Make 10 parts and ensure attributes are set correctly.
         for i in range(10):

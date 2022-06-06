@@ -32,8 +32,9 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
 
 
 def main(is_test = False):
-    maintainer = Maintainer(capacity = 1)
+    system = System(DataStorageType.MEMORY)
 
+    maintainer = Maintainer(capacity = 1)
     source = Source('source', Part('Part', value = 1, quality = 0), time_to_produce_part = 1)
     buffer = Buffer('source_buffer', [source], capacity = 12)
     M1 = new_machine('M1', [buffer], 2.5, 0.15, maintainer)
@@ -44,13 +45,11 @@ def main(is_test = False):
     level_probe = Probe(lambda target: target.level(), buffer)
     sensor = PeriodicSensor(2.5, [level_probe])
 
-    system = System([maintainer, source, buffer, M1, M2, M3, sink, sensor],
-                    DataStorageType.MEMORY)
     random.seed(10)  # Setting seed ensures same results every run.
     system.simulate(simulation_time = 60 * 24 * 7)
 
     # Print information to console.
-    print(f'\nFinal net value of machines: {round(system.get_net_value_of_objects(), 2)}')
+    print(f'\nFinal net value of machines: {round(system.get_net_value_of_assets(), 2)}')
     print_produced_parts_and_average_quality(system, [M1, M2, M3])
 
     if not is_test:
