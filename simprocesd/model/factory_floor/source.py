@@ -73,7 +73,7 @@ class Source(Machine):
     def _prepare_next_part(self):
         if self._produced_parts >= self._max_produced_parts: return
 
-        self._output = self._sample_part.copy()
+        self._output = self._sample_part.make_copy()
         self._output.initialize(self._env)
         self._output.routing_history.append(self)
         self._schedule_pass_part_downstream()

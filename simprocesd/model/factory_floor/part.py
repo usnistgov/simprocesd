@@ -14,7 +14,7 @@ class Part(Asset):
     def __init__(self, name = None, value = 0.0, quality = 1.0):
         super().__init__(name, value, is_transitory = True)
 
-        self._counter = 0
+        self.copy_counter = 0
         self.quality = self._initial_quality = quality
         self._routing_history = []
 
@@ -22,7 +22,7 @@ class Part(Asset):
         super().initialize(env)
         self.quality = self._initial_quality
         self._routing_history = []
-        self._counter = 0
+        self.copy_counter = 0
 
     @property
     def routing_history(self):
@@ -34,12 +34,12 @@ class Part(Asset):
         '''
         return self._routing_history
 
-    def copy(self):
+    def make_copy(self):
         ''' Creates and returns a new and unique Part with same
         attributes as this part.
-        New Part will not have the same id and new routing_history will
-        start empty.
+        New Part will not have the same id and new Part's
+        routing_history will start empty.
         '''
-        self._counter += 1
-        new_part = Part(f'{self.name}_{self._counter}', self.value, self.quality)
+        self.copy_counter += 1
+        new_part = Part(f'{self.name}_{self.copy_counter}', self.value, self.quality)
         return new_part

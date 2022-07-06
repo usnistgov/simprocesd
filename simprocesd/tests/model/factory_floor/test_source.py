@@ -87,9 +87,9 @@ class SourceTestCase(TestCase):
         source._add_downstream(downstream)
 
         source.initialize(self.env)
-        wrapped_part.copy.assert_not_called()
+        wrapped_part.make_copy.assert_not_called()
         source._prepare_next_part()
-        wrapped_part.copy.assert_called_once()
+        wrapped_part.make_copy.assert_called_once()
 
         source._pass_part_downstream()
         args, kwargs = downstream.give_part.call_args

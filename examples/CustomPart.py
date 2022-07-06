@@ -9,7 +9,7 @@ from simprocesd.model import System
 from simprocesd.model.factory_floor import Part, Source, Machine, Buffer, Sink
 
 
-def update_quality(part, min_, max_, mac):
+def update_quality(part, min_, max_):
     diff = max_ - min_
     part.quality *= max_ - diff * random.random()
 
@@ -21,16 +21,16 @@ def main():
     M1 = Machine('M1',
                  upstream = [source],
                  cycle_time = 1)
-    M1.add_finish_processing_callback(lambda p: update_quality(p, 0.9, 1, 'M1'))
+    M1.add_finish_processing_callback(lambda p: update_quality(p, 0.9, 1))
     B1 = Buffer('B1', upstream = [M1], capacity = 10)
     M2 = Machine('M2',
                  upstream = [B1],
                  cycle_time = 2)
-    M2.add_finish_processing_callback(lambda p: update_quality(p, 0.6, 0.8, 'M2'))
+    M2.add_finish_processing_callback(lambda p: update_quality(p, 0.6, 0.8))
     M3 = Machine('M3',
                  upstream = [B1],
                  cycle_time = 2)
-    M3.add_finish_processing_callback(lambda p: update_quality(p, 0.3, 0.6, 'M3'))
+    M3.add_finish_processing_callback(lambda p: update_quality(p, 0.3, 0.6))
     sink = Sink(upstream = [M2, M3], collect_parts = True)
 
     random.seed(1)

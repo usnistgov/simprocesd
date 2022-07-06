@@ -35,14 +35,14 @@ class PartTestCase(TestCase):
         self.assertEqual(part.quality, 5)
         self.assertEqual(part.routing_history, [])
 
-    def test_copy(self):
+    def test_make_copy(self):
         ids = []
         part = Part('name', 100, 3)
         part.routing_history.append(MagicMock(spec = Asset))
         parts = [part]
         # Make 10 parts and ensure attributes are set correctly.
         for i in range(10):
-            parts.append(part.copy())
+            parts.append(part.make_copy())
             self.assertNotIn(parts[-1].id, ids)
             ids.append(parts[-1].id)
             self.assertRegex(parts[-1].name, f'{part.name}_{i+1}')
