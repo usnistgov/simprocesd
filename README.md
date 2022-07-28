@@ -10,9 +10,16 @@ The software is available for public use through a publicly available Github rep
 
 
 ## Installation
+
+Simantha can be installed via `pip` using:
+
 ```
 pip install sim-procesd
 ```
+
+### Installation Requirements
+Using Simantha requires Python ≥ 3.6 and, optionally, SciPy ≥ 1.5.2 for running the included tests. 
+
 
 ## Quickstart
 
@@ -48,3 +55,9 @@ Contacts:
 - [Mehdi Dadfarnia](https://www.nist.gov/people/mehdi-dadfarnia), Maintenance & Development
 - [Serghei Drozdov](https://www.nist.gov/people/serghei-drozdov), Lead Developer
 - [Michael Sharp](https://www.nist.gov/people/michael-sharp), Project Leader
+
+
+## Citing this software 
+Citation examples can be found at: https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications 
+
+DOI: tbd
