@@ -1,6 +1,6 @@
-# Sim-PROCESD
+# Sim-PROCESD: Simulated-Production Resource for Operations & Conditions Evaluations to Support Decision-making
 
-Sim-Procesd is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines with finite buffers. It also provides functionality for modeling the degradation and maintenance of machines in these systems.
+Sim-PROCESD is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines with finite buffers. It also provides functionality for modeling the degradation and maintenance of machines in these systems.
 
 In addition to modeling the behavior of existing systems, Sim-PROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
 
@@ -37,7 +37,9 @@ A collection of examples is available at [simprocesd/examples](/simprocesd/examp
 - Maintenance policy testing: [MaintenanceOptimization.py](/simprocesd/examples/MaintenanceOptimization.py)  
 
 ## Simantha
-Sim-PROCESD was forked from the Simantha project which can be found [here](https://github.com/m-hoff/simantha).
+Sim-PROCESD was forked from the original Simantha project which can be found [here](https://github.com/m-hoff/simantha). Another iteration of [Simantha](https://github.com/usnistgov/simantha) extends a few capabilities and examples to prepare it for the modeling of condition monitoring systems and prognostics and health management tools.
+
+ 
 
 ## Who We Are
 This tool is part of the Smart Manufacturing Industrial AI Management & Metrology project in the Smart Connected Systems Division (Communications Technology Laboratory) at NIST.
@@ -45,4 +47,4 @@ This tool is part of the Smart Manufacturing Industrial AI Management & Metrolog
 Contacts:
 - [Mehdi Dadfarnia](https://www.nist.gov/people/mehdi-dadfarnia), Maintenance & Development
 - [Serghei Drozdov](https://www.nist.gov/people/serghei-drozdov), Lead Developer
-- [Michael Sharp](https://www.nist.gov/people/mehdi-dadfarnia), Project Leader
+- [Michael Sharp](https://www.nist.gov/people/michael-sharp), Project Leader
