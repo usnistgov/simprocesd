@@ -11,14 +11,16 @@ The software is available for public use through a publicly available Github rep
 
 ## Installation
 
-Simantha can be installed via `pip` using:
+Sim-PROCESD can be installed via `pip` using:
 
 ```
 pip install sim-procesd
 ```
 
 ### Installation Requirements
-Using Sim-PROCESD requires Python ≥ 3.6 and, optionally, SciPy ≥ 1.5.2 for running the included tests. 
+Using Sim-PROCESD requires Python ≥ 3.6 and, optionally:
+- scipy ≥ 1.5.2 and numpy ≥ 1.21 for running certain examples.
+- matplotlib ≥ 3.5 for using plot functions and running certain examples.
 
 
 ## Quickstart
@@ -57,13 +59,8 @@ Contacts:
 - [Michael Sharp](https://www.nist.gov/people/michael-sharp), Project Leader
 
 
-## Documentation Links
-For the complete Sim-PROCESD documentation, see TBD . Here, you will find:
-- Reference for all the objects 
-- Use case and examples of discrete manufacturing system models and various maintenance schemes
-
-
-Sim-PROCESD and all of it's associated projects are in the public domain (see License). For more information and to provide feedback, please open an issue, submit a pull-request, or email the point of contact (below).
+## License
+Sim-PROCESD and all of it's associated projects are in the public domain (see License). For more information and to provide feedback, please open an issue, submit a pull-request, or email the point of contact (above).
 
 
 ## Citing this software 

@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-source_code_url = 'https://github.com/usnistgov/simantha'
+source_code_url = 'https://github.com/usnistgov/simprocesd'
 with open('README.md', 'r') as f:
     long_description = f.read().split('\n')
 long_description = '\n'.join(long_description[:10])
@@ -25,6 +25,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Intended Audience :: Manufacturing',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
@@ -32,5 +33,5 @@ setup(
     ],
     packages = find_packages(exclude = ['simprocesd.tests',
                                         'simprocesd.tests.*']),
-    install_requires = ['matplotlib', 'numpy', 'scipy']
+    install_requires = ['matplotlib>=3.5', 'numpy>=1.21', 'scipy>=1.7']
 )
