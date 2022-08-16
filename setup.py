@@ -9,7 +9,7 @@ long_description = long_description + \
 
 setup(
     name = 'sim-procesd',
-    version = '0.1.4',
+    version = '0.1.6',
     author = 'Serghei Drozdov',
     author_email = 'serghei.drozdov@nist.gov',
     description = 'Discreet event simulator for manufacturing systems.',
@@ -31,7 +31,16 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent'
     ],
-    packages = find_packages(exclude = ['simprocesd.tests',
-                                        'simprocesd.tests.*']),
-    install_requires = ['matplotlib>=3.5', 'numpy>=1.21', 'scipy>=1.7']
+    packages = find_packages(exclude = [
+        'simprocesd.tests',
+        'simprocesd.tests.*'
+    ]),
+    python_requires = ">=3.7",
+    install_requires = ['matplotlib >= 3.5'],
+    extras_require = {
+        "examples": [
+            'numpy >= 1.21',
+            'scipy >= 1.7'
+        ],
+    },
 )

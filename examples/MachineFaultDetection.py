@@ -7,14 +7,16 @@ In perfect conditions each machine is expected to affect the part
 quality equally.
 '''
 import random
+
 import numpy
 from scipy.optimize import minimize
 
-from simprocesd.examples import StatusTrackerWithDamage
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
 from simprocesd.utils import DataStorageType, geometric_distribution_sample, \
     print_produced_parts_and_average_quality
+
+from . import StatusTrackerWithDamage
 
 
 def process_part(part, quality_distribution, status):

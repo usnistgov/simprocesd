@@ -1,0 +1,19 @@
+# This file contains GitLab configurations for the project.
+default:
+    image: python:3.10
+
+testing:
+    stage: test
+    script:
+        - pip install .[examples]             # Install sim-procesd package
+        - python -m unittest                  # Run unittests
+        - |                                   # Run examples with 'testing' flag:
+           for f in examples/*.py             # List all example. f=examples/Test.py
+             do h="${f##*/}"                  # Remove last / and everything before. h=Test.py
+             if [[ $h = [A-Z]* ]]             # Check if name starts with a capital letter.
+               then g="${h%.*}"               # Remove file extension. g=Test
+               # Run example with 'testing' flag. If test exits with non-zero value then raise an error.
+               echo python -m examples.$g testing
+               python -m examples.$g testing || exit 1
+             fi
+           done

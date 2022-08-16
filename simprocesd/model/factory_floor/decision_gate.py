@@ -1,16 +1,16 @@
 from .device import Device
 
 
-class Filter(Device):
+class DecisionGate(Device):
     ''' Allows to filter which parts can be passed between when upstream
-    and downstream of this filter.
-    Filter does not hold/buffer any parts.
+    and downstream of this device.
+    DecisionGate does not hold/buffer any parts.
 
     Arguments:
-    should_pass_part -- a callable with signature func(part) that
+    should_pass_part -- a function with a signature func(part) that
         returns True if the part is allowed to be passed downstream or
         False if the part is not allowed.
-    name -- name of the Filter.
+    name -- name of the DecisionGate.
     upstream -- list of upstream devices.
     '''
 

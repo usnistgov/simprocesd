@@ -12,10 +12,11 @@ import sys
 
 from matplotlib import pyplot
 
-from simprocesd.examples import StatusTrackerWithDamage
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, Maintainer, Part
 from simprocesd.utils import DataStorageType
+
+from . import StatusTrackerWithDamage
 
 # Setup parameters
 capacity_to_repair = 1

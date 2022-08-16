@@ -2,10 +2,11 @@
 **/__pycache__/
 **/.ipynb_checkpoints
 *.vscode/
-validation/
+build/
+dist/
 logs/
 simenv/
-dist/
+validation/
 *.egg-info/
 
 setup.py

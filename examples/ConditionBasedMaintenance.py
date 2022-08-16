@@ -6,12 +6,13 @@ Each machine should have been maintained about 300 times.
 '''
 import random
 
-from simprocesd.examples import StatusTrackerWithDamage
 from simprocesd.model import System
 from simprocesd.model.cms import Cms
 from simprocesd.model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, AttributeProbe
 from simprocesd.utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
+
+from . import StatusTrackerWithDamage
 
 
 def time_to_maintain(damage):

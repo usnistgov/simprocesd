@@ -8,10 +8,11 @@ Expected parts produced: about 8000
 
 import random
 
-from simprocesd.examples import StatusTrackerWithFaults
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, Maintainer
 from simprocesd.utils import geometric_distribution_sample
+
+from . import StatusTrackerWithFaults
 
 
 def main():

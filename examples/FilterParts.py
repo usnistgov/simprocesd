@@ -7,7 +7,7 @@ PartFixer average output part quality should be between 0.9 and 1
 import random
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Filter
+from simprocesd.model.factory_floor import Source, Machine, Sink, DecisionGate
 from simprocesd.utils import DataStorageType, print_produced_parts_and_average_quality
 
 
@@ -26,15 +26,15 @@ def main():
     M1 = Machine('Processor', upstream = [source], cycle_time = 1)
     M1.add_finish_processing_callback(process_part)
 
-    filter1 = Filter(should_pass_part = lambda part: part.quality >= 0.75)
-    filter2 = Filter(should_pass_part = lambda part: part.quality < 0.75)
+    gate1 = DecisionGate(should_pass_part = lambda part: part.quality >= 0.75)
+    gate2 = DecisionGate(should_pass_part = lambda part: part.quality < 0.75)
 
-    M2 = Machine('PartFixer', upstream = [filter2], cycle_time = 1)
+    M2 = Machine('PartFixer', upstream = [gate2], cycle_time = 1)
     M2.add_finish_processing_callback(improve_part)
-    filter1.upstream = [M1, M2]
-    filter2.upstream = [M1, M2]
+    gate1.upstream = [M1, M2]
+    gate2.upstream = [M1, M2]
 
-    sink = Sink(upstream = [filter1], collect_parts = True)
+    sink = Sink(upstream = [gate1], collect_parts = True)
 
     random.seed(1)
     system.simulate(simulation_time = 1000)

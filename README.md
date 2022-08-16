@@ -17,10 +17,18 @@ Sim-PROCESD can be installed via `pip` using:
 pip install sim-procesd
 ```
 
+To install with optional requirements needed to run certain examples:
+
+```
+pip install sim-procesd[examples]
+```
+
+
 ### Installation Requirements
-Using Sim-PROCESD requires Python ≥ 3.6 and, optionally:
-- scipy ≥ 1.5.2 and numpy ≥ 1.21 for running certain examples.
+Using Sim-PROCESD requires:
+- Python ≥ 3.7:
 - matplotlib ≥ 3.5 for using plot functions and running certain examples.
+- [optional] scipy ≥ 1.5.2 and numpy ≥ 1.21 for running certain examples.
 
 
 ## Quickstart
@@ -29,7 +37,7 @@ The package provides following objects for modeling a manufacturing process:
 - **Source**: Introduces new parts to the system.
 - **Machine**: Retrieves, processes, and relinquishes parts. Can be subject to degradation, failures, and repairs.
 - **Buffer**: Retrieves, stores, and relinquishes parts.
-- **Filter**: Conditionally allow parts to pass between its upstream and downstream.
+- **DecisionGate**: Conditionally allow parts to pass between its upstream and downstream.
 - **Sink**: Collects finished parts that exit the system.
 - **Maintainer**: Performs requested maintenance as soon as possible. Has a configurable capacity.
 - **Probes & Sensors**: Take periodic or on-demand readings and record them. The recorded data is accessible during the simulation and after.
