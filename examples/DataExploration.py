@@ -36,7 +36,7 @@ def main(is_test = False):
     system = System(DataStorageType.MEMORY)
 
     maintainer = Maintainer(capacity = 1)
-    source = Source('source', Part('Part', value = 1, quality = 0), time_to_produce_part = 1)
+    source = Source('source', Part('Part', value = 1, quality = 0), cycle_time = 1)
     buffer = Buffer('source_buffer', [source], capacity = 12)
     M1 = new_machine('M1', [buffer], 2.5, 0.15, maintainer)
     M2 = new_machine('M2', [buffer], 2.5, 0.3, maintainer)
@@ -47,7 +47,7 @@ def main(is_test = False):
     sensor = PeriodicSensor(2.5, [level_probe])
 
     random.seed(10)  # Setting seed ensures same results every run.
-    system.simulate(simulation_time = 60 * 24 * 7)
+    system.simulate(simulation_duration = 60 * 24 * 7)
 
     # Print information to console.
     print(f'\nFinal net value of machines: {round(system.get_net_value_of_assets(), 2)}')

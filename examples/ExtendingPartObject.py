@@ -50,7 +50,7 @@ def main():
     sink = Sink(upstream = [M2], collect_parts = True)
 
     # If time units are minutes then simulation period is a day.
-    system.simulate(simulation_time = 24 * 60)
+    system.simulate(simulation_duration = 24 * 60)
 
     average_quality = (
         sum([part.quality for part in sink.collected_parts]) / len(sink.collected_parts)

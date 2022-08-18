@@ -45,13 +45,13 @@ class System:
         else:
             return None
 
-    def simulate(self, simulation_time, reset = False, trace = False, print_summary = True):
+    def simulate(self, simulation_duration, reset = False, trace = False, print_summary = True):
         ''' Ensure objects are initialized and run the simulation for
         specified duration.
 
         Arguments:
-        simulation_time -- for how long to run the simulation measured
-            in simulation time.
+        simulation_duration -- for how long to run the simulation
+            measured in simulation time.
         reset -- if True then the simulation will be restarted from time
             zero. States of all devices and other assets will be reset
             to initial states. If False the simulation will continue
@@ -73,7 +73,7 @@ class System:
             self._simulation_is_initialized = True
 
         produced_parts_before = self._get_part_count_in_sinks()
-        self._env.run(simulation_time, trace = trace)
+        self._env.run(simulation_duration, trace = trace)
         produced_parts_after = self._get_part_count_in_sinks()
 
         stop = time.time()

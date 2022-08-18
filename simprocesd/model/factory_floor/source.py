@@ -12,13 +12,13 @@ class Source(Machine):
     name -- device name.
     sample_part -- part which will be used to make copies. This part is
         never passed downstream, only copies of it will be passed.
-    time_to_produce_part -- how long it takes to produce a part.
+    cycle_time -- how long it takes to produce a part.
     max_produced_parts -- maximum number of parts to produce.
     '''
 
-    def __init__(self, name = None, sample_part = None, time_to_produce_part = 0.0,
+    def __init__(self, name = None, sample_part = None, cycle_time = 0.0,
                  max_produced_parts = float('inf')):
-        super().__init__(name, [], time_to_produce_part, value = 0)
+        super().__init__(name, [], cycle_time, value = 0)
 
         if sample_part == None:
             sample_part = Part()

@@ -33,6 +33,15 @@ class EventType(IntEnum):
 class Event:
     ''' Simulation event class. Works together with the Environment
     class.
+
+    Arguments:
+    time - simulation time when the event will be executed.
+    asset_id - ID of the Asset who the action belongs to.
+    action - action to be executed, a function with no input
+        parameters.
+    event_type - type of the event of EventType or another numerical
+        value.
+    message - an accompanying message to be stored in the event logs.
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = ''):
@@ -112,18 +121,18 @@ class Environment:
         self._trace = False
         self._event_index = 0
 
-    def run(self, simulation_time, trace = False):
+    def run(self, simulation_duration, trace = False):
         ''' Simulate the system for a limited duration.
 
         Arguments:
-        simulation_time -- for how long to run the simulation measured
-            in simulation time.
+        simulation_duration -- for how long to run the simulation
+            measured in simulation time.
         trace -- if True then events will be recorded and exported to
             a file. Otherwise (default) trace is not recorded.
         '''
         self._trace = trace
 
-        self.schedule_event(self.now + simulation_time, -1, self._terminate, EventType.TERMINATE)
+        self.schedule_event(self.now + simulation_duration, -1, self._terminate, EventType.TERMINATE)
 
         try:
             while self._events and not self._terminated:

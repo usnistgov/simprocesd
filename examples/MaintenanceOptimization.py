@@ -26,8 +26,8 @@ cycle_time = 5
 min_acceptable_quality = 0.9
 # Machine damage parameters.
 d_period, d_probability, d_magnitude, d_fail = 60, 0.33, .5, 5
-# Simulation time per iteration. 1 week (12 operational hours a day).
-simulation_time = 60 * 12 * 7
+# Simulation duration per iteration. 1 week (12 operational hours a day).
+simulation_duration = 60 * 12 * 7
 # Iterations per threshold.
 iterations = 10
 
@@ -60,9 +60,9 @@ def main(is_test = False):
         damage_threshold = current_threshold
         results.append([])
         for i in range(iterations):
-            system.simulate(simulation_time = simulation_time, print_summary = False)
+            system.simulate(simulation_duration = simulation_duration, print_summary = False)
             results[-1].append([x.quality for x in sink.collected_parts])
-            system.simulate(simulation_time = 0, print_summary = False, reset = True)
+            system.simulate(simulation_duration = 0, print_summary = False, reset = True)
 
     # Prepare data for graphing.
     all_parts_per_dt = []

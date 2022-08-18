@@ -29,7 +29,7 @@ def main():
     machines = [M1, M2, M3, M4, M5, M6]
     sink = Sink(upstream = [M4], collect_parts = True)
 
-    system.simulate(simulation_time = 1000)
+    system.simulate(simulation_duration = 1000)
     print_produced_parts_and_average_quality(system, machines)
 
 

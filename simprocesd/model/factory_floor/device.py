@@ -28,9 +28,11 @@ class Device(Asset):
 
     def initialize(self, env):
         if self._env == None:
-            # Runs only the first time initialize is called.
+            # If this is the the first time initialize is called then
+            # save the starting upstream list.
             self._initial_upstream = self.upstream
         else:
+            # Simulation is resetting, restore starting upstream list.
             self.upstream = self._initial_upstream
 
         super().initialize(env)
@@ -57,13 +59,13 @@ class Device(Asset):
         assert_is_instance(upstream, list)
         for up in self._upstream:
             up._remove_downstream(self)
-        # Use copy so changes to upstream don't affect self._upstream.
+        # Use a copy() of upstream in case it gets modified later.
         self._upstream = upstream.copy()
         for up in self._upstream:
             assert_is_instance(up, Device)
-            # When passing a part, a device can't pass to itself because
-            # it already contains a part. A 0 cycle time Device can be
-            # added in between to function as a buffer.
+            # This scenario is not supported.
+            # Use an intermediate buffer or extend the class to do
+            # multiple cycles without releasing the part.
             assert up != self, 'Device\'s upstream cannot point directly to itself.'
             up._add_downstream(self)
         # Reset waiting time if Device was already waiting for a part.

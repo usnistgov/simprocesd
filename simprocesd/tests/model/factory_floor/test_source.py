@@ -34,7 +34,7 @@ class SourceTestCase(TestCase):
         self.assertIn(source, self.sys._assets)
 
     def test_initialize(self):
-        source = Source(time_to_produce_part = 6, sample_part = Part(value = 5))
+        source = Source(cycle_time = 6, sample_part = Part(value = 5))
         source.initialize(self.env)
         self.assert_last_scheduled_event(6, source.id, source._prepare_next_part,
                                          EventType.FINISH_PROCESSING)

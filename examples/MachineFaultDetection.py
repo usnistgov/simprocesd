@@ -59,7 +59,7 @@ def main():
     sink = Sink('Sink', stage4, collect_parts = True)
 
     random.seed(3)  # Setting seed ensures same results every run.
-    system.simulate(simulation_time = 2000)
+    system.simulate(simulation_duration = 2000)
 
     unique_machines = stage1 + stage2 + stage3 + stage4
     unique_machines.sort(key = lambda a: a.name)

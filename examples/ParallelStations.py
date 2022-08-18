@@ -24,7 +24,7 @@ def main():
     sink = Sink(upstream = [M6, M7])
 
     # If time units are minutes then simulation period is a week.
-    system.simulate(simulation_time = 60 * 24 * 7)
+    system.simulate(simulation_duration = 60 * 24 * 7)
 
 
 if __name__ == '__main__':

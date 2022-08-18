@@ -35,7 +35,7 @@ def main():
 
     random.seed(1)
     # If time units are minutes then simulation period is a day.
-    system.simulate(simulation_time = 24 * 60)
+    system.simulate(simulation_duration = 24 * 60)
 
     print('\nAverage final quality of the parts that passed through each machine:')
     for machine in [M1, M2, M3]:

@@ -8,8 +8,7 @@ class Sink(Machine):
     Arguments:
     name -- device name.
     upstream -- list of upstream devices.
-    time_between_receiving_parts -- minimum time between receiving
-        parts.
+    cycle_time -- minimum time between receiving parts.
     collect_parts -- if True then received parts are stored in the
         attribute 'collected_parts' as a list in the order they were
         received.
@@ -18,9 +17,9 @@ class Sink(Machine):
     def __init__(self,
                  name = None,
                  upstream = [],
-                 time_between_receiving_parts = 0,
+                 cycle_time = 0,
                  collect_parts = False):
-        super().__init__(name, upstream, cycle_time = time_between_receiving_parts, value = 0)
+        super().__init__(name, upstream, cycle_time = cycle_time, value = 0)
 
         self._collect_parts = collect_parts
         self.collected_parts = []

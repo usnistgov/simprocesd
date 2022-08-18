@@ -70,7 +70,7 @@ def main():
 
     random.seed(1)
     # If time units are minutes then simulation period is a week.
-    system.simulate(simulation_time = 60 * 24 * 7)
+    system.simulate(simulation_duration = 60 * 24 * 7)
 
     print_maintenance_counts(system)
 

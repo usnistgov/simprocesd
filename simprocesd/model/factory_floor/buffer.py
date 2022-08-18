@@ -8,17 +8,17 @@ class Buffer(Machine):
     Arguments:
     name -- name of the Buffer.
     upstream -- list of upstream devices.
-    time_to_receive_part -- how long it takes for a part to be received
-        before it can be passed downstream.
+    cycle_time -- how long it takes for a part to be received before
+        it can be passed downstream.
     capacity -- maximum number of parts that can be stored in the Buffer
         at once.
     value -- starting value of the Buffer.
     '''
 
-    def __init__(self, name = None, upstream = [], time_to_receive_part = 0,
+    def __init__(self, name = None, upstream = [], cycle_time = 0,
                  capacity = float('inf'), value = 0):
         assert int(capacity) >= 1, 'Capacity has to be at least 2.'
-        super().__init__(name, upstream, time_to_receive_part, value = value)
+        super().__init__(name, upstream, cycle_time, value = value)
 
         self._capacity = capacity
         self._buffer = []

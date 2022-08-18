@@ -37,7 +37,7 @@ def main():
     sink = Sink(upstream = [gate1], collect_parts = True)
 
     random.seed(1)
-    system.simulate(simulation_time = 1000)
+    system.simulate(simulation_duration = 1000)
     print_produced_parts_and_average_quality(system, [M1, M2])
 
 
