@@ -60,32 +60,36 @@ class AssetTestCase(TestCase):
 
         env.now = 1
         a.add_value('label', 5.95)
-        expected = [('label', 1, 5.95)]
+        new_expected_value = 10 + 5.95
+        expected = [('label', 1, 5.95, new_expected_value)]
         self.assertEqual(a.value_history, expected)
-        self.assertEqual(a.value, 10 + 5.95)
+        self.assertEqual(a.value, new_expected_value)
 
         env.now = 5
         a.add_value('label2', 100)
-        expected.append(('label2', 5, 100))
+        new_expected_value += 100
+        expected.append(('label2', 5, 100, new_expected_value))
         self.assertEqual(a.value_history, expected)
-        self.assertEqual(a.value, 10 + 5.95 + 100)
+        self.assertEqual(a.value, new_expected_value)
 
     def test_add_cost(self):
-        a = Asset()  # value = 0
+        a = Asset(value = 10)
         env = MagicMock(spec = Environment)
         a.initialize(env)
 
         env.now = 1
         a.add_cost('label', 3.50)
-        expected = [('label', 1, -3.50)]
+        new_expected_value = 10 - 3.50
+        expected = [('label', 1, -3.50, new_expected_value)]
         self.assertEqual(a.value_history, expected)
-        self.assertEqual(a.value, -3.50)
+        self.assertEqual(a.value, new_expected_value)
 
         env.now = 2
         a.add_cost('label2', 1)
-        expected.append(('label2', 2, -1))
+        new_expected_value -= 1
+        expected.append(('label2', 2, -1, new_expected_value))
         self.assertEqual(a.value_history, expected)
-        self.assertEqual(a.value, -3.50 - 1)
+        self.assertEqual(a.value, new_expected_value)
 
 
 if __name__ == '__main__':

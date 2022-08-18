@@ -27,7 +27,7 @@ class Asset:
             self._name = name
         self._env = None
         self._value = self._initial_value = value
-        self.value_history = []
+        self._value_history = []
 
         if is_transitory == False:
             System.add_asset(self)
@@ -40,7 +40,7 @@ class Asset:
             f'Asset {self.name} cannot be initialized by multiple Environments.'
         self._env = env
         self._value = self._initial_value
-        self.value_history = []
+        self._value_history = []
 
     @property
     def name(self):
@@ -58,24 +58,35 @@ class Asset:
     def env(self):
         return self._env
 
+    @property
+    def value_history(self):
+        ''' A list of tuples tracking Asset's value changes.
+        Tuple composition: (label, time, value_change, new_value)
+          label - label provided with the change in value.
+          time - simulation time when the value was changed.
+          value_change - by how much the value was changed.
+          new_value - Asset's value after the value change.
+        '''
+        return self._value_history
+
     def add_value(self, label, value):
-        ''' Add to the value of the asset and record the change in
-        value_history - (label, time, value).
+        ''' Add to the value of the Asset and record the change in
+        value_history.
 
         Arguments:
-        label -- label to explain change in value.
-        value -- how much to increase the value by.
+        label -- label for the change in value.
+        value -- how much to increase the Asset's value by.
         '''
-        self.value_history.append((label, self._env.now, value))
         self._value += value
+        self._value_history.append((label, self._env.now, value, self._value))
 
     def add_cost(self, label, cost):
-        ''' Decrease the value of the asset and record the change in
-        value_history - (label, time, value).
+        ''' Decrease the value of the Asset and record the change in
+        value_history.
 
         Arguments:
-        label -- label to explain change in value.
-        value -- how much to decrease the value by.
+        label -- label for the change in value.
+        cost -- how much to decrease the Asset's value by.
         '''
         self.add_value(label, -cost)
 
