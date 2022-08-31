@@ -62,10 +62,21 @@ class EventTestCase(TestCase):
         e2.random_weight = 0
         self.assertLess(e2, e1)
 
-        e1.event_type = EventType.OTHER_HIGH
+        e1.event_type = EventType.OTHER_HIGH_PRIORITY
         self.assertLess(e1, e2)
 
         e2.time = 0
+        self.assertLess(e2, e1)
+
+    def test_adjusted_event_priority(self):
+        action = MagicMock()
+        e1 = Event(1, 1, action, EventType.FAIL)
+        e2 = Event(1, 1, action, EventType.FAIL)
+
+        e1.event_type += 0.5  # Higher priority.
+        self.assertLess(e1, e2)
+
+        e2.event_type += 2.5  # Higher priority.
         self.assertLess(e2, e1)
 
 

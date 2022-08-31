@@ -29,7 +29,7 @@ class EnvironmentTestCase(TestCase):
         '''
         # WARNING: changing parameters may break tests.
         self.env.schedule_event(45 + time_offset, 0, MagicMock(), EventType.FAIL)
-        self.env.schedule_event(50 + time_offset, 1, MagicMock(), EventType.OTHER_LOW)
+        self.env.schedule_event(50 + time_offset, 1, MagicMock(), EventType.OTHER_LOW_PRIORITY)
         self.env.schedule_event(15 + time_offset, 2, MagicMock(), EventType.FAIL)
         self.env.schedule_event(20 + time_offset, 2, MagicMock(), EventType.RESTORE)
         self.env.schedule_event(50 + time_offset, 3, MagicMock(), EventType.FAIL)

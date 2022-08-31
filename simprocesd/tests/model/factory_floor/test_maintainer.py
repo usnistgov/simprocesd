@@ -60,7 +60,7 @@ class MaintainerTestCase(TestCase):
         self.assertEqual(mt.total_capacity, 5)
         # Capacity to fix is configured in setUp.
         self.assertEqual(mt.available_capacity, 5 - 1)
-        self.assert_last_scheduled_event(self.env.now, mt.id, None, EventType.OTHER_LOW)
+        self.assert_last_scheduled_event(self.env.now, mt.id, None, EventType.OTHER_LOW_PRIORITY)
         self.machines[0].status_tracker.get_capacity_to_maintain.assert_called_once_with(tag)
         # Get time should only get called once the maintenance began.
         self.machines[0].status_tracker.get_time_to_maintain.assert_not_called()

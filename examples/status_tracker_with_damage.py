@@ -48,7 +48,7 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         self._env.schedule_event(self._env.now + time_to_degrade,
                                  self._machine.id,
                                  self._degrade,
-                                 EventType.OTHER_HIGH,
+                                 EventType.OTHER_HIGH_PRIORITY,
                                  f'Machine degrade event.')
 
     def _degrade(self):

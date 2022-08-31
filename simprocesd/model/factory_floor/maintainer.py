@@ -103,7 +103,7 @@ class Maintainer(Asset):
                     self._env.now,
                     self.id,
                     lambda r = req: self._shutdown_and_repair(r),
-                    EventType.OTHER_LOW,
+                    EventType.OTHER_LOW_PRIORITY,
                     f'shutting down before repair: {req.machine.name}')
             else:
                 i += 1

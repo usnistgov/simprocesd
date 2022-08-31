@@ -9,25 +9,31 @@ from ..utils import DataStorageType, assert_is_instance, assert_callable
 
 @unique
 class EventType(IntEnum):
-    ''' Events in the order of highest to lowest priority. Default
-    events are all ints. To give a custom priority to an event specify
-    a value that is slightly higher or lower than another event.
-    For example:
-    event_type = EventType.FAIL + 0.1 -- this type of event will be
-    executed with a slightly lower priority than EventType.FAIL
+    ''' Events in the order of lowest to highest priority. EventType
+    priority makes a different when multiple events are scheduled to
+    happen at the exact same time, in those cases events with higher
+    priority are executed first
+
+    To give a custom priority to an event you can specify a value that
+    is slightly higher or lower than another event. For example:
+    event_type = EventType.FAIL - 0.1
+        an event with this event_type will be executed with a slightly
+        lower priority than EventType.FAIL, meaning that the FAIL
+        event would be executed first if it was scheduled for the
+        exact same time.
     '''
-    OTHER_HIGH = auto()
-    RESTORE = auto()
+    TERMINATE = auto()
+
+    OTHER_LOW_PRIORITY = auto()
+    SENSOR = auto()
+    FAIL = auto()
 
     # Order of the next 2 events is required for correct machine throughput.
-    FINISH_PROCESSING = auto()
     PASS_PART = auto()
+    FINISH_PROCESSING = auto()
 
-    FAIL = auto()
-    SENSOR = auto()
-    OTHER_LOW = auto()
-
-    TERMINATE = auto()
+    RESTORE = auto()
+    OTHER_HIGH_PRIORITY = auto()
 
 
 class Event:
@@ -39,7 +45,7 @@ class Event:
     asset_id - ID of the Asset who the action belongs to.
     action - action to be executed, a function with no input
         parameters.
-    event_type - type of the event of EventType or another numerical
+    event_type - type of the event, EventType or another numerical
         value.
     message - an accompanying message to be stored in the event logs.
     '''
@@ -75,13 +81,13 @@ class Event:
     def __lt__(self, other):
         return (
             self.time,
-            self.event_type,
+            -self.event_type,
             self.random_weight,
             # A reliable tie-breaker because asset IDs are unique
             self.asset_id
         ) < (
             other.time,
-            other.event_type,
+            -other.event_type,
             other.random_weight,
             other.asset_id
         )
@@ -165,7 +171,7 @@ class Environment:
             print(f'  status: {next_event.status}')
             raise e
 
-    def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW,
+    def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW_PRIORITY,
                        message = ''):
         '''
         Schedule a new simulation event to be executed.

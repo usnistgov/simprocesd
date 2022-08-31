@@ -2,8 +2,9 @@ import random
 
 
 def geometric_distribution_sample(probability, target_successes):
-    ''' Returns the number of iterations before it took to reach target number
-    of successes. Randomness is generated with Python's 'random' module.
+    ''' Returns the number of iterations it took to reach target
+    number of successes. Randomness is generated with Python's
+    'random' module.
 
     Arguments:
     probability -- chance of success of each trial (0 to 1).

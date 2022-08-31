@@ -11,8 +11,8 @@ class Asset:
     value -- starting value of the asset.
     is_transitory -- If True the Asset need to be
         initialized/re-initialized manually. For example Part objects
-        are initialized by the Source that produced them. If False the
-        Asset automatically registers with the System using
+        are initialized by the Source that produced them. If False
+        then the Asset automatically registers with the System using
         System.add_asset
     '''
 
