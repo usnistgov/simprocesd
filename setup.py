@@ -8,7 +8,7 @@ long_description = long_description + \
         f'\nSee the project\'s [GitHub page]({source_code_url}) for more information.'
 
 setup(
-    name = 'sim-procesd',
+    name = 'simprocesd',
     version = '0.1.6',
     author = 'Serghei Drozdov',
     author_email = 'serghei.drozdov@nist.gov',

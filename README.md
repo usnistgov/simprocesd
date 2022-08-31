@@ -14,13 +14,13 @@ The software is available for public use through a publicly available Github rep
 Sim-PROCESD can be installed via `pip` using:
 
 ```
-pip install sim-procesd
+pip install simprocesd
 ```
 
 To install with optional requirements needed to run certain examples:
 
 ```
-pip install sim-procesd[examples]
+pip install simprocesd[examples]
 ```
 
 
@@ -74,4 +74,4 @@ Sim-PROCESD and all of it's associated projects are in the public domain (see Li
 ## Citing this software 
 Citation examples can be found at: https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications 
 
-DOI: tbd
+DOI: https://data.nist.gov/od/id/mds2-2733
