@@ -31,7 +31,7 @@ class System:
         if new_asset not in System._instance._assets:
             System._instance._assets.append(new_asset)
 
-    def __init__(self, simulation_data_storage_type = DataStorageType.NONE):
+    def __init__(self, simulation_data_storage_type = DataStorageType.MEMORY):
         self._assets = []
         self._env = Environment(simulation_data_storage_type = simulation_data_storage_type)
         self._simulation_is_initialized = False

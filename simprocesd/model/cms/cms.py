@@ -18,9 +18,11 @@ class Cms(Asset):
             s.initialize(env)
 
     def add_sensor(self, sensor):
+        if sensor in self._sensors:
+            return
+
         self._sensors.append(sensor)
-        # user_data can be manipulated directly from sensor
-        callback = lambda time, data:self.on_sense(sensor, time, data)
+        callback = lambda s, time, data: self.on_sense(s, time, data)
         sensor.add_on_sense_callback(callback)
 
     def on_sense(self, sensor, time, data):

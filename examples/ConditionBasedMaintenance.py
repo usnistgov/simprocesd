@@ -1,13 +1,13 @@
 '''
-Example of a condition-based maintenance policy. The CBM threshold determines the health
-index level at which a machine requests maintenance.
+Example of a condition-based maintenance policy. The CBM threshold
+determines the health index level at which a machine requests
+maintenance.
 Expected parts received by sink: around 4400.
 Each machine should have been maintained about 300 times.
 '''
 import random
 
 from simprocesd.model import System
-from simprocesd.model.cms import Cms
 from simprocesd.model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, AttributeProbe
 from simprocesd.utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
@@ -22,14 +22,6 @@ def time_to_maintain(damage):
     else:
         # maintenance for a failed machine
         return geometric_distribution_sample(0.10, 1)
-
-
-class CustomCms(Cms):
-
-    def on_sense(self, sensor, time, data):
-        if data[0] >= 3:
-            # Request preventative maintenance
-            self.maintainer.request_maintenance(sensor.probes[0].target.machine)
 
 
 def main():
@@ -59,14 +51,21 @@ def main():
     sink = Sink(upstream = [M2])
 
     maintainer = Maintainer(capacity = 1)
-    cms = CustomCms(maintainer, name = 'CMS')
+
+    def on_sense(sensor, time, data):
+        if data[0] >= 3:
+            # probe target is the MachineStatusTracker
+            device = sensor.probes[0].target.machine
+            # Request  maintenance.
+            maintainer.request_maintenance(device)
 
     p1 = AttributeProbe('damage', status1)
     sensor1 = PeriodicSensor(1, [p1], name = 'M1 Sensor')
-    cms.add_sensor(sensor1)
+    sensor1.add_on_sense_callback(on_sense)
+
     p2 = AttributeProbe('damage', status2)
     sensor2 = PeriodicSensor(1, [p2], name = 'M2 Sensor')
-    cms.add_sensor(sensor2)
+    sensor2.add_on_sense_callback(on_sense)
 
     random.seed(1)
     # If time units are minutes then simulation period is a week.

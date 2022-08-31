@@ -66,7 +66,7 @@ class Sensor(Asset):
             self.data[p] = []
 
     def add_on_sense_callback(self, callback):
-        ''' callback(target_machine, time, sense_data)
+        ''' callback(sensor/self, time, sense_data)
 
         Arguments:
         time -- current simulation time.
@@ -89,7 +89,7 @@ class Sensor(Asset):
     def sense(self):
         self._collect_data()
         for c in self._on_sense:
-            c(self._env.now, self.last_sense)
+            c(self, self._env.now, self.last_sense)
 
     @property
     def last_sense(self):

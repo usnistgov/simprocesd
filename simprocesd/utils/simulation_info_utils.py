@@ -99,13 +99,8 @@ def plot_value(assets):
     '''
     figure, graph = pyplot.subplots()
     for asset in assets:
-        sum_ = []
-        current = 0
-        for d in asset.value_history:
-            current += d[2]
-            sum_.append(current)
         graph.plot([d[1] for d in asset.value_history],
-                   [d for d in sum_],
+                   [d[3] for d in asset.value_history],
                    lw = 2,
                    label = asset.name)
 
