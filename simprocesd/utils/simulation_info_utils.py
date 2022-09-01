@@ -9,8 +9,9 @@ def print_produced_parts_and_average_quality(system, machines):
     system -- System object used in the simulation.
     machines -- list of Machine objects.
     '''
+    all_production_data = system.simulation_data.get('produced_parts', {})
     for machine in machines:
-        machine_production_data = system.simulation_data['produced_parts'].get(machine.name, [])
+        machine_production_data = all_production_data.get(machine.name, [])
         quality_sum = 0
         for d in machine_production_data:
             quality_sum += d[1]
@@ -30,7 +31,7 @@ def print_maintenance_counts(system):
     system -- System object used in the simulation.
     '''
     maintenance_count = {}
-    for maintainer_data in system.simulation_data['finish_maintenance'].values():
+    for maintainer_data in system.simulation_data.get('finish_maintenance', {}).values():
         for data in maintainer_data:
             if data[1] not in maintenance_count.keys():
                 maintenance_count[data[1]] = 1
@@ -49,10 +50,12 @@ def plot_throughput(system, machines):
     machines -- list of Machine objects.
     '''
     figure, graph = pyplot.subplots()
+    all_production_data = system.simulation_data.get('produced_parts', {})
     for machine in machines:
-        produced_parts = system.simulation_data['produced_parts'].get(machine.name, [])
-        # List of tuples: (time, parts_produced_so_far)
-        production_data = [(produced_parts[i][0], i + 1) for i in range(len(produced_parts))]
+        machine_production_data = all_production_data.get(machine.name, [])
+        # Make a list of tuples: (time, parts_produced_so_far)
+        production_data = [(machine_production_data[i][0], i + 1)
+                           for i in range(len(machine_production_data))]
         throughput = [
             parts_produced / time
             for time, parts_produced in production_data if time != 0
@@ -77,8 +80,9 @@ def plot_damage(system, machines):
     machines -- list of Machine objects.
     '''
     figure, graph = pyplot.subplots()
+    all_damage_data = system.simulation_data.get('damage_update', {})
     for machine in machines:
-        damage_data = system.simulation_data['damage_update'].get(machine.name, [])
+        damage_data = all_damage_data.get(machine.name, [])
         graph.step([d[0] for d in damage_data],
                    [d[1] for d in damage_data],
                    lw = 2, where = 'post', label = machine.name)
