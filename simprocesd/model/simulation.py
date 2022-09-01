@@ -245,7 +245,7 @@ class Environment:
             event.time += self.now - event.paused_at
             bisect.insort(self._events, event)
 
-    def add_datapoint(self, list_label, asset_name, data_point):
+    def add_datapoint(self, list_label, sub_label, data_point):
         ''' Record a new datapoint/item in the appropriate list. Data
         storage is decided by simulation_data_storage_type parameter
         that was provided to Environment.
@@ -253,8 +253,8 @@ class Environment:
         Arguments:
         label -- usually a string indicating the theme of stored data
             in the related list.
-        asset_name -- second identified for the list where data_point
-            will be added. It indicates related asset.
+        sub_label -- second identified for the list where data_point
+            will be added. Usually a device name.
         data_point -- new data point that will be added to the list
             using list.append(data_point)
         '''
@@ -270,8 +270,8 @@ class Environment:
                 self.simulation_data[list_label] = table_dictionary
 
             try:
-                table_dictionary[asset_name].append(data_point)
+                table_dictionary[sub_label].append(data_point)
             except KeyError:
-                table_dictionary[asset_name] = [data_point]
+                table_dictionary[sub_label] = [data_point]
         elif self._simulation_data_storage_type == DataStorageType.FILE:
             raise NotImplementedError('Storing to file/disk is not supported yet.')

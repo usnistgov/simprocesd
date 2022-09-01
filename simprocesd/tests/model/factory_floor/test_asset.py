@@ -36,7 +36,7 @@ class AssetTestCase(TestCase):
 
         env = Environment()
         a.initialize(env)
-        self.assertEqual(a._env, env)
+        self.assertEqual(a.env, env)
 
     def test_re_initialize(self):
         a = Asset(name = 'asset', value = 10)

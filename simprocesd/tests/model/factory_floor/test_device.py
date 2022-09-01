@@ -47,7 +47,7 @@ class DeviceTestCase(TestCase):
             part = Part()
             device.give_part(part)
             device.add_value('', 3)
-            device.upstream = []
+            device.set_upstream([])
             self.assertEqual(device._output, part)
             self.assertEqual(device.value, 10 + 3)
             self.assertEqual(device.upstream, [])
@@ -68,7 +68,7 @@ class DeviceTestCase(TestCase):
 
         self.env.now = 10
         new_upstream = [Device()]
-        device.upstream = new_upstream
+        device.set_upstream(new_upstream)
 
         self.assertEqual(self.upstream[0].downstream, [])
         self.assertEqual(self.upstream[1].downstream, [])
@@ -80,7 +80,7 @@ class DeviceTestCase(TestCase):
         device = Device()
 
         def test_helper():
-            device.upstream = [device]
+            device.set_upstream([device])
 
         self.assertRaises(AssertionError, test_helper)
 

@@ -31,8 +31,8 @@ def main():
 
     M2 = Machine('PartFixer', upstream = [gate2], cycle_time = 1)
     M2.add_finish_processing_callback(improve_part)
-    gate1.upstream = [M1, M2]
-    gate2.upstream = [M1, M2]
+    gate1.set_upstream([M1, M2])
+    gate2.set_upstream([M1, M2])
 
     sink = Sink(upstream = [gate1], collect_parts = True)
 

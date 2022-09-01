@@ -83,7 +83,7 @@ class Source(Machine):
         super()._pass_part_downstream()
         if output_before != None and self._output == None:
             self._produced_parts += 1
-            self._env.add_datapoint('supplied_new_part', self.name, self._env.now)
+            self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
             self.add_cost('supplied_part', output_before.value)
             self._cost_of_produced_parts += output_before.value
             self._schedule_prepare_next_part()

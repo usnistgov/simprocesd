@@ -24,7 +24,7 @@ class Device(Asset):
         self._waiting_for_part_since = 0
         self._env = None
 
-        self.upstream = upstream
+        self.set_upstream(upstream)
 
     def initialize(self, env):
         if self._env == None:
@@ -33,7 +33,7 @@ class Device(Asset):
             self._initial_upstream = self.upstream
         else:
             # Simulation is resetting, restore starting upstream list.
-            self.upstream = self._initial_upstream
+            self.set_upstream(self._initial_upstream)
 
         super().initialize(env)
         self._part = None
@@ -54,13 +54,12 @@ class Device(Asset):
         '''
         return self._upstream.copy()
 
-    @upstream.setter
-    def upstream(self, upstream):
-        assert_is_instance(upstream, list)
+    def set_upstream(self, new_upstream_list):
+        assert_is_instance(new_upstream_list, list)
         for up in self._upstream:
             up._remove_downstream(self)
-        # Use a copy() of upstream in case it gets modified later.
-        self._upstream = upstream.copy()
+        # Use a copy() of new_upstream_list in case it's modified later.
+        self._upstream = new_upstream_list.copy()
         for up in self._upstream:
             assert_is_instance(up, Device)
             # This scenario is not supported.
