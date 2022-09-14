@@ -1,0 +1,390 @@
+<!-- Extend the theme's layout by adding scripts and links required by NIST policy.
+layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthedocs/sphinx_rtd_theme/blob/master/sphinx_rtd_theme/layout.html
+-->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Introduction &mdash; SimPROCESD 0.1.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+	<!-- NIST header + footer -->
+	<script src="https://pages.nist.gov/nist-header-footer/js/jquery-1.9.0.min.js" type="text/javascript" defer="defer"></script>
+	<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+    
+	<!-- Google Analytics. -->
+	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script>
+
+	<!-- leave notice that is to be used when opening external link. -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js" defer="defer"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  // Regex if the adress starts with https and ends with nist.gov
+		  var re_nist = new RegExp('^https?:\/\/((^\/)*\.)*nist\\.gov(\/|$)'); 
+		  // Regex if the  address starts with https
+		  var re_absolute_address = new RegExp('^((https?:)?\/\/)');
+		  // Run for each link.
+		  $("a").each(function() {
+			var url=$(this).attr('href'); 
+			// If absolute address and not an absolute nist address then mark as external.
+			if (re_absolute_address.test(url) && !re_nist.test(url)) {
+			  $(this).addClass('external-link-tag');
+			}
+		  });
+		  // Add leaveNotice to external A elements 
+		  $('a.external-link-tag').leaveNotice({
+			siteName: 'SimPROCESD Documentation',
+            exitMessage: "<h2><strong>Thank you for visiting {SITENAME}.</strong></h2><p>You are being redirected to an external site. NIST does not necessarily endorse the views expressed or the facts presented on this site. Further, NIST does not endorse any commercial products that may be advertised or available on this site.</p>",
+		  });
+		});
+	</script>
+	
+	
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+
+	<!-- NIST header + footer -->
+	<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+	
+	<!-- leave notice that is to be used when opening external link. -->
+	<link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+	
+	
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" />
+ 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> SimPROCESD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About SimPROCESD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objects">Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upstream-s">Upstream/s</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-downstreams">Multiple Downstreams</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-example">Simple Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#post-simulation-analysis">Post-Simulation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulated-sensors">Simulated Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integrated-data-collection">Integrated Data Collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-data-reference">simulation_data Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#discrete-event-simulator">Discrete Event Simulator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SimPROCESD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Code Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code_introduction.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-introduction">
+<h1>Code Introduction<a class="headerlink" href="#code-introduction" title="Permalink to this heading"></a></h1>
+<p>Some of the basic that will help understand how SimPROCESD works and how to use it.</p>
+<section id="objects">
+<h2>Objects<a class="headerlink" href="#objects" title="Permalink to this heading"></a></h2>
+<p>The package provides the following objects for modeling a manufacturing process:</p>
+<ul class="simple">
+<li><p><strong>Source</strong>: Introduces new parts to the system.</p></li>
+<li><p><strong>Machine</strong>: Retrieves, processes, and relinquishes parts. Has a status tracker.</p></li>
+<li><p><strong>MachineStatusTracker</strong>: Tracks machine’s condition, triggers hard failures, and contains maintenance information.</p></li>
+<li><p><strong>Buffer</strong>: Retrieves, stores, and relinquishes parts.</p></li>
+<li><p><strong>DecisionGate</strong>: Conditionally allow parts to pass between its upstream and downstream.</p></li>
+<li><p><strong>Sink</strong>: Collects finished parts that exit the system.</p></li>
+<li><p><strong>Maintainer</strong>: Performs requested maintenance as soon as possible. Has a configurable capacity.</p></li>
+<li><p><strong>Probes &amp; Sensors</strong>: Take periodic or on-demand readings and record them. The recorded data is accessible during the simulation and after.</p></li>
+</ul>
+</section>
+<section id="upstream-s">
+<h2>Upstream/s<a class="headerlink" href="#upstream-s" title="Permalink to this heading"></a></h2>
+<p>When deviceA can receive parts from deviceB then deviceA is known as the upstream of deviceB.<br />
+SImilarly, deviceB is a downstream of deviceA.
+The links between different devices are configured by setting the <code class="docutils literal notranslate"><span class="pre">upstream</span></code> parameter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">S1</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+    <span class="n">S2</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>In this setup, <code class="docutils literal notranslate"><span class="pre">M1</span></code> can receive parts from both <code class="docutils literal notranslate"><span class="pre">S1</span></code> and <code class="docutils literal notranslate"><span class="pre">S2</span></code>.</p></li>
+<li><p>Default <code class="docutils literal notranslate"><span class="pre">Machine</span></code> can accept only 1 part at a time from an upstream.</p></li>
+</ul>
+<p>The upstream property can also be replaced with a new list after an object is created.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">])</span>
+<span class="n">M1</span><span class="o">.</span><span class="n">set_upstream</span><span class="p">([</span><span class="n">S1</span><span class="p">])</span>  <span class="c1"># S2 is no longer upstream of M1.</span>
+</pre></div>
+</div>
+<p>A device’s upstream list can not contain the device itself. A circular flow is possible if deviceA
+is set as upstream of deviceB and deviceB is set as upstream of deviceA.</p>
+<section id="multiple-downstreams">
+<h3>Multiple Downstreams<a class="headerlink" href="#multiple-downstreams" title="Permalink to this heading"></a></h3>
+<p>Configuring a device to pass parts to multiple devices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">S1</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">])</span>
+    <span class="n">B1</span> <span class="o">=</span> <span class="n">Buffer</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">],</span> <span class="n">capacity</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>In this setup, parts from <code class="docutils literal notranslate"><span class="pre">S1</span></code> can go to either <code class="docutils literal notranslate"><span class="pre">M1</span></code> or <code class="docutils literal notranslate"><span class="pre">B1</span></code>.</p></li>
+<li><p>As parts become available in any device they will be passed to one of their downstreams prioritizing
+downstreams that has been waiting for a part the longest.</p></li>
+</ul>
+</section>
+</section>
+<section id="simple-example">
+<h2>Simple Example<a class="headerlink" href="#simple-example" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">()</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">sample_part</span> <span class="o">=</span> <span class="n">part</span><span class="p">,</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">Sink</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M1</span><span class="p">])</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">simulation_duration</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Part’s flow through the devices: <code class="docutils literal notranslate"><span class="pre">source</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">M1</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">sink</span></code></p>
+<p>Same example with additional comments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># System needs to be created first so that other simulation objects</span>
+    <span class="c1"># can register themselves with it automatically.</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">()</span>
+
+    <span class="c1"># Create a part object to be used as a sample in the Source.</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">()</span>
+
+    <span class="c1"># Source will create copies of the sample part every 1 time unit</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">sample_part</span> <span class="o">=</span> <span class="n">part</span><span class="p">,</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Create Machine that gets parts from Source and takes 1 time unit</span>
+    <span class="c1"># to process the part before passing it downstream.</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Sink is the end of the line and can only receive parts.</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">Sink</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M1</span><span class="p">])</span>
+
+    <span class="c1"># Run the simulation for 100 time units.</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">simulation_duration</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Time units are not specified but will work as long as they are used consistently. For example,
+time units can represent seconds as long as that is consistently used throughout the simulation.</p></li>
+</ul>
+</section>
+<section id="post-simulation-analysis">
+<h2>Post-Simulation Analysis<a class="headerlink" href="#post-simulation-analysis" title="Permalink to this heading"></a></h2>
+<p>How to go about collecting data during the simulation and retrieving it afterwards.</p>
+<section id="simulated-sensors">
+<h3>Simulated Sensors<a class="headerlink" href="#simulated-sensors" title="Permalink to this heading"></a></h3>
+<p>Sensor example: <a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ConditionBasedMaintenance.py">ConditionBasedMaintenance.py</a></p>
+</section>
+<section id="integrated-data-collection">
+<h3>Integrated Data Collection<a class="headerlink" href="#integrated-data-collection" title="Permalink to this heading"></a></h3>
+<p>SimPROCESD by default records some data about the simulation.</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Description</p></th>
+<th class="head"><p>list_label</p></th>
+<th class="head"><p>sub_label</p></th>
+<th class="head"><p>data_point</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Device receives a part</p></td>
+<td><p>‘received_parts’</p></td>
+<td><p>device_name</p></td>
+<td><p>(time, part_quality)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Device processes a part</p></td>
+<td><p>‘produced_parts’</p></td>
+<td><p>device_name</p></td>
+<td><p>(time, part_quality)</p></td>
+</tr>
+<tr class="row-even"><td><p>Work order enteres queue</p></td>
+<td><p>‘enter_queue’</p></td>
+<td><p>maintainer_name</p></td>
+<td><p>(time, device_to_maintain, maintenance_tag)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Work order begins</p></td>
+<td><p>‘begin_maintenance’</p></td>
+<td><p>maintainer_name</p></td>
+<td><p>(time, device_to_maintain, maintenance_tag)</p></td>
+</tr>
+<tr class="row-even"><td><p>Work order completes</p></td>
+<td><p>‘finish_maintenance’</p></td>
+<td><p>maintainer_name</p></td>
+<td><p>(time, device_to_maintain, maintenance_tag)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sink receives a part</p></td>
+<td><p>‘collected_part’</p></td>
+<td><p>sink_name</p></td>
+<td><p>(time, part_quality, part_value)</p></td>
+</tr>
+<tr class="row-even"><td><p>Source passes a part</p></td>
+<td><p>‘supplied_new_part’</p></td>
+<td><p>source_name</p></td>
+<td><p>(time,)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example of retrieving a table of raw data for a specific device.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">system</span><span class="o">.</span><span class="n">simulation_data</span><span class="p">[</span><span class="s1">&#39;produced_parts&#39;</span><span class="p">][</span><span class="s1">&#39;M1&#39;</span><span class="p">]</span>
+    <span class="c1"># &lt;System&gt;.simulation_data[list_label][sub_label]</span>
+    <span class="c1"># or</span>
+    <span class="c1"># &lt;Environment&gt;.simulation_data[list_label][sub_label]</span>
+</pre></div>
+</div>
+<p>That data gets stored in simulation data which is a dictionary with the following structure:</p>
+<ul class="simple">
+<li><p>Key: <code class="docutils literal notranslate"><span class="pre">list_label</span></code> (string)</p></li>
+<li><p>Value: Dictionary</p>
+<ul>
+<li><p>Key: <code class="docutils literal notranslate"><span class="pre">sub_label</span></code> (string)</p></li>
+<li><p>Value: List of tuples stored with that <code class="docutils literal notranslate"><span class="pre">list_label</span></code> and <code class="docutils literal notranslate"><span class="pre">sub_label</span></code></p>
+<ul>
+<li><p>The list contains data in the order that it was recorded.</p></li>
+<li><p>tuples are <code class="docutils literal notranslate"><span class="pre">tuple_of_data</span></code> from the example below.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Adding new datapoints to be recorded with simulated data is easy:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># During the simulation you can all the following code on any Asset (Device, Machine, Source, etc).</span>
+    <span class="n">M1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">add_datapoint</span><span class="p">(</span><span class="s1">&#39;new label&#39;</span><span class="p">,</span> <span class="n">M1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">M1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">quality</span><span class="p">))</span>
+    <span class="c1"># &lt;Asset&gt;.env.add_datapoint(list_label, sub_label, tuple_of_data)</span>
+</pre></div>
+</div>
+<p>These calls can be integrated into other parts like Machine’s callbacks:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_received_part</span><span class="p">(</span><span class="n">part</span><span class="p">):</span>
+        <span class="n">M1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">add_datapoint</span><span class="p">(</span><span class="s1">&#39;received_part_value&#39;</span><span class="p">,</span> <span class="n">M1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">M1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># Configure on_received_part to be called everytime M1 receives a part.</span>
+    <span class="n">M1</span><span class="o">.</span><span class="n">add_receive_part_callback</span><span class="p">(</span><span class="n">on_received_part</span><span class="p">)</span>
+	
+    <span class="o">...</span><span class="n">run</span> <span class="n">simulation</span><span class="o">...</span>
+
+    <span class="c1"># Print list of recorded tuples</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">simulation_data</span><span class="p">[</span><span class="s1">&#39;received_part_value&#39;</span><span class="p">][</span><span class="n">M1</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="simulation-data-reference">
+<h3>simulation_data Reference<a class="headerlink" href="#simulation-data-reference" title="Permalink to this heading"></a></h3>
+<p>There are build in functions under
+GitHub: <a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/simprocesd/utils/simulation_info_utils.py">simulation_info_utils.py</a>
+that show graphs based on simulation_data.</p>
+</section>
+</section>
+<section id="discrete-event-simulator">
+<h2>Discrete Event Simulator<a class="headerlink" href="#discrete-event-simulator" title="Permalink to this heading"></a></h2>
+<p>SimPROCESD is a discrete event simulator which means that the simulation is driven forward by
+events. Initial events are created during initialization of the simulated objects and additional
+events are generated in process of executing the previous events.</p>
+<p> <br />
+Multiple events can be schedules to happen at the exact same time in which case they are
+executed in order of <a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/simprocesd/model/simulation.py#L11"><code class="docutils literal notranslate"><span class="pre">EventType</span></code> priority</a>
+(represented by a number).</p>
+<p> <br />
+Example of how <code class="docutils literal notranslate"><span class="pre">Source</span></code> can schedule an event for generating a new part after <code class="docutils literal notranslate"><span class="pre">cycle_time</span></code> has passed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">schedule_event</span><span class="p">(</span>                <span class="c1"># Environment.schedule_event(...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">now</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time</span><span class="p">,</span>     <span class="c1"># Absolute simulation time when the event will execute.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>                            <span class="c1"># ID of the object whose action the event represents.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_next_part</span><span class="p">,</span>            <span class="c1"># The action to be executed (a function).</span>
+        <span class="n">EventType</span><span class="o">.</span><span class="n">FINISH_PROCESSING</span><span class="p">,</span>        <span class="c1"># Event type. Helps determine correct execution order.</span>
+        <span class="s1">&#39;</span><span class="si">{self.name}</span><span class="s1"> prepares part.&#39;</span>        <span class="c1"># A debug string to associate with the event.</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

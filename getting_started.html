@@ -1,0 +1,207 @@
+<!-- Extend the theme's layout by adding scripts and links required by NIST policy.
+layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthedocs/sphinx_rtd_theme/blob/master/sphinx_rtd_theme/layout.html
+-->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; SimPROCESD 0.1.6 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+	<!-- NIST header + footer -->
+	<script src="https://pages.nist.gov/nist-header-footer/js/jquery-1.9.0.min.js" type="text/javascript" defer="defer"></script>
+	<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+    
+	<!-- Google Analytics. -->
+	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script>
+
+	<!-- leave notice that is to be used when opening external link. -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js" defer="defer"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  // Regex if the adress starts with https and ends with nist.gov
+		  var re_nist = new RegExp('^https?:\/\/((^\/)*\.)*nist\\.gov(\/|$)'); 
+		  // Regex if the  address starts with https
+		  var re_absolute_address = new RegExp('^((https?:)?\/\/)');
+		  // Run for each link.
+		  $("a").each(function() {
+			var url=$(this).attr('href'); 
+			// If absolute address and not an absolute nist address then mark as external.
+			if (re_absolute_address.test(url) && !re_nist.test(url)) {
+			  $(this).addClass('external-link-tag');
+			}
+		  });
+		  // Add leaveNotice to external A elements 
+		  $('a.external-link-tag').leaveNotice({
+			siteName: 'SimPROCESD Documentation',
+            exitMessage: "<h2><strong>Thank you for visiting {SITENAME}.</strong></h2><p>You are being redirected to an external site. NIST does not necessarily endorse the views expressed or the facts presented on this site. Further, NIST does not endorse any commercial products that may be advertised or available on this site.</p>",
+		  });
+		});
+	</script>
+	
+	
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+
+	<!-- NIST header + footer -->
+	<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+	
+	<!-- leave notice that is to be used when opening external link. -->
+	<link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+	
+	
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Introduction" href="code_introduction.html" />
+    <link rel="prev" title="About SimPROCESD" href="about.html" />
+ 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> SimPROCESD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About SimPROCESD</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#option-1-standard-package-install">Option 1: Standard package install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#option-2-developer-setup">Option 2: Developer setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SimPROCESD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<p>How to get started with using the SimPROCESD simulator package.</p>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>Python3, version 3.7 or later.</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<section id="option-1-standard-package-install">
+<h3>Option 1: Standard package install<a class="headerlink" href="#option-1-standard-package-install" title="Permalink to this heading"></a></h3>
+<p>Install Sim-PROCESD via <code class="docutils literal notranslate"><span class="pre">pip</span></code> using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install simprocesd
+</pre></div>
+</div>
+<p>To install with optional requirements needed to run some of the examples use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install simprocesd[examples]
+</pre></div>
+</div>
+</section>
+<section id="option-2-developer-setup">
+<h3>Option 2: Developer setup<a class="headerlink" href="#option-2-developer-setup" title="Permalink to this heading"></a></h3>
+<p>If you would like to make local changes to the <code class="docutils literal notranslate"><span class="pre">simprocesd</span></code> package you are running.</p>
+<p><strong>1.</strong> Fetch the code to a local folder</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">usnistgov</span><span class="o">/</span><span class="n">simprocesd</span><span class="o">.</span><span class="n">git</span> <span class="o">&lt;</span><span class="n">root_repo_folder_path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><strong>2.</strong> Add the local code as a package with pip. Navigate to <code class="docutils literal notranslate"><span class="pre">&lt;root_repo_folder_path&gt;</span></code> and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="n">examples</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">-e</span></code> flag means the install will be <u>editable</u> and any changes made to the code in
+<code class="docutils literal notranslate"><span class="pre">&lt;root_repo_folder_path&gt;</span></code> will be reflected without needing to reinstall the SimPROCESD package.</p>
+<p> <br />
+<strong>3.</strong> Import and use SimPROCESD package as you normally would except that now you can make changes
+to the code and have them be reflected in the package.</p>
+<p> <br />
+4. To uninstall a package installed with a <code class="docutils literal notranslate"><span class="pre">-e</span></code> flag navigate to <code class="docutils literal notranslate"><span class="pre">&lt;root_repo_folder_path&gt;</span></code> and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span> <span class="o">-</span><span class="n">u</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="about.html" class="btn btn-neutral float-left" title="About SimPROCESD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code_introduction.html" class="btn btn-neutral float-right" title="Code Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

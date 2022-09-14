@@ -1,1 +1,4 @@
+# Folders, files, and extensions to ignore.
+
 *.bak
+*.lock

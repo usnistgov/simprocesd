@@ -1,0 +1,33 @@
+/* Hide the copyright element from rtd theme*/
+div[role=contentinfo] {
+	visibility: hidden;
+	position: relative;
+	height: 0px;
+}
+
+p {
+    line-height: 24px;
+    font-size: 16px;
+    margin: 0 0 8px;
+}
+
+.rst-content .toctree-wrapper>p.caption, .rst-content h1, .rst-content h2, .rst-content h3, .rst-content h4, .rst-content h5, .rst-content h6 {
+    margin-bottom: 24px;
+    margin-top: 24px;
+}
+
+.wy-breadcrumbs li.wy-breadcrumbs-aside {
+	visibility: hidden;
+	position: relative;
+	height: 0px;
+}
+
+/* Furo
+p {
+    margin: 0 0 0px;
+}
+
+ul {
+    margin: 0 0 0px;
+}
+*/
