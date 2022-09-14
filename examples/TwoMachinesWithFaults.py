@@ -1,6 +1,5 @@
 ''' Expected parts produced: around 6500-7000
 '''
-import random
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
