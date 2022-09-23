@@ -6,10 +6,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 
 <!-- Update 'linktags' block in the layout with a new link at the start. super() makes 
 the block include all previous content in the 'linktags' block. -->
-{%- block linktags %}
-	<!-- NIST header + footer -->
-	<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
-	
+{%- block linktags %}	
 	<!-- leave notice that is to be used when opening external link. -->
 	<link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
 	
@@ -18,11 +15,7 @@ the block include all previous content in the 'linktags' block. -->
 
 <!-- Update 'scripts' block in the layout with new scripts at the start. super() makes 
 the block include all previous content in the 'scripts' block. -->
-{%- block scripts %}
-	<!-- NIST header + footer -->
-	<script src="https://pages.nist.gov/nist-header-footer/js/jquery-1.9.0.min.js" type="text/javascript" defer="defer"></script>
-	<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
-    
+{%- block scripts %}    
 	<!-- Google Analytics. -->
 	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
 </script>
