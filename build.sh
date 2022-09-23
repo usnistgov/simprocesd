@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Building directly into ./ prevents custom.css from applying.
-sphinx-build -E -b html docs/source/ docs/build/
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 # Do some cleaning.
-rm -rf _sources
-rm -rf _static
+rm -rf "$SCRIPTPATH/build"
+mkdir "$SCRIPTPATH/build"
+cp "$SCRIPTPATH/.nojekyll" "$SCRIPTPATH/build/.nojekyll"
 
-# Move build files to root for pages to pick it up.
-mv docs/build/* .
+# Building directly into ./ prevents custom.css from applying.
+sphinx-build -E -b html "$SCRIPTPATH/docs/source/" "$SCRIPTPATH/build/"
