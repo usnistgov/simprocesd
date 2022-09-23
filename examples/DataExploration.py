@@ -8,7 +8,7 @@ import sys
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, Probe
-from simprocesd.utils import DataStorageType, geometric_distribution_sample, plot_throughput, \
+from simprocesd.utils import geometric_distribution_sample, plot_throughput, \
     plot_damage, plot_value, print_produced_parts_and_average_quality, simple_plot
 
 from . import StatusTrackerWithDamage
@@ -33,20 +33,20 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
 
 
 def main(is_test = False):
-    system = System(DataStorageType.MEMORY)
-
+    system = System()
     maintainer = Maintainer(capacity = 1)
-    source = Source('source', Part('Part', value = 1, quality = 0), cycle_time = 1)
+
+    sample_part = Part('Part', value = 1, quality = 0)
+    source = Source('source', sample_part, cycle_time = 1)
     buffer = Buffer('source_buffer', [source], capacity = 12)
     M1 = new_machine('M1', [buffer], 2.5, 0.15, maintainer)
     M2 = new_machine('M2', [buffer], 2.5, 0.3, maintainer)
     M3 = new_machine('M3', [buffer], 2.5, 0.6, maintainer)
     sink = Sink('sink', [M1, M2, M3])
-    # Add a custom sensor to buffer with a single probe that measures buffer level.
+
     level_probe = Probe(lambda target: target.level(), buffer)
     sensor = PeriodicSensor(2.5, [level_probe])
 
-    random.seed(10)  # Setting seed ensures same results every run.
     system.simulate(simulation_duration = 60 * 24 * 7)
 
     # Print information to console.

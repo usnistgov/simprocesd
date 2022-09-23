@@ -58,7 +58,7 @@ class CustomCms(CmsEmulator):
 def sample(duration, with_cms):
     system = System()
 
-    part = Part(f'{count_per_part}xPart', 0, 1)
+    part = Part(value = 0, quality = 1)
     source = Source(sample_part = part)
 
     status = StatusTrackerWithFaults()
