@@ -2,9 +2,11 @@
 
 All of the examples are part of the open source repo on GitHub: [examples/](https://github.com/usnistgov/simprocesd/tree/master/examples)  
 
-Once you have simprocesd package installed and the source code repository downloaded you can run examples like so:
+Once you have simprocesd package installed and the source code downloaded you can run examples like so:
 ```
-python simprocesd_code_repo/examples/SingleMachine.py
+# To run SingleMachine.py example navigate to the root folder of SimPROCESD
+# and run the following command:
+python -m examples.SingleMachine
 ```
 
 **[SingleMachine.py](https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachine.py)**  

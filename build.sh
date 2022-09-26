@@ -8,8 +8,9 @@ ls $SCRIPTPATH/docs/build/
 sphinx-build -E -b html $SCRIPTPATH/docs/source/ $SCRIPTPATH/docs/build/
 
 # Do some cleaning.
+rm -rf $SCRIPTPATH/.doctrees
 rm -rf $SCRIPTPATH/_sources
 rm -rf $SCRIPTPATH/_static
 
-# Move build files to root for pages to pick it up.
-mv $SCRIPTPATH/docs/build/* $SCRIPTPATH
+# Move build files+folders to root so pages picks it up.
+mv $SCRIPTPATH/docs/build/{*,.[^.]*} $SCRIPTPATH/
