@@ -119,7 +119,7 @@ def wasted_part_processing(part):
     part.add_cost('M1_failed_processing', part.value)
 
 
-def default_part_processing(part):
+def default_part_processing(machine, part):
     if part.quality > 0:
         part.add_value('M1_processing', 1.5 * count_per_part * part.quality)
 

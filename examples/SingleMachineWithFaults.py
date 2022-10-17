@@ -17,8 +17,8 @@ from . import StatusTrackerWithFaults
 
 def main():
     system = System()
-
     maintainer = Maintainer()
+
     source = Source()
     M1 = Machine('M1',
                  cycle_time = 1,
@@ -27,7 +27,9 @@ def main():
     M1.status_tracker.add_recurring_fault('Fault',
         get_time_to_fault = lambda: geometric_distribution_sample(0.1, 4),
         get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1))
-    M1.add_failed_callback(lambda p: maintainer.request_maintenance(M1, 'Fault'))
+
+    on_shutdown_cb = lambda m, is_failure, p: maintainer.request_maintenance(m, 'Fault')
+    M1.add_shutdown_callback(on_shutdown_cb)
     sink = Sink(upstream = [M1])
 
     random.seed(1)

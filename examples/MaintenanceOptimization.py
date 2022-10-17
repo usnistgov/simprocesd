@@ -117,9 +117,9 @@ def generate_machine(name, upstream, maintainer):
                                  get_capacity_to_maintain = lambda damage: capacity_to_repair)
     new_machine = Machine(name, upstream, cycle_time, st)
 
-    def finish_processing(part):
+    def finish_processing(machine, part):
         # Part quality is adjusted based on current machine's damage level.
-        damage = new_machine.status_tracker.damage
+        damage = machine.status_tracker.damage
         # Damage negatively affects part quality. The relationship is
         # exponential. Gauss distribution is used for noise.
         part.quality = max(0, 1 - max(0, random.gauss(pow(damage, 3) * 0.01, .1)))

@@ -112,19 +112,31 @@ class MachineTestCase(TestCase):
         self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
                                          EventType.PASS_PART)
 
-    def test_fail_callbacks(self):
+    def test_shutdown_callback(self):
         machine = Machine()
-        fail_cb = MagicMock()
-        machine.add_failed_callback(fail_cb)
+        shutdown_cb = MagicMock()
+        machine.add_shutdown_callback(shutdown_cb)
         machine.initialize(self.env)
         part = Part()
         machine.give_part(part)
 
-        fail_cb.assert_not_called()
-        machine._fail()
-        fail_cb.assert_called_once_with(part)
+        shutdown_cb.assert_not_called()
+        machine.shutdown()
+        shutdown_cb.assert_called_once_with(machine, False, None)
 
-    def test_restore_callbacks(self):
+    def test_shutdown_callback_on_fail(self):
+        machine = Machine()
+        shutdown_cb = MagicMock()
+        machine.add_shutdown_callback(shutdown_cb)
+        machine.initialize(self.env)
+        part = Part()
+        machine.give_part(part)
+
+        shutdown_cb.assert_not_called()
+        machine._fail()
+        shutdown_cb.assert_called_once_with(machine, True, part)
+
+    def test_restore_callback(self):
         machine = Machine()
         restore_cb = MagicMock()
         machine.add_restored_callback(restore_cb)
@@ -133,7 +145,7 @@ class MachineTestCase(TestCase):
 
         restore_cb.assert_not_called()
         machine.restore_functionality()
-        restore_cb.assert_called_once()
+        restore_cb.assert_called_once_with(machine)
 
     def test_schedule_failure(self):
         machine = Machine(upstream = self.upstream)
@@ -168,7 +180,7 @@ class MachineTestCase(TestCase):
 
         received_part_cb.assert_not_called()
         machine.give_part(part)
-        received_part_cb.assert_called_once()
+        received_part_cb.assert_called_once_with(machine, part)
         self.env.add_datapoint.assert_called_once()
         self.assert_last_scheduled_event(self.env.now + 3, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
@@ -184,7 +196,7 @@ class MachineTestCase(TestCase):
 
         finished_processing_cb.assert_not_called()
         machine._finish_processing_part()
-        finished_processing_cb.assert_called_once()
+        finished_processing_cb.assert_called_once_with(machine, part)
         self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
         self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)

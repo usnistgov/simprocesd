@@ -11,11 +11,11 @@ from simprocesd.model.factory_floor import Source, Machine, Sink, DecisionGate
 from simprocesd.utils import DataStorageType, print_produced_parts_and_average_quality
 
 
-def process_part(part):
+def process_part(machine, part):
     part.quality = random.random()
 
 
-def improve_part(part):
+def improve_part(machine, part):
     part.quality = min(1, part.quality + 0.75)
 
 

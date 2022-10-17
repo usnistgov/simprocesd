@@ -27,7 +27,7 @@ class StatusTrackerWithFaults(MachineStatusTracker):
             f.initialize(self)
             self._prepare_fault(f)
 
-    def _receive_part(self, part):
+    def _receive_part(self, machine, part):
         # Fault callbacks.
         for n, f in self._active_faults.items():
             if f.receive_part_callback != None:

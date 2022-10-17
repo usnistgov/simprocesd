@@ -42,11 +42,11 @@ def main():
     M1 = Machine('M1',
                  upstream = [source],
                  cycle_time = 1)
-    M1.add_finish_processing_callback(lambda p: process_part(p, 0.5, 0.75))
+    M1.add_finish_processing_callback(lambda m, p: process_part(p, 0.5, 0.75))
     M2 = Machine('M2',
                  upstream = [M1],
                  cycle_time = 1)
-    M2.add_finish_processing_callback(lambda p: process_part(p, 0.1, 0.25))
+    M2.add_finish_processing_callback(lambda m, p: process_part(p, 0.1, 0.25))
     sink = Sink(upstream = [M2], collect_parts = True)
 
     # If time units are minutes then simulation period is a day.

@@ -17,7 +17,7 @@ class Machine(Device):
 
     If machine fails with a part that hasn't been fully processed then
     the part is lost. Lost part can be captured by using
-    add_failed_callback.
+    add_shutdown_callback.
     '''
 
     def __init__(self,
@@ -41,7 +41,7 @@ class Machine(Device):
         self._is_shut_down = False
         self._received_part_callbacks = []
         self._finish_processing_callbacks = []
-        self._failed_callbacks = []
+        self._shutdown_callbacks = []
         self._restored_callbacks = []
 
     @property
@@ -71,7 +71,7 @@ class Machine(Device):
         self._env.add_datapoint('received_parts', self.name, (self._env.now, self._part.quality))
         super()._on_received_new_part()
         for c in self._received_part_callbacks:
-            c(self._part)
+            c(self, self._part)
 
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
@@ -95,7 +95,7 @@ class Machine(Device):
         self._schedule_pass_part_downstream()
         self._part = None
         for c in self._finish_processing_callbacks:
-            c(self._output)
+            c(self, self._output)
         self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
 
     def schedule_failure(self, time, message):
@@ -114,8 +114,8 @@ class Machine(Device):
         self._part = None
         self._env.cancel_matching_events(asset_id = self.id)
         self._set_waiting_for_part(False)
-        for c in self._failed_callbacks:
-            c(lost_part)
+        for c in self._shutdown_callbacks:
+            c(self, True, lost_part)
 
     def shutdown(self):
         ''' Make sure not to call in the middle of another Machine
@@ -127,12 +127,16 @@ class Machine(Device):
         self._is_shut_down = True
         self._env.pause_matching_events(asset_id = self.id)
         self._set_waiting_for_part(False)
+        for c in self._shutdown_callbacks:
+            c(self, False, None)
 
     def restore_functionality(self):
         ''' Restore machine to an operational state after a shutdown()
         or after a maintained/repaired failure. If status tracker is not
         operational nothing will be done.
         '''
+        if not self._is_shut_down:
+            return
         if not self.status_tracker.is_operational():
             return
         self._is_shut_down = False
@@ -143,34 +147,61 @@ class Machine(Device):
             self.notify_upstream_of_available_space()
 
         for c in self._restored_callbacks:
-            c()
+            c(self)
 
     def add_receive_part_callback(self, callback):
-        '''Accepts one argument: received part.
-        callback(part)
+        ''' Setup a function to be called when the machine receives a
+        a new part.
+        Function signature: callback(machine, part)
+
+        Arguments:
+        callback - function to be called.
+            callback arguments:
+            machine - machine to which the callback was added.
+            part - part that was received.
         '''
         assert_callable(callback)
         self._received_part_callbacks.append(callback)
 
     def add_finish_processing_callback(self, callback):
-        '''Accepts one argument: part that has just been processed.
-        callback(part)
+        ''' Setup a function to be called when the machine finishes
+        processing a part.
+        Function signature: callback(machine, part)
+
+        Arguments:
+        callback - function to be called.
+            callback arguments:
+            machine - machine to which the callback was added.
+            part - part that has just been processed.
         '''
         assert_callable(callback)
         self._finish_processing_callbacks.append(callback)
 
-    def add_failed_callback(self, callback):
-        '''Accepts one argument: part in the machine that has not been
-        processed yet or None if there is no such part in the machine.
-        The part is removed from the machine when machine fails.
-        callback(part)
+    def add_shutdown_callback(self, callback):
+        ''' Setup a function to be called when the machine shuts down.
+        Function signature: callback(machine, is_failure, part)
+
+        Arguments:
+        callback - function to be called.
+            callback arguments:
+            machine - machine to which the callback was added.
+            is_failure - True if the shutdown occurred due to failure,
+                False otherwise.
+            part - part object that was lost when the machine shut
+                down or None if no part was lost.
         '''
         assert_callable(callback)
-        self._failed_callbacks.append(callback)
+        self._shutdown_callbacks.append(callback)
 
     def add_restored_callback(self, callback):
-        '''Accepts no arguments.
-        callback()
+        ''' Setup a function to be called when the machine is restored
+        after a shutdown.
+        Function signature: callback(machine)
+
+        Arguments:
+        callback - function to be called.
+            callback arguments:
+            machine - machine to which the callback was added.
         '''
         assert_callable(callback)
         self._restored_callbacks.append(callback)

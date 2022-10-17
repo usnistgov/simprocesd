@@ -39,7 +39,7 @@ class OutputPartSensor(Sensor):
         super().initialize(env)
         self._counter = 0
 
-    def _probe_part(self, part):
+    def _probe_part(self, machine, part):
         self._counter -= 1
         if self._counter < 0:
             for p in self._probes:

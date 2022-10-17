@@ -27,8 +27,9 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
                                      get_time_to_maintain = time_to_maintain,
                                      get_capacity_to_maintain = lambda tag: 1)
     machine = Machine(name, upstream, cycle_time, status)
-    machine.add_finish_processing_callback(lambda p, st = status: process_part(p, st))
-    machine.add_failed_callback(lambda p, m = machine: maintainer.request_maintenance(m))
+    machine.add_finish_processing_callback(lambda m, p: process_part(p, m.status_tracker))
+    machine.add_shutdown_callback(
+            lambda m, is_failure, p: maintainer.request_maintenance(m) if is_failure else None)
     return machine
 
 
