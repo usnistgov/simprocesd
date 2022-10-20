@@ -72,6 +72,12 @@ class AssetTestCase(TestCase):
         self.assertEqual(a.value_history, expected)
         self.assertEqual(a.value, new_expected_value)
 
+        # Value of 0 is ignored
+        a.add_value('label3', 0)
+        self.assertEqual(a.value_history, expected)
+        a.add_cost('label4', 0)
+        self.assertEqual(a.value_history, expected)
+
     def test_add_cost(self):
         a = Asset(value = 10)
         env = MagicMock(spec = Environment)

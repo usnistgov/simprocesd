@@ -23,22 +23,22 @@ def print_produced_parts_and_average_quality(system, machines):
               +f'quality of {average_quality}')
 
 
-def print_maintenance_counts(system):
-    ''' Prints which machines were maintained and how many maintenances
-    of those machines were completed.
+def print_finished_work_order_counts(system):
+    ''' Prints which machines had work orders performed (to finish) on
+    them and how many of those work orders were performed.
 
     Arguments:
     system -- System object used in the simulation.
     '''
     maintenance_count = {}
-    for maintainer_data in system.simulation_data.get('finish_maintenance', {}).values():
+    for maintainer_data in system.simulation_data.get('finish_work_order', {}).values():
         for data in maintainer_data:
             if data[1] not in maintenance_count.keys():
                 maintenance_count[data[1]] = 1
             else:
                 maintenance_count[data[1]] += 1
     for machine_name, count in sorted(maintenance_count.items()):
-        print(f'{machine_name} was maintained {count} times.')
+        print(f'{count} work orders were started and finished on {machine_name}.')
 
 
 def plot_throughput(system, machines):

@@ -72,17 +72,21 @@ class Asset:
     def add_value(self, label, value):
         ''' Add to the value of the Asset and record the change in
         value_history.
+        If the value is 0 then nothing is recorded.
 
         Arguments:
         label -- label for the change in value.
         value -- how much to increase the Asset's value by.
         '''
+        if value == 0:
+            return
         self._value += value
         self._value_history.append((label, self._env.now, value, self._value))
 
     def add_cost(self, label, cost):
         ''' Decrease the value of the Asset and record the change in
         value_history.
+        If the value is 0 then nothing is recorded.
 
         Arguments:
         label -- label for the change in value.

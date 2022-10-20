@@ -243,11 +243,11 @@ class CmsEmulator(Cms):
             if random.random() >= self.miss_rate[fault.name]:
                 # fault is detected now
                 self.sense_fault_count[fault.name] = 0
-                self.maintainer.request_maintenance(self.machine[fault.name], fault.name)
+                self.maintainer.create_work_order(self.machine[fault.name], fault.name)
         elif self.sense_fault_count[fault.name] == self.miss_count[fault.name]:
             # fault was missed earlier by CMS and is caught now by other means
             self.sense_fault_count[fault.name] = 0
-            self.maintainer.request_maintenance(self.machine[fault.name], fault.name)
+            self.maintainer.create_work_order(self.machine[fault.name], fault.name)
 
     def check_for_false_alerts(self, allow_multiple = False):
         ''' Called when a sense event shows no ongoing faults so that false alerts can
@@ -256,7 +256,7 @@ class CmsEmulator(Cms):
         for name, count in self.fa_buffer.items():
             if count > 0 and random.random() < 0.01:
                 self.fa_buffer[name] -= 1
-                self.maintainer.request_maintenance(self.machine[name], name)
+                self.maintainer.create_work_order(self.machine[name], name)
                 if not allow_multiple: return
 
     def configure_fault_handling(self, fault_name, machine,

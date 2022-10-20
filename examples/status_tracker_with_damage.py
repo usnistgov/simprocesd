@@ -70,10 +70,10 @@ class StatusTrackerWithDamage(MachineStatusTracker):
         if not was_operational:
             self._prepare_next_degrade_event()
 
-    def get_time_to_maintain(self, maintenance_id):
+    def get_time_to_maintain(self, tag):
         return self._get_time_to_maintain(self.damage)
 
-    def get_capacity_to_maintain(self, maintenance_id):
+    def get_capacity_to_maintain(self, tag):
         return self._get_capacity_to_maintain(self.damage)
 
     def is_operational(self):

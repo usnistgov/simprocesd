@@ -1,9 +1,10 @@
 from ...utils.utils import assert_is_instance, assert_callable
 from ..simulation import EventType
 from .device import Device
+from .maintainer import Maintainable
 
 
-class Machine(Device):
+class Machine(Device, Maintainable):
     ''' Machine is a Device that can process parts and has a state
     represented by a status_tracker.
 
@@ -206,6 +207,24 @@ class Machine(Device):
         assert_callable(callback)
         self._restored_callbacks.append(callback)
 
+    # Start method overrides for Maintainable subclass.
+    def get_work_order_duration(self, tag):
+        return self.status_tracker.get_time_to_maintain(tag)
+
+    def get_work_order_capacity(self, tag):
+        return self.status_tracker.get_capacity_to_maintain(tag)
+
+    def get_work_order_cost(self, tag):
+        return self.status_tracker.get_cost_to_maintain(tag)
+
+    def start_work(self, tag):
+        self.shutdown()
+
+    def end_work(self, tag):
+        self.status_tracker.maintain(tag)
+        self.restore_functionality()
+    # End method overrides for Maintainable subclass.
+
 
 class MachineStatusTracker:
     ''' Base class for representing the status of the machine.
@@ -225,29 +244,38 @@ class MachineStatusTracker:
         self._machine = machine
         self._env = env
 
-    def maintain(self, maintenance_tag):
+    def maintain(self, tag):
         ''' Perform maintenance. Called by Maintainer when it performs
         maintenance on the associated Machine.
 
         Arguments:
-        maintenance_tag -- maintenance identifier. Supports any type.
+        tag -- maintenance identifier. Supports any type.
         '''
         pass
 
-    def get_time_to_maintain(self, maintenance_tag):
+    def get_time_to_maintain(self, tag):
         ''' Return how long it will take to perform the maintenance.
 
         Arguments:
-        maintenance_tag -- maintenance identifier. Supports any type.
+        tag -- maintenance identifier. Supports any type.
         '''
         return 0
 
-    def get_capacity_to_maintain(self, maintenance_tag):
+    def get_capacity_to_maintain(self, tag):
         ''' Return how much maintenance capacity is needed to perform
         the maintenance.
 
         Arguments:
-        maintenance_tag -- maintenance identifier. Supports any type.
+        tag -- maintenance identifier. Supports any type.
+        '''
+        return 0
+
+    def get_cost_to_maintain(self, tag):
+        ''' Return how much maintenance capacity is needed to perform
+        the maintenance.
+
+        Arguments:
+        tag -- maintenance identifier. Supports any type.
         '''
         return 0
 

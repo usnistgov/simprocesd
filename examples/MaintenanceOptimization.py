@@ -127,7 +127,7 @@ def generate_machine(name, upstream, maintainer):
     def on_status_degrade(damage):
         # Request maintenance if damage is above threshold.
         if damage >= damage_threshold:
-            maintainer.request_maintenance(new_machine)
+            maintainer.create_work_order(new_machine)
 
     new_machine.add_finish_processing_callback(finish_processing)
     st.add_on_degrade_callback(on_status_degrade)

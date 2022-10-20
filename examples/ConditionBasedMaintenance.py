@@ -10,7 +10,7 @@ import random
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Buffer, Sink, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, AttributeProbe
-from simprocesd.utils import DataStorageType, geometric_distribution_sample, print_maintenance_counts
+from simprocesd.utils import DataStorageType, geometric_distribution_sample, print_finished_work_order_counts
 
 from . import StatusTrackerWithDamage
 
@@ -57,7 +57,7 @@ def main():
             # probe target is the MachineStatusTracker
             device = sensor.probes[0].target.machine
             # Request  maintenance.
-            maintainer.request_maintenance(device)
+            maintainer.create_work_order(device)
 
     p1 = AttributeProbe('damage', status1)
     sensor1 = PeriodicSensor(1, [p1], name = 'M1 Sensor')
@@ -71,7 +71,7 @@ def main():
     # If time units are minutes then simulation period is a week.
     system.simulate(simulation_duration = 60 * 24 * 7)
 
-    print_maintenance_counts(system)
+    print_finished_work_order_counts(system)
 
 
 if __name__ == '__main__':

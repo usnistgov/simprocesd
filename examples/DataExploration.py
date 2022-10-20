@@ -29,7 +29,7 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
     machine = Machine(name, upstream, cycle_time, status)
     machine.add_finish_processing_callback(lambda m, p: process_part(p, m.status_tracker))
     machine.add_shutdown_callback(
-            lambda m, is_failure, p: maintainer.request_maintenance(m) if is_failure else None)
+            lambda m, is_failure, p: maintainer.create_work_order(m) if is_failure else None)
     return machine
 
 

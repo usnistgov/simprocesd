@@ -28,7 +28,7 @@ def main():
         get_time_to_fault = lambda: geometric_distribution_sample(0.1, 4),
         get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1))
 
-    on_shutdown_cb = lambda m, is_failure, p: maintainer.request_maintenance(m, 'Fault')
+    on_shutdown_cb = lambda m, is_failure, p: maintainer.create_work_order(m, 'Fault')
     M1.add_shutdown_callback(on_shutdown_cb)
     sink = Sink(upstream = [M1])
 

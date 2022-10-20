@@ -17,7 +17,7 @@ def main():
     system = System()
 
     maintainer = Maintainer()
-    schedule_repair = lambda f: maintainer.request_maintenance(
+    schedule_repair = lambda f: maintainer.create_work_order(
             f.machine, f.name)
 
     source = Source()

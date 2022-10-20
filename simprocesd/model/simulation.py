@@ -25,6 +25,7 @@ class EventType(IntEnum):
     TERMINATE = auto()
 
     OTHER_LOW_PRIORITY = auto()
+    START_WORK = auto()
     SENSOR = auto()
     FAIL = auto()
 
@@ -33,6 +34,7 @@ class EventType(IntEnum):
     FINISH_PROCESSING = auto()
 
     RESTORE = auto()
+    FINISH_WORK = auto()
     OTHER_HIGH_PRIORITY = auto()
 
 
