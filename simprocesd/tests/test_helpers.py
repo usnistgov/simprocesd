@@ -2,11 +2,20 @@ from unittest.mock import patch, MagicMock
 
 
 def add_side_effect_to_class_method(test_case, target, replacement = None, side_effect = None):
-    ''' Configure side_effect and replacement to be called with parameters
-    that the target is normally called with. For target format see target
-    parameter used by unittest.mock.patch
+    ''' Configure side_effect and replacement to be called with
+    parameters that the target is normally called with.
 
-    Returns mock object for the target.
+    Arguments:
+    test_case - TestCase whose cleanup will be used to cleanup the
+        patch.
+    target - For target format see target parameter used by
+        unittest.mock.patch
+    replacement - method to replace the original call. If None
+        (default) then the original call will remain.
+    side_effect - an additional function to be called when the call
+        to the target is made.
+
+    Return: a mock object for the target.
     '''
     # Configure patch target.
     patcher = patch(target, autospec = True)

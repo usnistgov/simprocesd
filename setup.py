@@ -36,7 +36,10 @@ setup(
         'simprocesd.tests.*'
     ]),
     python_requires = ">=3.7",
-    install_requires = ['matplotlib >= 3.5'],
+    install_requires = [
+        'matplotlib >= 3.5',
+        'dill'
+        ],
     extras_require = {
         "examples": [
             'numpy >= 1.21',

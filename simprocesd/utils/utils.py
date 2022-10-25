@@ -1,4 +1,8 @@
 import csv
+import lzma
+import os.path
+
+import dill as dill
 
 
 def assert_is_instance(obj, type_, message = None):
@@ -33,3 +37,38 @@ def save_list_to_csv(filename, list_):
     with open(filename, 'w', newline = '') as file:
         writer = csv.writer(file, quoting = csv.QUOTE_ALL)
         writer.writerows(list_)
+
+
+def save_object(obj, file_path, override_file = False):
+    ''' Serialize and save an object in a file using Dill module.
+    https://pypi.org/project/dill/
+    Function also compresses the data using lzma.
+
+    Arguments:
+    obj - object that will be serialized
+    file_path - relative or absolute path to the file.
+    override_file - if True then the function will overwrite an
+        existing file at the same path, if False (default) the
+        function will fail if provided file already exists.
+    '''
+    if not override_file and os.path.isfile(file_path):
+        raise FileExistsError(f'File \'{file_path}\' already exists.')
+
+    with lzma.open(file_path, 'wb') as file:
+        dill.dump(obj, file)
+
+
+def load_object(file_path):
+    '''
+    Load an object that was saved using utils.save_object and return
+    he loaded object.
+
+    Warning: Only load objects that you trust as they could execute
+    arbitrary code.
+
+    Arguments:
+    file_path - relative or absolute path to the file.
+    '''
+    with lzma.open(file_path, 'rb') as file:
+        return dill.load(file)
+

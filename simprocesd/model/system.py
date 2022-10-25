@@ -5,13 +5,19 @@ from ..utils import DataStorageType
 
 
 class System:
-    ''' A System object is a convenient way to run the simulation and
-    access simulation data.
+    ''' A System object is a required object to run the simulation and
+    a convenient way to access simulation data.
     System needs to be created before other devices and assets because
     those objects will automatically register themselves with the last
     instantiated System object.
     When a new System object is created the previous System instance can
     no longer run simulations but the data in it can still be accessed.
+
+    Arguments:
+    simulation_data_storage_type - indicate how simulation data should
+        be stored while the simulation is running. Needs to be of type
+        DataStorageType.
+        default: DataStorageType.MEMORY
     '''
 
     _instance = None  # Last initialized System.
@@ -91,4 +97,27 @@ class System:
         '''
         from .factory_floor.asset import Asset
         return sum(x.value for x in self._assets if isinstance(x, Asset))
+
+    def find_assets(self, name = None, id_ = None, type_ = None, subtype = None):
+        ''' Return a list of assets that match the given arguments.
+        If multiple arguments are given then it will return only the
+        assets that match all of the parameters.
+
+        Arguments:
+        name - fined assets by name.
+        id_ - find assets by id.
+        type_ - find assets by class/type, does not check for
+            matching subtypes.
+        subtype - find assets by class/type, checks for matching
+            object type or subtype using isinstance.
+        '''
+        rtn = []
+        for a in self._assets:
+            if (name == None or name == a.name) and \
+                    (id_ == None or id_ == a.id) and \
+                    (type_ == None or type(a) is type_) and \
+                    (subtype == None or isinstance(a, subtype)):
+                rtn.append(a)
+
+        return rtn
 
