@@ -1,15 +1,19 @@
 import random
 
 from simprocesd.model.cms.cms import Cms
-from simprocesd.model.factory_floor import MachineStatusTracker
+from simprocesd.model.factory_floor import Machine
 from simprocesd.model.simulation import EventType
 from simprocesd.utils import assert_callable
 
 
-class StatusTrackerWithFaults(MachineStatusTracker):
+class MachineWithFaults(Machine):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self,
+                 name = None,
+                 upstream = [],
+                 cycle_time = 0,
+                 value = 0):
+        super().__init__(name, upstream, cycle_time, value)
         self._possible_faults = {}  # name, MachineFault
         self._active_faults = {}  # name, MachineFault
 
@@ -17,21 +21,19 @@ class StatusTrackerWithFaults(MachineStatusTracker):
     def active_faults(self):
         return self._active_faults
 
-    def initialize(self, machine, env):
-        first_call = self._env == None
-        super().initialize(machine, env)
-        if first_call:
-            self._machine.add_receive_part_callback(self._receive_part)
+    def initialize(self, env):
+        super().initialize(env)
 
         for n, f in self._possible_faults.items():
             f.initialize(self)
             self._prepare_fault(f)
 
-    def _receive_part(self, machine, part):
+    def _on_received_new_part(self):
+        super()._on_received_new_part()
         # Fault callbacks.
         for n, f in self._active_faults.items():
             if f.receive_part_callback != None:
-                f.receive_part_callback(part)
+                f.receive_part_callback(self._part)
 
         # Check if any faults need to cause machine to fail
         for n, f in self._possible_faults.items():
@@ -42,20 +44,10 @@ class StatusTrackerWithFaults(MachineStatusTracker):
                     # failures for same fault.
                     f.operations_to_fault = None
                     self._env.schedule_event(self._env.now,
-                                             self._machine.id,
+                                             self.id,
                                              lambda: self._scheduled_fault(f),
                                              EventType.FAIL,
                                              f'Cycle count fault: {n}')
-
-    def maintain(self, fault_name):
-        f = self._active_faults.get(fault_name)
-        if f != None:
-            del self._active_faults[fault_name]
-            self._machine.add_cost(f'fix-{fault_name}', f.get_cost_to_fix())
-            self._prepare_fault(f)
-        else:
-            f = self._possible_faults[fault_name]
-            self._machine.add_cost(f'fix_false_alert-{fault_name}', f.get_false_alert_cost())
 
     def add_recurring_fault(self,
                  name = None,
@@ -74,10 +66,10 @@ class StatusTrackerWithFaults(MachineStatusTracker):
         name -- name of fault, used as maintenance tag to fix fault.
         get_time_to_fault -- function that gives time to fault, no
             periodic faults if not set.
-        get_operations_to_fault -- function that gives n and n-th
-            operation will trigger fault, n is infinite if not set.
-        get_time_to_maintain -- how long it takes for maintenance to fix
-            this fault.
+        get_operations_to_fault -- function that returns n and n-th
+            operation will trigger the fault, n is infinite if not set.
+        get_time_to_maintain -- how long it takes for maintenance to
+            fix this fault.
         get_cost_to_fix -- how much it costs to fix this fault.
         get_false_alert_cost -- how much it costs to fix this fault.
         is_hard_fault -- will machine keep operating when fault occurs.
@@ -85,7 +77,8 @@ class StatusTrackerWithFaults(MachineStatusTracker):
             maintaining this fault.
         receive_part_callback = called with received part if the fault
             occurred and has not been maintained yet.
-        failed_callback -- called with fault name when fault occurs.
+        failed_callback -- called with machine, and fault name when
+            this fault occurs.
         '''
         if name == None:
             name = f'Failure_{len(self._possible_faults)}'
@@ -99,18 +92,6 @@ class StatusTrackerWithFaults(MachineStatusTracker):
         )
         self._possible_faults[name] = mf
 
-    def get_time_to_maintain(self, fault_name):
-        return self._possible_faults[fault_name].get_time_to_maintain()
-
-    def get_capacity_to_maintain(self, fault_name):
-        return self._possible_faults[fault_name].capacity_to_repair
-
-    def is_operational(self):
-        for n, f in self._active_faults.items():
-            if f.is_hard_fault:
-                return False
-        return True
-
     def _prepare_fault(self, fault):
         # If the fault is not scheduled then schedule or reschedule it to occur.
         if fault.scheduled_fault_time == None:
@@ -122,7 +103,7 @@ class StatusTrackerWithFaults(MachineStatusTracker):
 
             if fault.scheduled_fault_time != None:
                 self._env.schedule_event(fault.scheduled_fault_time,
-                                         self._machine.id,
+                                         self.id,
                                          lambda: self._scheduled_fault(fault),
                                          EventType.FAIL,
                                          f'Timed fault: {fault.name}')
@@ -146,11 +127,37 @@ class StatusTrackerWithFaults(MachineStatusTracker):
                     f.remaining_time_to_fault = max(0, f.scheduled_fault_time - self._env.now)
                     f.scheduled_fault_time = None
             # Failing machine will cancel all currently scheduled events for the machine.
-            self._machine.schedule_failure(self._env.now,
-                    f'Fault: {fault.name} on machine: {self._machine.name}')
+            self.schedule_failure(self._env.now,
+                    f'Fault: {fault.name} on machine: {self.name}')
 
         if fault.failed_callback != None:
-            fault.failed_callback(fault)
+            fault.failed_callback(self, fault.name)
+
+    # Beginning of Maintainable function overrides.
+    def get_work_order_duration(self, fault_name):
+        return self._possible_faults[fault_name].get_time_to_maintain()
+
+    def get_work_order_capacity(self, fault_name):
+        return self._possible_faults[fault_name].capacity_to_repair
+
+    def get_work_order_cost(self, tag):
+        return 0  # No additional cost to maintainer.
+
+    def start_work(self, tag):
+        self.shutdown()
+
+    def end_work(self, fault_name):
+        f = self._active_faults.get(fault_name)
+        if f != None:
+            del self._active_faults[fault_name]
+            self.add_cost(f'fix-{fault_name}', f.get_cost_to_fix())
+            self._prepare_fault(f)
+        else:
+            f = self._possible_faults[fault_name]
+            self.add_cost(f'fix_false_alert-{fault_name}', f.get_false_alert_cost())
+
+        self.restore_functionality()
+    # End of Maintainable function overrides.
 
 
 class RecurringMachineFault:
@@ -193,10 +200,10 @@ class RecurringMachineFault:
 
     @property
     def machine(self):
-        return self._machine_status.machine
+        return self._machine
 
-    def initialize(self, machine_status):
-        self._machine_status = machine_status
+    def initialize(self, machine):
+        self._machine = machine
         self.scheduled_fault_time = None
         self.remaining_time_to_fault = None
         self.operations_since_last_fix = 0
@@ -205,8 +212,7 @@ class RecurringMachineFault:
 
 class CmsEmulator(Cms):
     ''' CMS emulator that is configured with average rates rather than
-    actual detection logic. Built to work with machines using
-    StatusTrackerWithFaults.
+    actual detection logic. Built to work with MachineWithFaults.
     '''
 
     def __init__(self, maintainer, **kwargs):

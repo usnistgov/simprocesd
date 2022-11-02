@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Part, Machine, MachineStatusTracker
+from ....model.factory_floor import Part, Machine
 
 
 class MachineTestCase(TestCase):
@@ -25,18 +25,15 @@ class MachineTestCase(TestCase):
             self.assertEqual(args[4], message)
 
     def test_initialize(self):
-        status_tracker = MachineStatusTracker()
-        machine = Machine('mb', self.upstream, 2, status_tracker, 15)
+        machine = Machine('mb', self.upstream, 2, 15)
         self.assertIn(machine, self.sys._assets)
         machine.initialize(self.env)
         self.assertEqual(machine.name, 'mb')
         self.assertEqual(machine.value, 15)
         self.assertEqual(machine.upstream, self.upstream)
-        self.assertEqual(machine.status_tracker, status_tracker)
 
     def test_re_initialize(self):
-        status_tracker = MachineStatusTracker()
-        machine = Machine('mb', self.upstream, 2, status_tracker, 15)
+        machine = Machine('mb', self.upstream, 2, 15)
         machine.initialize(self.env)
 
         part = Part()
@@ -49,23 +46,13 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine._part, None)
         self.assertEqual(machine.value, 15)
         self.assertEqual(machine.upstream, self.upstream)
-        self.assertEqual(machine.status_tracker, status_tracker)
 
     def test_is_operational(self):
-        mst_mock = MagicMock(spec = MachineStatusTracker)
-        machine = Machine(status_tracker = mst_mock)
+        machine = Machine()
         machine.initialize(self.env)
 
-        mst_mock.is_operational.return_value = True
         self.assertTrue(machine.is_operational())
-
-        mst_mock.is_operational.return_value = False
-        self.assertFalse(machine.is_operational())
-
         machine.shutdown()
-        self.assertFalse(machine.is_operational())
-
-        mst_mock.is_operational.return_value = True
         self.assertFalse(machine.is_operational())
 
     def test_shutdown(self):
@@ -77,19 +64,10 @@ class MachineTestCase(TestCase):
         self.assertFalse(machine.is_operational())
 
     def test_restore(self):
-        mst_mock = MagicMock(spec = MachineStatusTracker)
-        machine = Machine(upstream = self.upstream, status_tracker = mst_mock)
+        machine = Machine(upstream = self.upstream)
         machine.initialize(self.env)
         machine.shutdown()
-        # Attempt to restore when status tracker is not operational.
-        mst_mock.is_operational.return_value = False
-        machine.restore_functionality()
-        self.assertFalse(machine.is_operational())
-        self.env.unpause_matching_events.assert_not_called()
-        for u in self.upstream:
-            u.space_available_downstream.assert_not_called()
 
-        mst_mock.is_operational.return_value = True
         machine.restore_functionality()
         self.assertTrue(machine.is_operational())
         self.env.unpause_matching_events.assert_called_with(asset_id = machine.id)
@@ -202,12 +180,11 @@ class MachineTestCase(TestCase):
                                     EventType.PASS_PART)
 
     def test_process_part_when_not_operational(self):
-        mst_mock = MagicMock(spec = MachineStatusTracker)
-        machine = Machine(status_tracker = mst_mock)
+        machine = Machine()
         machine.initialize(self.env)
         machine.give_part(Part())
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
-        mst_mock.is_operational.return_value = False
+        machine.shutdown()
 
         machine._finish_processing_part()
         # No new events have been scheduled and part is not processed.

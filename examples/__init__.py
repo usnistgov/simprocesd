@@ -1,2 +1,2 @@
-from .status_tracker_with_damage import StatusTrackerWithDamage
-from .status_tracker_with_faults import StatusTrackerWithFaults
+from .machine_with_damage import MachineWithDamage
+from .machine_with_faults import MachineWithFaults, CmsEmulator

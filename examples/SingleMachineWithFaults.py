@@ -9,10 +9,10 @@ Expected parts produced: about 8000
 import random
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Maintainer
+from simprocesd.model.factory_floor import Source, Sink, Maintainer
 from simprocesd.utils import geometric_distribution_sample
 
-from . import StatusTrackerWithFaults
+from .machine_with_faults import MachineWithFaults
 
 
 def main():
@@ -20,11 +20,8 @@ def main():
     maintainer = Maintainer()
 
     source = Source()
-    M1 = Machine('M1',
-                 cycle_time = 1,
-                 upstream = [source],
-                 status_tracker = StatusTrackerWithFaults())
-    M1.status_tracker.add_recurring_fault('Fault',
+    M1 = MachineWithFaults('M1', cycle_time = 1, upstream = [source])
+    M1.add_recurring_fault('Fault',
         get_time_to_fault = lambda: geometric_distribution_sample(0.1, 4),
         get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1))
 

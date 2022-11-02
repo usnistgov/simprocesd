@@ -13,10 +13,10 @@ import sys
 from matplotlib import pyplot
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Maintainer, Part
+from simprocesd.model.factory_floor import Source, Sink, Maintainer, Part
 from simprocesd.utils import DataStorageType
 
-from . import StatusTrackerWithDamage
+from .machine_with_damage import MachineWithDamage
 
 # Setup parameters
 capacity_to_repair = 1
@@ -112,25 +112,32 @@ def generate_machine(name, upstream, maintainer):
     ''' Create and configure a part processing machine for this
     experiment.
     '''
-    st = StatusTrackerWithDamage(d_period, d_probability, d_magnitude, d_fail,
-                                 get_time_to_maintain = lambda damage: time_to_repair,
-                                 get_capacity_to_maintain = lambda damage: capacity_to_repair)
-    new_machine = Machine(name, upstream, cycle_time, st)
+    new_machine = MachineWithDamage(
+            name = name,
+            upstream = upstream,
+            cycle_time = cycle_time,
+            period_to_degrade = d_period,
+            probability_to_degrade = d_probability,
+            damage_on_degrade = d_magnitude,
+            damage_to_fail = d_fail,
+            get_maintenance_duration = lambda d, t: time_to_repair,
+            get_capacity_to_maintain = lambda d, t: capacity_to_repair
+    )
 
     def finish_processing(machine, part):
         # Part quality is adjusted based on current machine's damage level.
-        damage = machine.status_tracker.damage
+        damage = machine.damage
         # Damage negatively affects part quality. The relationship is
         # exponential. Gauss distribution is used for noise.
         part.quality = max(0, 1 - max(0, random.gauss(pow(damage, 3) * 0.01, .1)))
 
-    def on_status_degrade(damage):
+    def on_status_degrade(machine):
         # Request maintenance if damage is above threshold.
-        if damage >= damage_threshold:
+        if machine.damage >= damage_threshold:
             maintainer.create_work_order(new_machine)
 
     new_machine.add_finish_processing_callback(finish_processing)
-    st.add_on_degrade_callback(on_status_degrade)
+    new_machine.add_on_degrade_callback(on_status_degrade)
     return new_machine
 
 

@@ -9,10 +9,10 @@ import random
 import sys
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Part, Maintainer
+from simprocesd.model.factory_floor import Source, Sink, Part, Maintainer
 from simprocesd.model.sensors import OutputPartSensor, AttributeProbe, Probe
 
-from .status_tracker_with_faults import StatusTrackerWithFaults, CmsEmulator
+from .machine_with_faults import MachineWithFaults, CmsEmulator
 
 count_per_part = 50  # set to 1 for more accurate results
 processing_rate = 10
@@ -61,11 +61,9 @@ def sample(duration, with_cms):
     part = Part(value = 0, quality = 1)
     source = Source(sample_part = part)
 
-    status = StatusTrackerWithFaults()
-    M1 = Machine('M1', upstream = [source], cycle_time = machine_cycle_time,
-                 status_tracker = status)
+    M1 = MachineWithFaults('M1', upstream = [source], cycle_time = machine_cycle_time)
     M1.add_finish_processing_callback(default_part_processing)
-    M1.status_tracker.add_recurring_fault(
+    M1.add_recurring_fault(
         name = dulling_name,
         # Failure rate of once in 100 days.
         get_time_to_fault = lambda: distributed_ttf(100),
@@ -74,7 +72,7 @@ def sample(duration, with_cms):
         is_hard_fault = False,
         receive_part_callback = wasted_part_processing
     )
-    M1.status_tracker.add_recurring_fault(
+    M1.add_recurring_fault(
         name = ma_name,
         # Failure rate of ~99% per day.
         get_time_to_fault = lambda: distributed_ttf(1.01),
@@ -101,7 +99,7 @@ def sample(duration, with_cms):
 
     # Probe target will be overwritten by OutputPartSensor
     p1 = AttributeProbe('quality', None)
-    p2 = Probe(lambda t: M1.status_tracker.active_faults, None)
+    p2 = Probe(lambda t: M1.active_faults, None)
     sensor = OutputPartSensor(M1, [p1, p2], name = 'M1 Sensor')
     cms.add_sensor(sensor)
 

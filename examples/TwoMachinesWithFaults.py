@@ -2,10 +2,10 @@
 '''
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Buffer, Maintainer
+from simprocesd.model.factory_floor import Source, Sink, Buffer, Maintainer
 from simprocesd.utils import geometric_distribution_sample
 
-from . import StatusTrackerWithFaults
+from .machine_with_faults import MachineWithFaults
 
 
 def main():
@@ -17,21 +17,19 @@ def main():
     system = System()
 
     maintainer = Maintainer()
-    schedule_repair = lambda f: maintainer.create_work_order(
-            f.machine, f.name)
+    schedule_repair = lambda m, f: maintainer.create_work_order(
+            m, f)
 
     source = Source()
-    M1 = Machine('M1', upstream = [source], cycle_time = 1,
-                 status_tracker = StatusTrackerWithFaults())
-    M1.status_tracker.add_recurring_fault(get_time_to_fault = get_ttf,
-                                          get_time_to_maintain = get_ttm,
-                                          failed_callback = schedule_repair)
+    M1 = MachineWithFaults('M1', upstream = [source], cycle_time = 1)
+    M1.add_recurring_fault(get_time_to_fault = get_ttf,
+                           get_time_to_maintain = get_ttm,
+                           failed_callback = schedule_repair)
     B1 = Buffer(upstream = [M1], capacity = 5)
-    M2 = Machine('M2', upstream = [B1], cycle_time = 1,
-                 status_tracker = StatusTrackerWithFaults())
-    M2.status_tracker.add_recurring_fault(get_time_to_fault = get_ttf,
-                                          get_time_to_maintain = get_ttm,
-                                          failed_callback = schedule_repair)
+    M2 = MachineWithFaults('M2', upstream = [B1], cycle_time = 1)
+    M2.add_recurring_fault(get_time_to_fault = get_ttf,
+                           get_time_to_maintain = get_ttm,
+                           failed_callback = schedule_repair)
     sink = Sink(upstream = [M2])
 
     # If time units are minutes then simulation period is a week.

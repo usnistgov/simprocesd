@@ -6,28 +6,33 @@ import random
 import sys
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Machine, Source, Buffer, Sink, Part, Maintainer
+from simprocesd.model.factory_floor import Source, Buffer, Sink, Part, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, Probe
 from simprocesd.utils import geometric_distribution_sample, plot_throughput, \
     plot_damage, plot_value, print_produced_parts_and_average_quality, simple_plot
 
-from . import StatusTrackerWithDamage
+from .machine_with_damage import MachineWithDamage
 
 
-def process_part(part, status):
-    quality_change = 1 - status.damage * (0.1 + random.uniform(-.01, .01))
+def process_part(machine, part):
+    quality_change = 1 - machine.damage * (0.1 + random.uniform(-.01, .01))
     part.quality += quality_change
     if quality_change > 0:
         part.add_value('part_processed', quality_change * 10)
 
 
 def new_machine(name, upstream, cycle_time, probability_to_degrade, maintainer):
-    time_to_maintain = lambda tag: geometric_distribution_sample(0.25, 25)
-    status = StatusTrackerWithDamage(60, probability_to_degrade, 1, 3,
-                                     get_time_to_maintain = time_to_maintain,
-                                     get_capacity_to_maintain = lambda tag: 1)
-    machine = Machine(name, upstream, cycle_time, status)
-    machine.add_finish_processing_callback(lambda m, p: process_part(p, m.status_tracker))
+    time_to_maintain = lambda machine, tag: geometric_distribution_sample(0.25, 25)
+    machine = MachineWithDamage(name = name,
+                                upstream = upstream,
+                                cycle_time = cycle_time,
+                                period_to_degrade = 60,
+                                probability_to_degrade = probability_to_degrade,
+                                damage_on_degrade = 1,
+                                damage_to_fail = 3,
+                                get_maintenance_duration = time_to_maintain,
+                                get_capacity_to_maintain = lambda m, t: 1)
+    machine.add_finish_processing_callback(lambda m, p: process_part(m, p))
     machine.add_shutdown_callback(
             lambda m, is_failure, p: maintainer.create_work_order(m) if is_failure else None)
     return machine

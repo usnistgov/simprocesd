@@ -1,19 +1,16 @@
-from ...utils.utils import assert_is_instance, assert_callable
+from ...utils.utils import assert_callable
 from ..simulation import EventType
 from .device import Device
 from .maintainer import Maintainable
 
 
 class Machine(Device, Maintainable):
-    ''' Machine is a Device that can process parts and has a state
-    represented by a status_tracker.
+    ''' Machine is a Device that can process parts.
 
     Arguments:
     name -- name of the machine.
     upstream -- list of upstream devices.
     cycle_time -- how long it takes to complete one process cycle.
-    status_tracker -- optional object for tracking operational status of
-        the machine.
     value -- starting value of the machine.
 
     If machine fails with a part that hasn't been fully processed then
@@ -25,16 +22,9 @@ class Machine(Device, Maintainable):
                  name = None,
                  upstream = [],
                  cycle_time = 0,
-                 status_tracker = None,
                  value = 0):
         assert cycle_time >= 0, 'Cycle time cannot be negative.'
         super().__init__(name, upstream, value)
-
-        if status_tracker == None:
-            status_tracker = MachineStatusTracker()
-        else:
-            assert_is_instance(status_tracker, MachineStatusTracker)
-        self.status_tracker = status_tracker
 
         self.cycle_time = self._initial_cycle_time = cycle_time
 
@@ -59,11 +49,10 @@ class Machine(Device, Maintainable):
         self._cycle_time = new_value
 
     def is_operational(self):
-        return not self._is_shut_down and self.status_tracker.is_operational()
+        return not self._is_shut_down
 
     def initialize(self, env):
         super().initialize(env)
-        self.status_tracker.initialize(self, env)
         self.cycle_time = self._initial_cycle_time
         self._is_part_processed = False
         self._is_shut_down = False
@@ -133,12 +122,10 @@ class Machine(Device, Maintainable):
 
     def restore_functionality(self):
         ''' Restore machine to an operational state after a shutdown()
-        or after a maintained/repaired failure. If status tracker is not
-        operational nothing will be done.
+        or after a maintained/repaired failure.
+        Does nothing if machine is not in a shut down state.
         '''
         if not self._is_shut_down:
-            return
-        if not self.status_tracker.is_operational():
             return
         self._is_shut_down = False
         self._env.unpause_matching_events(asset_id = self.id)
@@ -156,7 +143,7 @@ class Machine(Device, Maintainable):
         Function signature: callback(machine, part)
 
         Arguments:
-        callback - function to be called.
+        callback -- function to be called.
             callback arguments:
             machine - machine to which the callback was added.
             part - part that was received.
@@ -170,7 +157,7 @@ class Machine(Device, Maintainable):
         Function signature: callback(machine, part)
 
         Arguments:
-        callback - function to be called.
+        callback -- function to be called.
             callback arguments:
             machine - machine to which the callback was added.
             part - part that has just been processed.
@@ -183,7 +170,7 @@ class Machine(Device, Maintainable):
         Function signature: callback(machine, is_failure, part)
 
         Arguments:
-        callback - function to be called.
+        callback -- function to be called.
             callback arguments:
             machine - machine to which the callback was added.
             is_failure - True if the shutdown occurred due to failure,
@@ -200,87 +187,26 @@ class Machine(Device, Maintainable):
         Function signature: callback(machine)
 
         Arguments:
-        callback - function to be called.
+        callback -- function to be called.
             callback arguments:
             machine - machine to which the callback was added.
         '''
         assert_callable(callback)
         self._restored_callbacks.append(callback)
 
-    # Start method overrides for Maintainable subclass.
+    # Beginning of Maintainable function overrides.
     def get_work_order_duration(self, tag):
-        return self.status_tracker.get_time_to_maintain(tag)
+        return 0
 
     def get_work_order_capacity(self, tag):
-        return self.status_tracker.get_capacity_to_maintain(tag)
+        return 0
 
     def get_work_order_cost(self, tag):
-        return self.status_tracker.get_cost_to_maintain(tag)
+        return 0
 
     def start_work(self, tag):
         self.shutdown()
 
     def end_work(self, tag):
-        self.status_tracker.maintain(tag)
         self.restore_functionality()
-    # End method overrides for Maintainable subclass.
-
-
-class MachineStatusTracker:
-    ''' Base class for representing the status of the machine.
-    '''
-
-    def __init__(self):
-        self._machine = None
-        self._env = None
-
-    @property
-    def machine(self):
-        ''' Machine whose status this represents.
-        '''
-        return self._machine
-
-    def initialize(self, machine, env):
-        self._machine = machine
-        self._env = env
-
-    def maintain(self, tag):
-        ''' Perform maintenance. Called by Maintainer when it performs
-        maintenance on the associated Machine.
-
-        Arguments:
-        tag -- maintenance identifier. Supports any type.
-        '''
-        pass
-
-    def get_time_to_maintain(self, tag):
-        ''' Return how long it will take to perform the maintenance.
-
-        Arguments:
-        tag -- maintenance identifier. Supports any type.
-        '''
-        return 0
-
-    def get_capacity_to_maintain(self, tag):
-        ''' Return how much maintenance capacity is needed to perform
-        the maintenance.
-
-        Arguments:
-        tag -- maintenance identifier. Supports any type.
-        '''
-        return 0
-
-    def get_cost_to_maintain(self, tag):
-        ''' Return how much maintenance capacity is needed to perform
-        the maintenance.
-
-        Arguments:
-        tag -- maintenance identifier. Supports any type.
-        '''
-        return 0
-
-    def is_operational(self):
-        ''' Return True if the status of the machine does not prevent it
-        from operating, False otherwise.
-        '''
-        return True
+    # End of Maintainable function overrides.
