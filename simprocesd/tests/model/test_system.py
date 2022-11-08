@@ -71,10 +71,10 @@ class SystemTestCase(TestCase):
         self.sys.simulate(5, print_summary = False)
         sink.initialize.assert_called_once_with(self.env_mock)
 
-        self.sys.simulate(5, print_summary = False)
+        self.sys.simulate(5, reset = False, print_summary = False)
         sink.initialize.assert_called_once_with(self.env_mock)
 
-        self.sys.simulate(5, reset = True, print_summary = False)
+        self.sys.simulate(5, print_summary = False)
         self.assertEqual(len(sink.initialize.call_args_list), 2)
 
     def test_get_net_value(self):

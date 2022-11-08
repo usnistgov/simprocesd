@@ -51,7 +51,7 @@ class System:
         else:
             return None
 
-    def simulate(self, simulation_duration, reset = False, trace = False, print_summary = True):
+    def simulate(self, simulation_duration, reset = True, trace = False, print_summary = True):
         ''' Ensure objects are initialized and run the simulation for
         specified duration.
 

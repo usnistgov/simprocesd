@@ -58,7 +58,10 @@ class Machine(Device, Maintainable):
         self._is_shut_down = False
 
     def _on_received_new_part(self):
-        self._env.add_datapoint('received_parts', self.name, (self._env.now, self._part.quality))
+        self._env.add_datapoint('received_parts', self.name, (self._env.now,
+                                                              self._part.id,
+                                                              self._part.quality,
+                                                              self._part.value))
         super()._on_received_new_part()
         for c in self._received_part_callbacks:
             c(self, self._part)
@@ -76,7 +79,7 @@ class Machine(Device, Maintainable):
             f'By {self.name}'
         )
 
-    def _finish_processing_part(self):
+    def _finish_processing_part(self, record_produced_part_data = True):
         if not self.is_operational(): return
         assert self._part != None, f'Input part is missing.'
         assert self._output == None, f'Output part slot is already full.'
@@ -86,7 +89,11 @@ class Machine(Device, Maintainable):
         self._part = None
         for c in self._finish_processing_callbacks:
             c(self, self._output)
-        self._env.add_datapoint('produced_parts', self.name, (self._env.now, self._output.quality))
+        if record_produced_part_data:
+            self._env.add_datapoint('produced_parts', self.name, (self._env.now,
+                                                                  self._output.id,
+                                                                  self._output.quality,
+                                                                  self._output.value))
 
     def schedule_failure(self, time, message):
         ''' Schedule a failure for this machine.
@@ -102,6 +109,8 @@ class Machine(Device, Maintainable):
         # Processed part (_output) is not lost but input part is.
         lost_part = self._part
         self._part = None
+        self._env.add_datapoint('device_failure', self.name,
+                (self._env.now, lost_part.id if lost_part else None))
         self._env.cancel_matching_events(asset_id = self.id)
         self._set_waiting_for_part(False)
         for c in self._shutdown_callbacks:

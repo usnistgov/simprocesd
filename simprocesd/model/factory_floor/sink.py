@@ -51,15 +51,13 @@ class Sink(Machine):
         self._received_parts_count += 1
         self._value_of_received_parts += self._part.value
         self.add_value(f'collected_part', self._part.value)
-        self._env.add_datapoint('collected_part', self.name,
-                                (self._env.now, self._part.quality, self._part.value))
         if self._collect_parts:
             self.collected_parts.append(self._part)
 
         super()._on_received_new_part()
 
     def _finish_processing_part(self):
-        super()._finish_processing_part()
+        super()._finish_processing_part(record_produced_part_data = False)
         self._output = None
         self.notify_upstream_of_available_space()
 
