@@ -111,7 +111,6 @@ class MachineWithDamage(Machine):
         return self._get_capacity_to_maintain(self, tag)
 
     def get_work_order_cost(self, tag):
-        # Not tracking costs
         return self._get_cost_to_maintain(self, tag)
 
     def start_work(self, tag):

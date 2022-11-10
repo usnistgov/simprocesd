@@ -7,6 +7,17 @@ from simprocesd.utils import assert_callable
 
 
 class MachineWithFaults(Machine):
+    ''' A Machine that can be configured with a set of failure types
+    where each failure is independent of the others and can be
+    periodic or based on number of parts processed.
+    See MachineWithFaults.add_recurring_fault()
+
+    Arguments:
+    name -- name of the machine.
+    upstream -- list of upstream devices.
+    cycle_time -- how long it takes to complete one process cycle.
+    value -- starting value of the machine.
+    '''
 
     def __init__(self,
                  name = None,

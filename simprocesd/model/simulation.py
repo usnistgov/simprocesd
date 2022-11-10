@@ -168,7 +168,7 @@ class Environment:
             print(f'  time:     {next_event.time}')
             print(f'  asset_id: {next_event.asset_id}')
             print(f'  action:   {next_event.action.__name__}')
-            print(f'  event_type: {next_event.event_type.name}')
+            print(f'  event_type: {next_event.event_type}')
             print(f'  message: {next_event.message}')
             print(f'  status: {next_event.status}')
             raise e

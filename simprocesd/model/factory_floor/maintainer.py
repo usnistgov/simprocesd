@@ -4,6 +4,10 @@ from .asset import Asset
 
 
 class Maintainable:
+    ''' Maintainable represents an interface for Maintainer to create,
+    prioritize, and execute work orders on any class that extends
+    Maintainable.
+    '''
 
     @property
     def name(self):
