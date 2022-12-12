@@ -186,10 +186,7 @@ class MachineTestCase(TestCase):
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
         machine.shutdown()
 
-        machine._finish_processing_part()
-        # No new events have been scheduled and part is not processed.
-        self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
-        self.assertEqual(machine._output, None)
+        self.assertRaises(AssertionError, lambda: machine._finish_processing_part())
 
     def test_changing_cycle_time(self):
         machine = Machine(cycle_time = 5, upstream = self.upstream)

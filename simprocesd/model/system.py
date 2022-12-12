@@ -5,32 +5,48 @@ from ..utils import DataStorageType
 
 
 class System:
-    ''' A System object is a required object to run the simulation and
-    a convenient way to access simulation data.
-    System needs to be created before other devices and assets because
-    those objects will automatically register themselves with the last
-    instantiated System object.
-    When a new System object is created the previous System instance can
-    no longer run simulations but the data in it can still be accessed.
+    '''A required class that helps setup and run simulations.
 
-    Arguments:
-    simulation_data_storage_type - indicate how simulation data should
-        be stored while the simulation is running. Needs to be of type
-        DataStorageType.
-        default: DataStorageType.MEMORY
+    System handles Asset initialization and manages the Environment
+    object to provide an easy to use interface for running simulations.
+
+    Creating a new System sets it as the active System replacing another
+    active System if there is one. Only the active system can run
+    simulations.
+
+    System object needs to be created before any Asset because Assets
+    will automatically try to register themselves with the active
+    System.
+
+    Arguments
+    ---------
+    simulation_data_storage_type: DataStorageType, default=DataStorageType.MEMORY
+        How to store <simulation_data>. Does not currently support
+        DataStorageType.FILE
     '''
 
     _instance = None  # Last initialized System.
 
     @staticmethod
     def add_asset(new_asset):
-        ''' Automatically called by newly initialized Assets.
-        Adds new_asset to the last created System so the Asset can be
-        initialized and simulated by the System.
+        '''Register an Asset with the active System.
 
-        Note: System will keep a reference to this asset so transitory
-        assets should not be added here. For example Part is not added
-        here but is instead initialized by Source which created it.
+        Automatically called by newly created Assets.
+
+        Note: System will keep a reference to this Asset so transitory
+        assets should not be added here or they will remain loaded into
+        memory. For example, Parts are not added here and parts are
+        initialized by the Source that created them.
+
+        Arguments
+        ---------
+        new_asset: Asset
+            Asset to be registered.
+
+        Raises
+        ------
+        RuntimeError
+            System object must be created before non-transitory Assets.
         '''
         if System._instance == None:
             raise RuntimeError('A System object must be initialized before creating any asset.')
@@ -46,27 +62,39 @@ class System:
 
     @property
     def simulation_data(self):
+        '''Stored datapoints added with
+        environment.add_datapoint(list_label, sub_label, datapoint)
+
+        | To retrieving a list of datapoints call:
+        | system.simulation_data[list_label][sub_label]
+        '''
         if self._env is not None:
             return self._env.simulation_data
         else:
             return None
 
     def simulate(self, simulation_duration, reset = True, trace = False, print_summary = True):
-        ''' Ensure objects are initialized and run the simulation for
-        specified duration.
+        '''Run the simulation for the specified duration.
 
-        Arguments:
-        simulation_duration -- for how long to run the simulation
-            measured in simulation time.
-        reset -- if True then the simulation will be restarted from time
-            zero. States of all devices and other assets will be reset
-            to initial states. If False the simulation will continue
-            from the current state for the specified duration.
-        trace -- if True then events will be recorded and exported to
-            a file. Otherwise the events will not be recorded or
-            exported.
-        print_summary -- if True a brief summary will be printed after
-            the simulation.
+        Ensures objects are initialized or re-initialized as needed.
+
+        Arguments
+        ---------
+        simulation_duration: float
+            For how long to run the simulation. Measured in simulation
+            time.
+        reset: bool, default=True
+            If True then the simulation will be restarted from time
+            zero and states of all Devices and other Assets will be
+            reset to initial states. If False then the simulation will
+            continue from the current simulation time.
+        trace: bool, default=False
+            If True then the executed events will be recorded and the
+            trace will be exported to a file at
+            '~/Downloads/environment_trace.json'
+        print_summary: bool, default=True
+            If True a brief summary will be printed at the end of the
+            simulation.
         '''
         if System._instance != self:
             raise RuntimeError('This System can no longer simulate because a new one was created.')
@@ -92,24 +120,39 @@ class System:
         return sum(x.received_parts_count for x in self._assets if isinstance(x, Sink))
 
     def get_net_value_of_assets(self):
-        ''' Calculates and returns the net value of objects provided
-        when creating System.
+        '''Calculate the net value of all Assets which are registered
+        with the System.
+
+        Returns
+        -------
+        float
+            Net value of Assets.
         '''
         from .factory_floor.asset import Asset
         return sum(x.value for x in self._assets if isinstance(x, Asset))
 
     def find_assets(self, name = None, id_ = None, type_ = None, subtype = None):
-        ''' Return a list of assets that match the given arguments.
-        If multiple arguments are given then it will return only the
-        assets that match all of the parameters.
+        '''Search through Assets registered with the System.
 
-        Arguments:
-        name - fined assets by name.
-        id_ - find assets by id.
-        type_ - find assets by class/type, does not check for
-            matching subtypes.
-        subtype - find assets by class/type, checks for matching
-            object type or subtype using isinstance.
+        If multiple arguments are provided then it will return only the
+        Assets that match all of the arguments.
+
+        Arguments
+        ---------
+        name: str, optional
+            Filter Assets by name.
+        id_: int, optional
+            Filter Assets by ID.
+        type_: type, optional
+            Filter Assets by class type, checks immediate class only.
+        subtype: type, optional
+            Filter Assets by class type, checks all of the Asset's types
+            using isinstance()
+
+        Returns
+        -------
+        list
+            A list of Assets that match the provided arguments.
         '''
         rtn = []
         for a in self._assets:

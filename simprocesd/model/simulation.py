@@ -9,18 +9,16 @@ from ..utils import DataStorageType, assert_is_instance, assert_callable
 
 @unique
 class EventType(IntEnum):
-    ''' Events in the order of lowest to highest priority. EventType
-    priority makes a different when multiple events are scheduled to
-    happen at the exact same time, in those cases events with higher
-    priority are executed first
+    '''Events in the order of lowest to highest priority.
+
+    EventType priority makes a difference when multiple events are
+    scheduled to happen at the exact same time, in those cases events
+    with higher priority are executed first
 
     To give a custom priority to an event you can specify a value that
     is slightly higher or lower than another event. For example:
-    event_type = EventType.FAIL - 0.1
-        an event with this event_type will be executed with a slightly
-        lower priority than EventType.FAIL, meaning that the FAIL
-        event would be executed first if it was scheduled for the
-        exact same time.
+    "event_type = EventType.FAIL - 0.1". An event with this event_type
+    will be executed with a slightly lower priority than EventType.FAIL
     '''
     TERMINATE = auto()
 
@@ -39,17 +37,27 @@ class EventType(IntEnum):
 
 
 class Event:
-    ''' Simulation event class. Works together with the Environment
-    class.
+    '''Class used for scheduling actions within the simulation.
 
-    Arguments:
-    time - simulation time when the event will be executed.
-    asset_id - ID of the Asset who the action belongs to.
-    action - action to be executed, a function with no input
-        parameters.
-    event_type - type of the event, EventType or another numerical
-        value.
-    message - an accompanying message to be stored in the event logs.
+    | Higher Event priority is determined by:
+    | 1. lower <time>
+    | 2. if there is a tie, then higher <event_type>
+    | 3. if there is a tie, then a lower random weight
+    | 4. if there is a tie, then lower <asset_id>
+
+    Arguments
+    ---------
+    time: float
+        Simulation time when the event will be executed.
+    asset_id: int
+        ID of the Asset who the action belongs to.
+    action: function
+        Action to be executed, a function with no arguments.
+    event_type: float
+        Priority of the event, recommended to use EventType enum.
+    message: str, default=''
+        Any message to be associated with this Event. Useful as
+        debugging information.
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = ''):
@@ -70,7 +78,7 @@ class Event:
         self.executed = False
 
     def execute(self):
-        ''' Calls the event's action unless the event is marked as
+        '''Calls the event's action unless the event is marked as
         cancelled or as executed.
         '''
         if self.cancelled:
@@ -101,9 +109,30 @@ class Event:
 
 
 class Environment:
-    '''
-    The main simulation environment for Sim-PROCESD. By default,
-    Environment objects are instantiated automatically by the System.
+    ''' Simulation environment.
+
+    Responsible for creating, prioritizing, executing, and otherwise
+    managing Events.
+
+    Note
+    ----
+    Environment is automatically created by System and generally should
+    not be created manually.
+
+    Arguments
+    ---------
+    name: str, default='environment'
+        Environment name.
+    simulation_data_storage_type: DataStorageType, default=DataStorageType.NONE
+        How to store <simulation_data>. Does not currently support
+        DataStorageType.FILE
+
+    Attributes
+    ----------
+    now: float
+        Current time of the simulation, starts at 0.
+    simulation_data: list
+        Stored datapoints added with Environment.add_datapoint
     '''
 
     def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE):
@@ -114,11 +143,12 @@ class Environment:
         self.reset()
 
     def reset(self):
-        ''' Reset the Environment to its initial state. This will clear
-        out all scheduled and paused events and make a new
-        simulation_data table.
-        Reference to the previous simulation_data table can be saved
-        before calling reset to preserve the data.
+        '''Reset the Environment to its initial state.
+
+        This will clear out all scheduled and paused events and reset
+        the simulation_data table. To preserve the old data save a
+        reference to simulation_data before calling reset, the reference
+        can then be used to access old data.
         '''
         self.now = 0
         self.simulation_data = {}
@@ -130,13 +160,19 @@ class Environment:
         self._event_index = 0
 
     def run(self, simulation_duration, trace = False):
-        ''' Simulate the system for a limited duration.
+        '''Simulate the system for a limited duration.
 
-        Arguments:
-        simulation_duration -- for how long to run the simulation
-            measured in simulation time.
-        trace -- if True then events will be recorded and exported to
-            a file. Otherwise (default) trace is not recorded.
+        Will repeatedly execute a scheduled Event with the highest
+        priority until specified simulation time passes.
+
+        Arguments
+        ---------
+        simulation_duration: float
+            For how long to run the simulation. Measured in simulation
+            time.
+        trace: bool, default=False
+            If True then executed Events will be recorded and exported
+            to a file at: '~/Downloads/{environment.name}_trace.json'
         '''
         self._trace = trace
 
@@ -151,9 +187,7 @@ class Environment:
                 self._export_trace()
 
     def step(self):
-        ''' Find and execute the next earliest simulation event.
-        Simultaneous _events are executed in order according to Event's
-        default comparator.
+        '''Execute a scheduled Event with the highest priority.
         '''
         next_event = self._events.pop(0)
 
@@ -175,19 +209,24 @@ class Environment:
 
     def schedule_event(self, time, asset_id, action, event_type = EventType.OTHER_LOW_PRIORITY,
                        message = ''):
-        '''
-        Schedule a new simulation event to be executed.
+        '''Schedule an Event to be executed at a later simulation time.
 
-        Arguments:
-        time -- when to perform the action. Time cannot be lower than
-            the current simulation time (Environment.now).
-        asset_id -- id of the actor of the action. If this actor were to
-            shutdown then this event should be paused/cancelled.
-        action -- this will be called with no additional parameters at
-            the specified simulation time.
-        event_type -- one of the EventType enum values or a float.
-        message -- any message to be associated with this event. Useful
-            for debugging information.
+        Arguments
+        ---------
+        time: float
+            Simulation time of when to perform the action. Cannot be
+            lower than the current simulation time (Environment.now).
+        asset_id: int
+            ID of the actor Asset. Should follow the rule that if the
+            actor Asset were to shutdown then this event should be
+            paused/cancelled.
+        action: function
+            Action to be executed, a function with no arguments.
+        event_type: float, default=EventType.OTHER_LOW_PRIORITY
+            Priority of the event, recommended to use EventType enum.
+        message: str, default=''
+            Any message to be associated with this Event. Useful as
+            debugging information.
         '''
         if time < self.now:
             raise ValueError(f'Can not schedule _events in the past: now={self.now}, time={time}')
@@ -211,8 +250,13 @@ class Environment:
             json.dump(self._event_trace, fp)
 
     def cancel_matching_events(self, asset_id = None):
-        ''' Finds scheduled events with matching parameters and marks
-        then as cancelled.
+        '''Find scheduled Events with matching parameters and mark them
+        as cancelled.
+
+        Arguments
+        ---------
+        asset_id: int, optional
+            If set, will only match events with the same asset_id
         '''
         if asset_id == None: return
         # Cancel events that are scheduled and ones that are paused.
@@ -222,9 +266,14 @@ class Environment:
             event.cancelled = True
 
     def pause_matching_events(self, asset_id = None):
-        ''' Finds scheduled events with matching parameters and marks
-        then as paused. Paused events can be resumed with
-        unpause_matching_events.
+        '''Find scheduled Events with matching parameters and mark them
+        as Paused. Paused Events can be resumed with
+        environment.unpause_matching_events
+
+        Arguments
+        ---------
+        asset_id: int, optional
+            If set, will only match events with the same asset_id
         '''
         if asset_id == None: return
         events_to_pause = [x for x in self._events if x.asset_id == asset_id]
@@ -235,9 +284,15 @@ class Environment:
             event.paused_at = self.now
 
     def unpause_matching_events(self, asset_id = None):
-        ''' Finds paused events with matching parameters and schedules
-        them to be executed at a later time. An unpaused event's
-        scheduled time is offset by the duration of its pause.
+        '''Find paused Events with matching parameters and unpause them.
+
+        The Events to be unpaused will be scheduled for their original
+        time plus the duration of their pause.
+
+        Arguments
+        ---------
+        asset_id: int, optional
+            If set, will only match events with the same asset_id
         '''
         if asset_id == None: return
         events_to_unpause = [x for x in self._paused_events if x.asset_id == asset_id]
@@ -247,18 +302,21 @@ class Environment:
             event.time += self.now - event.paused_at
             bisect.insort(self._events, event)
 
-    def add_datapoint(self, list_label, sub_label, data_point):
-        ''' Record a new datapoint/item in the appropriate list. Data
-        storage is decided by simulation_data_storage_type parameter
-        that was provided to Environment.
+    def add_datapoint(self, list_label, sub_label, datapoint):
+        '''Record a new datapoint/item in the appropriate list.
+
+        Calling env.simulation_data[list_label][sub_label] will return
+        a list of all datapoint that were created using the same labels.
 
         Arguments:
-        label -- usually a string indicating the theme of stored data
-            in the related list.
-        sub_label -- second identified for the list where data_point
-            will be added. Usually a device name.
-        data_point -- new data point that will be added to the list
-            using list.append(data_point)
+        label: object
+            Primary label. Usually a string describing the datapoint.
+        sub_label: object
+            Secondary label. Usually a string specifying the source of
+            data like an Asset name.
+        datapoint: object
+            New datapoint that will be added to the list using
+            list.append(datapoint). Can be a single object or a tuple.
         '''
         if self._simulation_data_storage_type == DataStorageType.NONE:
             return
@@ -272,8 +330,8 @@ class Environment:
                 self.simulation_data[list_label] = table_dictionary
 
             try:
-                table_dictionary[sub_label].append(data_point)
+                table_dictionary[sub_label].append(datapoint)
             except KeyError:
-                table_dictionary[sub_label] = [data_point]
+                table_dictionary[sub_label] = [datapoint]
         elif self._simulation_data_storage_type == DataStorageType.FILE:
             raise NotImplementedError('Storing to file/disk is not supported yet.')

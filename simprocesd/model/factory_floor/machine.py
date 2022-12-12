@@ -5,17 +5,38 @@ from .maintainer import Maintainable
 
 
 class Machine(Device, Maintainable):
-    ''' Machine is a Device that can process parts.
+    '''Machine is a Device that can process parts.
 
-    Arguments:
-    name -- name of the machine.
-    upstream -- list of upstream devices.
-    cycle_time -- how long it takes to complete one process cycle.
-    value -- starting value of the machine.
+    Machine accepts a Part, holds onto it for the duration of a cycle
+    (processing time) and then passes it to a downstream Device when
+    possible before accepting a new Part to process. To change the Part
+    in some way when processing is done use
+    add_finish_processing_callback.
 
-    If machine fails with a part that hasn't been fully processed then
-    the part is lost. Lost part can be captured by using
-    add_shutdown_callback.
+    Callback functions can be added to this machine by using functions:
+    add_<trigger>_callback such as add_shutdown_callback.
+
+    Machine extends Maintainable class with basic functionality and the
+    class should be extended to simulate a more complex maintenance
+    scheme.
+
+    Arguments
+    ----------
+    name: str, default=None
+        Name of the Device. If name is None then the Device's name will
+        be changed to Machine_<id>
+    upstream: list, default=[]
+        A list of upstream Devices.
+    cycle_time: float, default=0
+        How long it takes to process a Part.
+    value: float, default=0
+        Starting value of the Machine.
+
+    Warning
+    -------
+    If Machine fails with a Part that hasn't been fully processed then
+    the Part is lost. A lost Part can be detected by using
+    add_shutdown_callback and checking if part != None in the callback.
     '''
 
     def __init__(self,
@@ -37,10 +58,10 @@ class Machine(Device, Maintainable):
 
     @property
     def cycle_time(self):
-        ''' How long it takes to complete one process cycle.
+        ''' How long it takes to process one Part.
 
-        Setting a new cycle time will affect all future process cycles.
-        An already started process cycle will not be affected.
+        Setting a new cycle time will affect all future process cycles
+        but not a cycle that is already in progress.
         '''
         return self._cycle_time
 
@@ -80,7 +101,9 @@ class Machine(Device, Maintainable):
         )
 
     def _finish_processing_part(self, record_produced_part_data = True):
-        if not self.is_operational(): return
+        # If Machine is not operational then the finish processing event
+        # should have been paused or cancelled.
+        assert self.is_operational(), 'Invalid Machine state.'
         assert self._part != None, f'Input part is missing.'
         assert self._output == None, f'Output part slot is already full.'
 
@@ -95,12 +118,18 @@ class Machine(Device, Maintainable):
                                                                   self._output.quality,
                                                                   self._output.value))
 
-    def schedule_failure(self, time, message):
-        ''' Schedule a failure for this machine.
+    def schedule_failure(self, time, message = ''):
+        '''Schedule a failure for this Machine.
 
-        Arguments:
-        time -- when the failure will be scheduled to occur.
-        message -- message that will be associated with the event.
+        When the Machine fails it will lose functionality any Part in
+        the middle of processing will be lost.
+
+        Arguments
+        ---------
+        time: float
+            Simulation time when the failure should occur.
+        message: str, default=''
+            Message that will be associated with the failure event.
             Useful for debugging.
         '''
         self._env.schedule_event(time, self.id, self._fail, EventType.FAIL, message)
@@ -117,11 +146,19 @@ class Machine(Device, Maintainable):
             c(self, True, lost_part)
 
     def shutdown(self):
-        ''' Make sure not to call in the middle of another Machine
-        operation, safest way is to schedule it as a separate event.
+        '''Shutdown Part related functionality.
 
-        WARNING: Part being processed will pause and resume when
-        machine is restored.
+        Part being processed will pause and resume processing when
+        Machine is restored. New parts cannot be accepted but any Part
+        that was already processed may still move downstream.
+
+        Call restore_functionality to bring Machine back online.
+
+        Warning
+        -------
+        Do not to call in the middle of another operation from this
+        Machine, safest way to call it is to schedule it as a separate
+        event.
         '''
         self._is_shut_down = True
         self._env.pause_matching_events(asset_id = self.id)
@@ -130,9 +167,10 @@ class Machine(Device, Maintainable):
             c(self, False, None)
 
     def restore_functionality(self):
-        ''' Restore machine to an operational state after a shutdown()
-        or after a maintained/repaired failure.
-        Does nothing if machine is not in a shut down state.
+        '''Restore Part related functionality and/or recover from a
+        failed state.
+
+        Does nothing if machine is not in a shutdown or failed state.
         '''
         if not self._is_shut_down:
             return
@@ -147,58 +185,65 @@ class Machine(Device, Maintainable):
             c(self)
 
     def add_receive_part_callback(self, callback):
-        ''' Setup a function to be called when the machine receives a
-        a new part.
-        Function signature: callback(machine, part)
+        '''Setup a function to be called when the Machine receives a
+        new Part.
 
-        Arguments:
-        callback -- function to be called.
-            callback arguments:
-            machine - machine to which the callback was added.
-            part - part that was received.
+        | Callback signature: callback(machine, part)
+        | machine - Machine to which the callback was added.
+        | part - Part that was lost or None if no Part was lost.
+
+        Arguments
+        ---------
+        callback: function
+            Function to be called.
         '''
         assert_callable(callback)
         self._received_part_callbacks.append(callback)
 
     def add_finish_processing_callback(self, callback):
-        ''' Setup a function to be called when the machine finishes
-        processing a part.
-        Function signature: callback(machine, part)
+        '''Setup a function to be called when the Machine finishes
+        processing a Part.
 
-        Arguments:
-        callback -- function to be called.
-            callback arguments:
-            machine - machine to which the callback was added.
-            part - part that has just been processed.
+        | Callback signature: callback(machine, part)
+        | machine - Machine to which the callback was added.
+        | part - Part that was received.
+
+        Arguments
+        ---------
+        callback: function
+            Function to be called.
         '''
         assert_callable(callback)
         self._finish_processing_callbacks.append(callback)
 
     def add_shutdown_callback(self, callback):
-        ''' Setup a function to be called when the machine shuts down.
-        Function signature: callback(machine, is_failure, part)
+        '''Setup a function to be called when the Machine shuts down.
 
-        Arguments:
-        callback -- function to be called.
-            callback arguments:
-            machine - machine to which the callback was added.
-            is_failure - True if the shutdown occurred due to failure,
-                False otherwise.
-            part - part object that was lost when the machine shut
-                down or None if no part was lost.
+        | Callback signature: callback(machine, part)
+        | machine - Machine to which the callback was added.
+        | is_failure - True if the shutdown occurred due to failure,
+            False otherwise.
+        | part - Part that was received.
+
+        Arguments
+        ---------
+        callback: function
+            Function to be called.
         '''
         assert_callable(callback)
         self._shutdown_callbacks.append(callback)
 
     def add_restored_callback(self, callback):
-        ''' Setup a function to be called when the machine is restored
-        after a shutdown.
-        Function signature: callback(machine)
+        '''Setup a function to be called when the Machine is restored
+        after a shutdown or failure.
 
-        Arguments:
-        callback -- function to be called.
-            callback arguments:
-            machine - machine to which the callback was added.
+        | Callback signature: callback(machine)
+        | machine - Machine to which the callback was added.
+
+        Arguments
+        ---------
+        callback: function
+            Function to be called.
         '''
         assert_callable(callback)
         self._restored_callbacks.append(callback)

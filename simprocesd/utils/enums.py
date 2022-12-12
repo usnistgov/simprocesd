@@ -3,6 +3,8 @@ from enum import IntEnum, unique, auto
 
 @unique
 class DataStorageType(IntEnum):
-    NONE = auto()
-    MEMORY = auto()
-    FILE = auto()
+    '''Options for how to store data.
+    '''
+    NONE = auto()  # Do not store.
+    MEMORY = auto()  # Store in memory (RAM).
+    FILE = auto()  # Store on a drive/disk.

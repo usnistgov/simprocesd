@@ -2,17 +2,26 @@ from .machine import Machine
 
 
 class Buffer(Machine):
-    ''' A Buffer can store parts from upstream and pass them downstream
-    in the order they were received.
+    '''A device that can store multiple parts.
 
-    Arguments:
-    name -- name of the Buffer.
-    upstream -- list of upstream devices.
-    cycle_time -- how long it takes for a part to be received before
-        it can be passed downstream.
-    capacity -- maximum number of parts that can be stored in the Buffer
-        at once.
-    value -- starting value of the Buffer.
+    Buffer stores received Parts and can pass the stored Parts
+    downstream. At any given time Buffer can store a number of Parts
+    up to its storage capacity.
+
+    Arguments
+    ----------
+    name : str, default=None
+        Name of the Buffer. If name is None the Asset's name with be
+        changed to Buffer_<id>
+    upstream: list, default=[]
+        A list of upstream Devices.
+    cycle_time: float, default=0
+        How long it takes to receive a Part.
+    capacity: int, optional
+        Maximum number of Parts that can be stored in the Buffer. No
+        maximum if not set.
+    value: float, default=0
+        Starting value of the machine.
     '''
 
     def __init__(self, name = None, upstream = [], cycle_time = 0,
@@ -28,7 +37,10 @@ class Buffer(Machine):
         self._buffer = []
 
     def level(self):
-        ''' Return how many parts are currently held by the buffer.
+        '''Returns
+        -------
+        int
+            Number of Parts held by the buffer.
         '''
         return len(self._buffer) + (1 if self._part != None else 0)
 

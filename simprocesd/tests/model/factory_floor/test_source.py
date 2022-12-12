@@ -74,9 +74,9 @@ class SourceTestCase(TestCase):
         # Source is not allowed to have upstream machines.
         source = Source()
 
-        def helper(): source.upstream = [Machine()]
+        def helper(): source.set_upstream([Machine()])
 
-        self.assertRaises(AttributeError, helper)
+        self.assertRaises(ValueError, helper)
 
     def test_pass_part_downstream(self):
         part = Part('n', 10, 3)
@@ -92,11 +92,18 @@ class SourceTestCase(TestCase):
         wrapped_part.make_copy.assert_called_once()
 
         source._pass_part_downstream()
+        self.assertEqual(source.value, -10)
+        self.assertEqual(source.produced_parts, 1)
+        self.assertEqual(source.cost_of_produced_parts, 10)
+
         args, kwargs = downstream.give_part.call_args
         # arg[0] is the part that was passed with give_part
         self.assertEqual(args[0].value, part.value)
         self.assertEqual(args[0].quality, part.quality)
         self.assertNotEqual(args[0].id, part.id)
+
+        self.assert_last_scheduled_event(0, source.id, source._prepare_next_part,
+                                         EventType.FINISH_PROCESSING)
 
     def test_max_produced_parts(self):
         part = Part('n', 10, 3)

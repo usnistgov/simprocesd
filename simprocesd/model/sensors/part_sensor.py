@@ -4,17 +4,27 @@ from .sensor import Sensor
 
 
 class OutputPartSensor(Sensor):
-    ''' Probes processed parts of a Machine.
+    '''Sensor for measuring a Machine's processed Parts.
 
-    Arguments:
-    machine -- machine whose produced parts will be probed.
-    sensing_interval -- how many parts to skip after last probed part.
-        Setting this to 0 means every part will be checked. First part
-        is always probed by the sensor.
-    name -- name of the sensor.
-    data_capacity -- number of most recent entries to store. Useful for
-        very long simulation where memory may become an issue.
-    value -- value of the sensor.
+    Will measure Parts that the Machine finished processing, Part does
+    have to pass downstream before it is measured.
+
+    Arguments
+    ---------
+    machine: Machine
+        A Machine whose produced parts will be measured.
+    sensing_interval: int, default=0
+        How many Parts to skip after last measured Part.
+        Setting this to 0 means every part will be checked. First Part
+        is always measured.
+    name: str, default=None
+        Name of the object. If name is None then the object's name will
+        be changed to OutputPartSensor_<id>
+    data_capacity: int, optional
+        Number of most recent entries to store. Limits the object's
+        maximum memory usage.
+    value: float, default=0
+        Starting value of the OutputPartSensor.
     '''
 
     def __init__(self,

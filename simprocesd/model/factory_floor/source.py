@@ -4,16 +4,31 @@ from ...utils import assert_is_instance
 
 
 class Source(Machine):
-    ''' A device that produces copies of Parts for the simulation.
-    Source will not start producing next part until previous part is
+    '''A Device that produces Part objects and supplies them to Devices
+    downstream. It is the start of a production line.
+
+    Source will not start producing a next Part until previous Part is
     passed downstream.
 
-    Arguments:
-    name -- device name.
-    sample_part -- part which will be used to make copies. This part is
-        never passed downstream, only copies of it will be passed.
-    cycle_time -- how long it takes to produce a part.
-    max_produced_parts -- maximum number of parts to produce.
+    Note
+    ----
+    Source value will decrease by sample_part.value every time a new
+    Part is created. This is how Source tracks the costs of producing
+    Parts.
+
+    Arguments
+    ----------
+    name: str, default=None
+        Name of the Source. If name is None then the Source's name will
+        be changed to Source_<id>
+    sample_part: Part, default=None
+        Source will produce copies of this Part and pass them
+        downstream, sample_part itself is never passed.
+        If sample_part is None then it will be set to Part()
+    cycle_time: float, default=0
+        How long it takes to produce a Part.
+    max_produced_parts: int, optional
+        Maximum number of Parts to produce. No maximum if not set.
     '''
 
     def __init__(self, name = None, sample_part = None, cycle_time = 0.0,
@@ -38,14 +53,16 @@ class Source(Machine):
 
         self._schedule_prepare_next_part()
 
-    @property
-    def upstream(self):
-        return self._upstream
+    def set_upstream(self, new_upstream_list):
+        ''' Source cannot have upstream Devices.
 
-    @upstream.setter
-    def upstream(self, upstream):
-        if upstream != []:
-            raise AttributeError('Source cannot have an upstream.')
+        Raises
+        ------
+        ValueError
+            if new_upstream_list is not an empty list.
+        '''
+        if new_upstream_list != []:
+            raise ValueError('Source cannot have an upstream.')
 
     @property
     def cost_of_produced_parts(self):
@@ -71,20 +88,21 @@ class Source(Machine):
         )
 
     def _prepare_next_part(self):
-        if self._produced_parts >= self._max_produced_parts: return
-
         self._output = self._sample_part.make_copy()
         self._output.initialize(self._env)
         self._output.routing_history.append(self)
+
         self._schedule_pass_part_downstream()
 
     def _pass_part_downstream(self):
+        if self._produced_parts + 1 > self._max_produced_parts: return
+
         output_before = self._output
         super()._pass_part_downstream()
         if output_before != None and self._output == None:
             self._produced_parts += 1
-            self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
             self.add_cost('supplied_part', output_before.value)
             self._cost_of_produced_parts += output_before.value
+            self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
             self._schedule_prepare_next_part()
 

@@ -6,6 +6,22 @@ import dill as dill
 
 
 def assert_is_instance(obj, type_, message = None):
+    '''Check if an object is an instance of a specific class type.
+
+    Arguments
+    ---------
+    obj: object
+        Object that will be checked.
+    type_: type
+        Class type that the object needs to be.
+    message: str, optional
+        Error message if object is not an instance of <type_>.
+
+    Raises
+    ------
+    TypeError
+        If <obj> is not an instance of <type_>
+    '''
     if not isinstance(obj, type_):
         if message == None:
             message = f'Object, {type(obj)}, does not implement {type_}'
@@ -13,6 +29,26 @@ def assert_is_instance(obj, type_, message = None):
 
 
 def assert_callable(obj, none_allowed = False, message = None):
+    '''Check if an object appears callable.
+
+    The check is done using the built-in 'callable()' function. In some
+    cases it is possible the function not to raise an error even if
+    <obj> cannot be called like a function.
+
+    Arguments
+    ---------
+    obj: object
+        Object that will be checked.
+    none_allowed: bool, default=False
+        If the value of None is allowed.
+    message: str, optional
+        Error message if object is not callable.
+
+    Raises
+    ------
+    TypeError
+        If object is not callable.
+    '''
     if obj == None:
         if not none_allowed:
             message = f'obj can not be None.'
@@ -26,13 +62,22 @@ def assert_callable(obj, none_allowed = False, message = None):
 
 
 def save_list_to_csv(filename, list_):
-    ''' Save a file with named <filename> in the current directory and fill it
-    with CVS data from list_. Each list entry will occupy one row and if the
-    list entry is a list or a tuple then the entry will be split into columns.
-    Example:
-        list_ = [(1,2),(3,4,5)]
-        File contents: 1,2
-                       3,4,5
+    '''Save a list as a CSV file.
+
+    Each list entry will occupy one row and if the list entry is a list
+    or a tuple then the entry will be split into columns.
+
+    | Example:
+    |    in: list_ = [ [1,2], [3,4,5] ]
+    |    file out: Row 1 = 1,2
+    |        Row 2 = 3,4,5
+
+    Arguments
+    ---------
+    filename: str
+        Relative or absolute path of where to store the CSV file.
+    list_: list
+        Data to be stored, can be a 1 or 2 dimensional list.
     '''
     with open(filename, 'w', newline = '') as file:
         writer = csv.writer(file, quoting = csv.QUOTE_ALL)
@@ -40,16 +85,28 @@ def save_list_to_csv(filename, list_):
 
 
 def save_object(obj, file_path, override_file = False):
-    ''' Serialize and save an object in a file using Dill module.
-    https://pypi.org/project/dill/
-    Function also compresses the data using lzma.
+    '''Serialize, compress, and save an object as a file.
 
-    Arguments:
-    obj - object that will be serialized
-    file_path - relative or absolute path to the file.
-    override_file - if True then the function will overwrite an
-        existing file at the same path, if False (default) the
-        function will fail if provided file already exists.
+    Uses Dill module to serialize the object.
+    https://pypi.org/project/dill/
+
+    Serialized data is compresses using lzma module.
+
+    Arguments
+    ---------
+    obj: object
+        Object to be serialized and stored.
+    file_path: str
+        Relative or absolute path of where to store the object.
+    override_file: bool, default=False
+        If True then any existing file at <file_path> will be
+        overwritten.
+
+    Raises
+    ------
+    FileExistsError
+        If a file at <file_path> already exists and <override_file> is
+        set to False.
     '''
     if not override_file and os.path.isfile(file_path):
         raise FileExistsError(f'File \'{file_path}\' already exists.')
@@ -59,15 +116,20 @@ def save_object(obj, file_path, override_file = False):
 
 
 def load_object(file_path):
-    '''
-    Load an object that was saved using utils.save_object and return
-    he loaded object.
+    '''Load an object from a file that was created using save_object().
 
-    Warning: Only load objects that you trust as they could execute
-    arbitrary code.
+    See save_object() for information on how objects are stored.
 
-    Arguments:
-    file_path - relative or absolute path to the file.
+    Warning
+    -------
+    Loaded object could execute arbitrary code when it is loaded.
+    Recommended to only load object from files you created or ones from
+    a source with a high degree of trust.
+
+    Arguments
+    ---------
+    file_path: str
+        Relative or absolute path to the file to load.
     '''
     with lzma.open(file_path, 'rb') as file:
         return dill.load(file)

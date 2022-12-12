@@ -2,13 +2,23 @@ from .asset import Asset
 
 
 class Part(Asset):
-    ''' Basic part with attributes to be passed between devices in the
-    simulation.
+    '''Representation of an item/part that passes between Devices in a
+    production line.
 
-    Arguments:
-    name -- name of the part.
-    value -- starting value of the part.
-    quality -- starting quality of the part.
+    Arguments
+    ---------
+    name: str, default=None
+        Name of the Part. If name is None then the Part's name will be
+        changed to Part_<id>
+    value: float, default=0
+        Starting value of the Part.
+    quality: float, default=1.0
+        Starting quality of the Part.
+
+    Attributes
+    ----------
+    quality: float
+        A numerical representation for the quality of the Part.
     '''
 
     def __init__(self, name = None, value = 0.0, quality = 1.0):
@@ -26,19 +36,26 @@ class Part(Asset):
 
     @property
     def routing_history(self):
-        ''' Contains an ordered list of devices that the part passed
+        ''' Ordered list of devices that the part passed
         through. First entry is usually a Source.
-        NOTE: Devices may not be configured to add themselves to the
-        routing_history and would then not appear in any part's
-        routing_history.
+
+        Warning
+        -------
+        Predefined classes (Source, Device, etc) contain code for
+        updating the routing history so a custom subclass is responsible
+        for ensuring those updates still happen or it might not appear
+        in the routing history.
         '''
         return self._routing_history
 
     def make_copy(self):
-        ''' Creates and returns a new and unique Part with same
-        attributes as this part.
-        New Part will not have the same id and new Part's
-        routing_history will start empty.
+        ''' Create a copy of this Part.
+
+        Returns
+        -------
+        Part
+            a copy of this Part with a unique ID and an empty
+            routing_history.
         '''
         self.copy_counter += 1
         new_part = Part(f'{self.name}_{self.copy_counter}', self.value, self.quality)

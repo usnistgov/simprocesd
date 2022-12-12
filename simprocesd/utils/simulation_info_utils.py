@@ -2,12 +2,20 @@ from matplotlib import pyplot
 
 
 def print_produced_parts_and_average_quality(system, machines):
-    ''' Prints number of parts produced by all machines or machines in
-    the list if provided. Also prints average quality of produced parts.
+    '''Print the number of Parts produced by each machine in the list
+    and the Part's average quality.
 
-    Arguments:
-    system -- System object used in the simulation.
-    machines -- list of Machine objects.
+    Note
+    ----
+    Won't work if System was initialized with
+    simulation_data_storage_type = DataStorageType.NONE
+
+    Arguments
+    ---------
+    system: System
+        System object used in the simulation.
+    machines: list
+        List of Machines to consider.
     '''
     all_production_data = system.simulation_data.get('produced_parts', {})
     for machine in machines:
@@ -24,11 +32,18 @@ def print_produced_parts_and_average_quality(system, machines):
 
 
 def print_finished_work_order_counts(system):
-    ''' Prints which machines had work orders performed (to finish) on
-    them and how many of those work orders were performed.
+    '''Print which machines had work orders completed on them and how
+    many of those work orders there were.
 
-    Arguments:
-    system -- System object used in the simulation.
+    Note
+    ----
+    Won't work if System was initialized with
+    simulation_data_storage_type = DataStorageType.NONE
+
+    Arguments
+    ---------
+    system: System
+        System object used in the simulation.
     '''
     maintenance_count = {}
     for maintainer_data in system.simulation_data.get('finish_work_order', {}).values():
@@ -42,12 +57,24 @@ def print_finished_work_order_counts(system):
 
 
 def plot_throughput(system, machines):
-    ''' Shows a graph of accumulated throughput over accumulated time
-    for provided machines.
+    '''Show a graph of cumulative mean throughput over time.
 
-    Arguments:
-    system -- System object used in the simulation.
-    machines -- list of Machine objects.
+    Cumulative throughput means at time=100 the graph will show the mean
+    throughput between time 0 and 100.
+
+    Graph is shown using matplotlib library.
+
+    Note
+    ----
+    Won't work if System was initialized with
+    simulation_data_storage_type = DataStorageType.NONE
+
+    Arguments
+    ---------
+    system: System
+        System object used in the simulation.
+    machines: list
+        List of Machines to plot.
     '''
     figure, graph = pyplot.subplots()
     all_production_data = system.simulation_data.get('produced_parts', {})
@@ -72,12 +99,21 @@ def plot_throughput(system, machines):
 
 
 def plot_damage(system, machines):
-    ''' Shows a graph with a step function of damage over time for each
-    machine if such data is available.
+    '''Show a step function graph of damage over time for each machine.
 
-    Arguments:
-    system -- System object used in the simulation.
-    machines -- list of Machine objects.
+    Graph is shown using matplotlib library.
+
+    Note
+    ----
+    Won't work if System was initialized with
+    simulation_data_storage_type = DataStorageType.NONE
+
+    Arguments
+    ---------
+    system: System
+        System object used in the simulation.
+    machines: list
+        List of Machines to plot.
     '''
     figure, graph = pyplot.subplots()
     all_damage_data = system.simulation_data.get('damage_update', {})
@@ -96,10 +132,14 @@ def plot_damage(system, machines):
 
 
 def plot_value(assets):
-    ''' Shows a graph of value over time for provided assets.
+    '''Show a graph of value over time for assets.
 
-    Arguments:
-    assets -- list of Asset objects.
+    Graph is shown using matplotlib library.
+
+    Arguments
+    ---------
+    assets: list
+        List of Asset objects to plot.
     '''
     figure, graph = pyplot.subplots()
     for asset in assets:
@@ -117,6 +157,17 @@ def plot_value(assets):
 
 
 def simple_plot(x, y, title = '', xlabel = '', ylabel = ''):
+    '''Show a graph with a single plot from the provided data.
+
+    Arguments
+    ---------
+    x: list
+        List of x values.
+    y: list
+        List of y values, must be same length as <x>.
+    title: str, optional
+
+    '''
     figure, graph = pyplot.subplots()
     graph.plot(x, y)
     figure.canvas.manager.set_window_title('Close window to continue.')

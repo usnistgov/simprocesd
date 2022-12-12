@@ -4,59 +4,88 @@ from .asset import Asset
 
 
 class Maintainable:
-    ''' Maintainable represents an interface for Maintainer to create,
-    prioritize, and execute work orders on any class that extends
-    Maintainable.
+    '''An interface the Maintainer uses to create, prioritize, and
+    execute work orders.
+
+    Maintainer can only perform work orders on classes that use
+    Maintainable as one of their base classes.
     '''
 
-    @property
-    def name(self):
-        return ''
-
     def get_work_order_duration(self, tag):
-        ''' Returns how long it will take to perform the work order
-        indicated by the tag.
-        Duration is measured in simulation time units.
+        '''Called at the beginning of performing a work order to
+        determine how long the work order will take.
 
-        Arguments:
-        tag -- identifier for the work order.
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            How long it will take to perform the work order indicated
+            by the tag. Duration is measured in simulation time units.
         '''
         return 0
 
     def get_work_order_capacity(self, tag):
-        ''' Returns how much of the maintainer's capacity is needed to
-        perform the work order indicated by the tag.
+        ''' Called once when the work order is created to determine how
+        much of the Maintainer's capacity is needed to perform the work
+        order.
 
-        Arguments:
-        tag -- identifier for the work order.
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            Needed capacity to perform the work order indicated by the
+            tag.
         '''
         return 0
 
     def get_work_order_cost(self, tag):
-        ''' Returns the one time cost to maintainer to perform the
-        work order indicated by the tag. If work order cost is tracked
-        elsewhere then this should return 0 (default implementation).
+        ''' Called once to get the cost to Maintainer to perform the
+        work order.
 
-        Arguments:
-        tag -- identifier for the work order.
+        Returned value will be subtracted from Maintainer's value. If
+        the work order cost is tracked elsewhere then this should return
+        0 (default implementation).
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            Needed capacity to perform the work order indicated by the
+            tag.
         '''
         return 0
 
     def start_work(self, tag):
-        ''' Called by a maintainer when it begins working on the work
+        ''' Called by Maintainer when it begins working on the work
         order.
 
-        Arguments:
-        tag -- identifier for the work order.
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
         '''
         pass
 
     def end_work(self, tag):
-        ''' Called by a maintainer when it finished working on the
-        work order.
+        ''' Called by Maintainer when it finishes working on the work
+        order.
 
-        Arguments:
-        tag -- identifier for the work order.
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
         '''
         pass
 
@@ -71,17 +100,31 @@ class WorkOrder:
 
 
 class Maintainer(Asset):
-    '''
-    A maintainer is responsible for performing requested work orders.
+    '''Asset that is responsible for performing requested work orders.
+
     Requests are generally worked in a first come first serve order
     but a later request may be worked first when available capacity is
     insufficient for the earlier request.
 
-    Arguments:
-    name -- name of the maintainer.
-    capacity -- capacity of the maintainer. Units are not defined but
-        need to be consistent with work order capacity requirements.
-    value -- starting value/cost of the maintainer.
+    Maintainer can work on multiple work orders at the same time as long
+    the the combined needed capacity of the work orders is less than or
+    equal to the Maintainer's maximum capacity. Needed capacity is
+    determined by Maintainable.get_work_order_capacity
+
+    Note
+    ----
+    Capacity units are not defined but need to be consistent across work
+    order capacity requirements and Maintainer's maximum capacity.
+
+    Arguments
+    ---------
+    name: str, default=None
+        Name of the Maintainer. If name is None then the Maintainer's
+        name will be changed to Maintainer_<id>
+    capacity: float, optional
+        Maintainer's maximum capacity.
+    value: float, default=0
+        Starting value of the Asset.
     '''
 
     def __init__(self, name = 'maintainer', capacity = float('inf'), value = 0):
@@ -101,7 +144,8 @@ class Maintainer(Asset):
 
     @property
     def available_capacity(self):
-        ''' Currently available capacity of the Maintainer.
+        ''' How much of the Maintainer's capacity is currently not being
+        used.
         '''
         return self._capacity - self._utilization
 
@@ -112,28 +156,34 @@ class Maintainer(Asset):
         self._active_requests = []
 
     def create_work_order(self, target, tag = None):
-        ''' Create a new work order and add it to the queue with other
-        work order requests, see class description for details on the
-        queue.
+        '''Request a new work order to be performed.
 
-        Arguments:
-        target -- Item which will receive maintenance. Has to  be of
-            type Maintainable.
-        tag -- work order identifier used by target to determine
-            what work is going to be performed. Tag supports any
-            object type.
+        Creates a new work order and adds it to the back of the queue of
+        work orders to be executed.
 
-        Returns: True if the work order was added to the queue and
-        False if it was rejected. Request will be rejected if the same
-        work order request is already in the queue or if such an order
-        is already being worked on.
+        Arguments
+        ---------
+        target: Maintainable
+            Target of the work order to be performed.
+        tag: object, default=None
+            Identifier the target uses to differentiate between various
+            work orders that could be performed on it.
+
+        Returns
+        -------
+        bool
+            True if the work order was added to the queue and
+            False if it was rejected. Request will be rejected if the
+            same work order request is already in the queue or is being
+            worked on.
         '''
+        assert_is_instance(target, Maintainable)
         if self._is_work_order_requested(target, tag):
             return False
 
         capacity = target.get_work_order_capacity(tag)
-        self._env.add_datapoint('enter_queue', self.name,
-                                (self._env.now, target.name, tag))
+        name = getattr(target, 'name', 'N/A')
+        self._env.add_datapoint('enter_queue', self.name, (self._env.now, name, tag))
         self._request_queue.append(WorkOrder(target, tag, capacity))
         self.try_working_requests()
         return True
@@ -148,11 +198,17 @@ class Maintainer(Asset):
         return False
 
     def try_working_requests(self):
-        ''' Maintainer will look through available work orders and
-        attempt to work as many of them as possible for the available
-        capacity.
+        '''Maintainer will look through the work order queue and
+        attempt to start working on each one.
+
+        Work orders will be started if the Maintainer has enough
+        available capacity to perform that work order.
+
+        Note
+        ----
         This function is called automatically when requests are made
-        and when requests are completed.
+        and when requests are completed. Normally there should be no
+        need to call it manually.
         '''
         i = 0
         while i < len(self._request_queue):

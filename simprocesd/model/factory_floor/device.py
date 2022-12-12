@@ -4,13 +4,20 @@ from .asset import Asset
 
 
 class Device(Asset):
-    ''' Base class for a production device. Contains the logic for
-    handing parts in a production line.
+    ''' Base class for production devices.
 
-    Arguments:
-    name -- name of the device.
-    upstream -- devices that can pass parts to this one.
-    value -- starting value of the device.
+    Contains common logic for handling parts as they pass between
+    Devices.
+
+    Arguments
+    ---------
+    name: str, default=None
+        Name of the Device. If name is None then the Device's name will
+        be changed to Device_<id>
+    upstream: list, default=[]
+        A list of upstream Device objects.
+    value: float, default=0
+        Starting value of the Device.
     '''
 
     def __init__(self, name = None, upstream = [], value = 0):
@@ -42,19 +49,44 @@ class Device(Asset):
         self._waiting_for_part_since = self._env.now
 
     def is_operational(self):
-        ''' Returns True is the device can perform its part handling
-        and processing functions, returns False otherwise.
+        '''Check whether the Device is operational.
+
+        Returns
+        -------
+        bool
+            True is the Device can perform part handling and
+            processing functions, otherwise False.
         '''
         return True
 
     @property
     def upstream(self):
-        ''' List of upstream devices, devices that can provide parts
-        to this one.
+        ''' List of upstream Devices, Devices that can feed Parts to
+        this Device.
+
+        Can be changed using set_upstream(new_list).
         '''
         return self._upstream.copy()
 
     def set_upstream(self, new_upstream_list):
+        '''Replace a set of upstream Devices with a new one.
+
+        Arguments
+        ---------
+        new_upstream_list: list
+            List of Devices that will replace the previous set of
+            upstream Devices.
+
+        Raises
+        ------
+        TypeError
+            If an object in the list is not a Device and does not extend
+            the Device class.
+
+        Warning
+        -------
+        A device cannot have itself as the upstream.
+        '''
         assert_is_instance(new_upstream_list, list)
         for up in self._upstream:
             up._remove_downstream(self)
@@ -73,25 +105,25 @@ class Device(Asset):
 
     @property
     def downstream(self):
-        ''' List of downstream devices, devices that receive parts from
-        this one.
+        ''' List of downstream Devices, Devices that can receive Parts
+        from this Device.
 
-        The list is dependent on upstream and cannot be set or modified
-        directly.
+        This list should not be set or modified directly because it's
+        dependent on upstream settings of other Devices.
         '''
         return self._downstream.copy()
 
     @property
     def waiting_for_part_start_time(self):
-        ''' Returns the simulation time of when this device started
-        waiting for the next Part or returns None if the device is not
-        currently waiting for a Part.
-        Value is reset every time a new part is received.
+        '''Simulation time of when this device started waiting for the
+        next Part. Is set to None if the device is not currently waiting
+        for a Part.
         '''
         return self._waiting_for_part_since
 
     def _add_downstream(self, downstream):
-        self._downstream.append(downstream)
+        if downstream not in self._downstream:
+            self._downstream.append(downstream)
 
     def _remove_downstream(self, downstream):
         self._downstream.remove(downstream)
@@ -128,28 +160,44 @@ class Device(Asset):
                 self._waiting_for_part_since = self._env.now
 
     def notify_upstream_of_available_space(self):
-        ''' Communicate to all immediate upstream devices that this
-        device can accept a new part.
+        ''' Communicate to all immediate upstream Devices that this
+        Device can accept a new Part.
+
+        If upstream Devices have a Part waiting to be passed they will
+        try to do so in a separate Event scheduled for the current
+        simulation time.
         '''
         self._set_waiting_for_part(True)
         for up in self._upstream:
             up.space_available_downstream()
 
     def space_available_downstream(self):
-        ''' Notify this device that downstream now can accept a part.
-        This does not guarantee that this device will pass a part
+        ''' Notify this Device that downstream now can accept a Part.
+
+        This does not guarantee that this Device will pass a Part
         downstream because space could become unavailable before this
-        device gets the chance to pass its part.
+        Device gets the chance to pass its Part.
         '''
         if self.is_operational() and self._waiting_for_space_availability:
             self._schedule_pass_part_downstream()
 
     def give_part(self, part):
-        ''' Try to pass a part to this device.
-        Returns True if the part has been accepted, otherwise False.
+        '''Try to pass a Part to this Device.
+
+        Arguments
+        ---------
+        part: Part
+            Part that is being passed.
+
+        Returns
+        -------
+        bool
+            True if the Part has been accepted, otherwise False.
         '''
-        assert part != None, 'Cannot give part=None.'
-        if not self.is_operational() or self._part != None or self._output != None:
+        assert part != None, 'part should never be None.'
+        if (not self.is_operational() or part == None
+                                      or self._part != None
+                                      or self._output != None):
             return False
 
         self._part = part
