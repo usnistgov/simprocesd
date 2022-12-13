@@ -5,26 +5,26 @@ import os.path
 import dill as dill
 
 
-def assert_is_instance(obj, type_, message = None):
+def assert_is_instance(obj, class_type, message = None):
     '''Check if an object is an instance of a specific class type.
 
     Arguments
     ---------
     obj: object
         Object that will be checked.
-    type_: type
+    class_type: type
         Class type that the object needs to be.
     message: str, optional
-        Error message if object is not an instance of <type_>.
+        Error message if object is not an instance of <class_type>.
 
     Raises
     ------
     TypeError
-        If <obj> is not an instance of <type_>
+        If <obj> is not an instance of <class_type>
     '''
-    if not isinstance(obj, type_):
+    if not isinstance(obj, class_type):
         if message == None:
-            message = f'Object, {type(obj)}, does not implement {type_}'
+            message = f'Object, {type(obj)}, does not implement {class_type}'
         raise TypeError(message)
 
 
@@ -61,14 +61,14 @@ def assert_callable(obj, none_allowed = False, message = None):
         raise TypeError(message)
 
 
-def save_list_to_csv(filename, list_):
-    '''Save a list as a CSV file.
+def save_list_to_csv(filename, data_list):
+    '''Save a list or table as a CSV file.
 
     Each list entry will occupy one row and if the list entry is a list
-    or a tuple then the entry will be split into columns.
+    or a tuple then the entry's elements will be split into columns.
 
     | Example:
-    |    in: list_ = [ [1,2], [3,4,5] ]
+    |    in: data_list = [ [1,2], [3,4,5] ]
     |    file out: Row 1 = 1,2
     |        Row 2 = 3,4,5
 
@@ -76,12 +76,12 @@ def save_list_to_csv(filename, list_):
     ---------
     filename: str
         Relative or absolute path of where to store the CSV file.
-    list_: list
+    data_list: list
         Data to be stored, can be a 1 or 2 dimensional list.
     '''
     with open(filename, 'w', newline = '') as file:
         writer = csv.writer(file, quoting = csv.QUOTE_ALL)
-        writer.writerows(list_)
+        writer.writerows(data_list)
 
 
 def save_object(obj, file_path, override_file = False):

@@ -308,7 +308,8 @@ class Environment:
         Calling env.simulation_data[list_label][sub_label] will return
         a list of all datapoint that were created using the same labels.
 
-        Arguments:
+        Arguments
+        ---------
         label: object
             Primary label. Usually a string describing the datapoint.
         sub_label: object

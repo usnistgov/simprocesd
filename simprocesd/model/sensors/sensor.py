@@ -8,8 +8,8 @@ from ..simulation import EventType
 class Probe:
     '''Measuring component of a Sensor.
 
-    Argument
-    --------
+    Arguments
+    ---------
     get_data: function
         A function that represents taking a measurement. Function
         signature is get_data(target) and it must return the measurement
@@ -37,8 +37,8 @@ class Probe:
 class AttributeProbe(Probe):
     '''A probe that measures an object's attribute.
 
-    Argument
-    --------
+    Arguments
+    ---------
     attribute_name: str
         Name of the attribute to be measured.
     target: object
