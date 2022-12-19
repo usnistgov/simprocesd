@@ -1,23 +1,23 @@
-# Sim-PROCESD: Simulated-Production Resource for Operations & Conditions Evaluations to Support Decision-making
+# SimPROCESD: Simulated-Production Resource for Operations & Conditions Evaluations to Support Decision-making
 
-Sim-PROCESD is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines with finite buffers. It also provides functionality for modeling the degradation and maintenance of machines in these systems.
+SimPROCESD is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines with finite buffers. It also provides functionality for modeling the degradation and maintenance of machines in these systems.
 
-In addition to modeling the behavior of existing systems, Sim-PROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
+In addition to modeling the behavior of existing systems, SimPROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
 
 The software is available for public use through a publicly available Github repository. Any user may create a fork (copy) of the repository to freely experiment (e.g., class extensions to model complex processes) with the code without affecting the original source code.
 
-**NOTE:** Sim-PROCESD project is in early development and may receive updates that are not backwards compatible.
+**NOTE:** SimPROCESD project is in early development and may receive updates that are not backwards compatible.
 
 
 ## Installation
 
-Sim-PROCESD can be installed via `pip` using:
+SimPROCESD can be installed via `pip` using:
 
 ```
 pip install simprocesd
 ```
 
-To install with optional requirements needed to run certain examples:
+To also include optional dependencies needed to some of the examples:
 
 ```
 pip install simprocesd[examples]
@@ -25,7 +25,7 @@ pip install simprocesd[examples]
 
 
 ### Installation Requirements
-Using Sim-PROCESD requires:
+Using SimPROCESD requires:
 - Python ≥ 3.7:
 - matplotlib ≥ 3.5 for using plot functions and running certain examples.
 - [optional] scipy ≥ 1.5.2 and numpy ≥ 1.21 for running certain examples.
@@ -44,17 +44,17 @@ The package provides following objects for modeling a manufacturing process:
 
 #### Examples
 
-A collection of examples is available at [simprocesd/examples](/simprocesd/examples).
+A collection of examples is available at [examples](/examples).
 
-- Basic example: [SingleMachine.py](/simprocesd/examples/SingleMachine.py)  
-- Parallel processing: [ParallelStations.py](/simprocesd/examples/ParallelStations.py)  
-- Utilizing Part quality: [CustomPart.py](/simprocesd/examples/CustomPart.py)  
-- Machine with configurable fault rates: [SingleMachineWithFaults.py](/simprocesd/examples/SingleMachineWithFaults.py)   
-- Machine with a health tracker: [ConditionBasedMaintenance.py](/simprocesd/examples/ConditionBasedMaintenance.py)  
-- Maintenance policy testing: [MaintenanceOptimization.py](/simprocesd/examples/MaintenanceOptimization.py)  
+- Basic example: [SingleMachine.py](/examples/SingleMachine.py)  
+- Parallel processing: [ParallelStations.py](/examples/ParallelStations.py)  
+- Utilizing Part quality: [PartQuality.py](/examples/PartQuality.py)  
+- Machine with configurable fault rates: [SingleMachineWithFaults.py](/examples/SingleMachineWithFaults.py)   
+- Machine with a health tracker: [ConditionBasedMaintenance.py](/examples/ConditionBasedMaintenance.py)  
+- Maintenance policy testing: [MaintenanceOptimization.py](/examples/MaintenanceOptimization.py)  
 
 ## Simantha
-Sim-PROCESD was forked from the original Simantha project which can be found [here](https://github.com/m-hoff/simantha). Another iteration of [Simantha](https://github.com/usnistgov/simantha) extends a few capabilities and examples to prepare it for the modeling of condition monitoring systems and prognostics and health management tools.
+SimPROCESD was forked from the original Simantha project which can be found [here](https://github.com/m-hoff/simantha). Another iteration of [Simantha](https://github.com/usnistgov/simantha) extends a few capabilities and examples to prepare it for the modeling of condition monitoring systems and prognostics and health management tools.
 
  
 
@@ -68,7 +68,7 @@ Contacts:
 
 
 ## License
-Sim-PROCESD and all of it's associated projects are in the public domain (see License). For more information and to provide feedback, please open an issue, submit a pull-request, or email the point of contact (above).
+SimPROCESD and all of it's associated projects are in the public domain (see License). For more information and to provide feedback, please open an issue, submit a pull-request, or email the point of contact (above).
 
 
 ## Citing this software 
