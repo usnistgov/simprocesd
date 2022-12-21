@@ -1,0 +1,241 @@
+<!-- Extend the theme's layout by adding scripts and links required by NIST policy.
+layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthedocs/sphinx_rtd_theme/blob/master/sphinx_rtd_theme/layout.html
+-->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simprocesd.model.cms package &mdash; SimPROCESD 0.1.6 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />    
+	<!-- Google Analytics. -->
+	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script>
+
+	<!-- leave notice that is to be used when opening external link. -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js" defer="defer"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  // Regex if the adress starts with https and ends with nist.gov
+		  var re_nist = new RegExp('^https?:\/\/((^\/)*\.)*nist\\.gov(\/|$)'); 
+		  // Regex if the  address starts with https
+		  var re_absolute_address = new RegExp('^((https?:)?\/\/)');
+		  // Run for each link.
+		  $("a").each(function() {
+			var url=$(this).attr('href'); 
+			// If absolute address and not an absolute nist address then mark as external.
+			if (re_absolute_address.test(url) && !re_nist.test(url)) {
+			  $(this).addClass('external-link-tag');
+			}
+		  });
+		  // Add leaveNotice to external A elements 
+		  $('a.external-link-tag').leaveNotice({
+			siteName: 'SimPROCESD Documentation',
+            exitMessage: "<h2><strong>Thank you for visiting {SITENAME}.</strong></h2><p>You are being redirected to an external site. NIST does not necessarily endorse the views expressed or the facts presented on this site. Further, NIST does not endorse any commercial products that may be advertised or available on this site.</p>",
+		  });
+		});
+	</script>
+	
+	
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+	
+	<!-- leave notice that is to be used when opening external link. -->
+	<link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+	
+	
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="simprocesd.model.factory_floor package" href="simprocesd.model.factory_floor.html" />
+    <link rel="prev" title="simprocesd.model package" href="simprocesd.model.html" />
+ 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SimPROCESD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About SimPROCESD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="simprocesd.html">simprocesd package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="simprocesd.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="simprocesd.model.html">simprocesd.model package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="simprocesd.model.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model.simulation">simprocesd.model.simulation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model.system">simprocesd.model.system module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.utils.html">simprocesd.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.html#module-simprocesd">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SimPROCESD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="simprocesd.html">simprocesd package</a> &raquo;</li>
+          <li><a href="simprocesd.model.html">simprocesd.model package</a> &raquo;</li>
+      <li>simprocesd.model.cms package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_docs/simprocesd.model.cms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simprocesd-model-cms-package">
+<h1>simprocesd.model.cms package<a class="headerlink" href="#simprocesd-model-cms-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-simprocesd.model.cms.cms">
+<span id="simprocesd-model-cms-cms-module"></span><h2>simprocesd.model.cms.cms module<a class="headerlink" href="#module-simprocesd.model.cms.cms" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.cms.cms.Cms">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.cms.cms.</span></span><span class="sig-name descname"><span class="pre">Cms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maintainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.cms.cms.Cms" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset" title="simprocesd.model.factory_floor.asset.Asset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asset</span></code></a></p>
+<p>Base class to represent a Condition Monitoring System.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cms is experimental at this time and is expected to have significant
+changes that may not be backwards compatible.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maintainer</strong> (<a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer" title="simprocesd.model.factory_floor.maintainer.Maintainer"><em>Maintainer</em></a>) – Maintainer where to issue work orders.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Cms. If name is None then it will be changed to
+Cms_&lt;id&gt;</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Cms.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.cms.cms.Cms.add_sensor">
+<span class="sig-name descname"><span class="pre">add_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.cms.cms.Cms.add_sensor" title="Permalink to this definition"></a></dt>
+<dd><p>Register a sensor for the CMS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sensor</strong> (<a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor" title="simprocesd.model.sensors.sensor.Sensor"><em>Sensor</em></a>) – Sensor to be registered.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.cms.cms.Cms.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.cms.cms.Cms.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.cms.cms.Cms.on_sense">
+<span class="sig-name descname"><span class="pre">on_sense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.cms.cms.Cms.on_sense" title="Permalink to this definition"></a></dt>
+<dd><p>Called every time a registered sensor takes a measurement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor</strong> (<a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor" title="simprocesd.model.sensors.sensor.Sensor"><em>Sensor</em></a>) – Sensor that took the measurement.</p></li>
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time of when the measurement was taken.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – Measurement data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.cms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.model.cms" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simprocesd.model.html" class="btn btn-neutral float-left" title="simprocesd.model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="simprocesd.model.factory_floor.html" class="btn btn-neutral float-right" title="simprocesd.model.factory_floor package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

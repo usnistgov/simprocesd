@@ -11,10 +11,10 @@ python -m examples.SingleMachine
 
 **[SingleMachine.py](https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachine.py)**  
 - Examples of a basic setup where:
- - a source creates parts
- - then a machine processes the parts
- - and then the parts are collected by the sink
-- Source and sink are required and are used in the rest of examples as well.
+    - a Source creates Parts
+    - then a machine processes the parts
+    - and then the parts are collected by the sink
+- Source and Sink are required and are used in the rest of examples as well.
 
 **[ConditionBasedMaintenance.py](https://github.com/usnistgov/simprocesd/blob/master/examples/ConditionBasedMaintenance.py)**  
 - Setup machines that accumulate damage over time.

@@ -16,8 +16,13 @@ release = '0.1.6'
 extensions = [
     'myst_parser',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
 ]
+
+# Make sure the target is unique
+autosectionlabel_prefix_document = True
 
 templates_path = ['_templates']
 exclude_patterns = []

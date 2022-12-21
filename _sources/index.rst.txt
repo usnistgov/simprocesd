@@ -16,7 +16,6 @@ Check out the :doc:`getting_started` section for further information on how to u
     code_introduction
     examples
 	GitHub Page [External link] <https://github.com/usnistgov/simprocesd>
-..
     api_docs/simprocesd
 
 

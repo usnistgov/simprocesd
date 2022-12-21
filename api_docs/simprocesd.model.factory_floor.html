@@ -1,0 +1,1226 @@
+<!-- Extend the theme's layout by adding scripts and links required by NIST policy.
+layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthedocs/sphinx_rtd_theme/blob/master/sphinx_rtd_theme/layout.html
+-->
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simprocesd.model.factory_floor package &mdash; SimPROCESD 0.1.6 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />    
+	<!-- Google Analytics. -->
+	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script>
+
+	<!-- leave notice that is to be used when opening external link. -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js" defer="defer"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  // Regex if the adress starts with https and ends with nist.gov
+		  var re_nist = new RegExp('^https?:\/\/((^\/)*\.)*nist\\.gov(\/|$)'); 
+		  // Regex if the  address starts with https
+		  var re_absolute_address = new RegExp('^((https?:)?\/\/)');
+		  // Run for each link.
+		  $("a").each(function() {
+			var url=$(this).attr('href'); 
+			// If absolute address and not an absolute nist address then mark as external.
+			if (re_absolute_address.test(url) && !re_nist.test(url)) {
+			  $(this).addClass('external-link-tag');
+			}
+		  });
+		  // Add leaveNotice to external A elements 
+		  $('a.external-link-tag').leaveNotice({
+			siteName: 'SimPROCESD Documentation',
+            exitMessage: "<h2><strong>Thank you for visiting {SITENAME}.</strong></h2><p>You are being redirected to an external site. NIST does not necessarily endorse the views expressed or the facts presented on this site. Further, NIST does not endorse any commercial products that may be advertised or available on this site.</p>",
+		  });
+		});
+	</script>
+	
+	
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+	
+	<!-- leave notice that is to be used when opening external link. -->
+	<link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+	
+	
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="simprocesd.model.sensors package" href="simprocesd.model.sensors.html" />
+    <link rel="prev" title="simprocesd.model.cms package" href="simprocesd.model.cms.html" />
+ 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SimPROCESD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About SimPROCESD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="simprocesd.html">simprocesd package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="simprocesd.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="simprocesd.model.html">simprocesd.model package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="simprocesd.model.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model.simulation">simprocesd.model.simulation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model.system">simprocesd.model.system module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.html#module-simprocesd.model">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.utils.html">simprocesd.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.html#module-simprocesd">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SimPROCESD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="simprocesd.html">simprocesd package</a> &raquo;</li>
+          <li><a href="simprocesd.model.html">simprocesd.model package</a> &raquo;</li>
+      <li>simprocesd.model.factory_floor package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_docs/simprocesd.model.factory_floor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simprocesd-model-factory-floor-package">
+<h1>simprocesd.model.factory_floor package<a class="headerlink" href="#simprocesd-model-factory-floor-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-simprocesd.model.factory_floor.asset">
+<span id="simprocesd-model-factory-floor-asset-module"></span><h2>simprocesd.model.factory_floor.asset module<a class="headerlink" href="#module-simprocesd.model.factory_floor.asset" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.asset.</span></span><span class="sig-name descname"><span class="pre">Asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_transitory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class to be used for all simulated assets in production.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Asset. If name is None then the Asset’s name will be
+changed to Asset_&lt;id&gt;</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Asset.</p></li>
+<li><p><strong>is_transitory</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True the Asset needs to be initialized/re-initialized
+manually. For example, Part objects are initialized by the
+Source that produced them.
+If False then the Asset automatically registers with the System
+which will handle object initialization.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.add_cost">
+<span class="sig-name descname"><span class="pre">add_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.add_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Decrease the value of the Asset and record the change in
+value_history.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>str</em>) – Label for the change in value</p></li>
+<li><p><strong>cost</strong> (<em>float</em>) – By how much to decrease the Asset’s value. Value of 0 is
+ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.add_value">
+<span class="sig-name descname"><span class="pre">add_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.add_value" title="Permalink to this definition"></a></dt>
+<dd><p>Add to the value of the Asset and record the change in
+value_history.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>str</em>) – Label for the change in value.</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – By how much to increase the Asset’s value. Value of 0 is
+ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.env">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">env</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.env" title="Permalink to this definition"></a></dt>
+<dd><p>Simulation’s Environment instance or None if the Asset has
+not been initialized yet</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.id" title="Permalink to this definition"></a></dt>
+<dd><p>Unique Asset ID.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.name" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the Asset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.value" title="Permalink to this definition"></a></dt>
+<dd><p>Current value of the Asset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.asset.Asset.value_history">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value_history</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.asset.Asset.value_history" title="Permalink to this definition"></a></dt>
+<dd><p>History of value changes for this Asset. Each entry contains:
+(label, time of change, value delta, new asset value)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.buffer">
+<span id="simprocesd-model-factory-floor-buffer-module"></span><h2>simprocesd.model.factory_floor.buffer module<a class="headerlink" href="#module-simprocesd.model.factory_floor.buffer" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.buffer.</span></span><span class="sig-name descname"><span class="pre">Buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.machine.Machine" title="simprocesd.model.factory_floor.machine.Machine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Machine</span></code></a></p>
+<p>A device that can store multiple parts.</p>
+<p>Buffer stores received Parts and can pass the stored Parts
+downstream. At any given time Buffer can store a number of Parts
+up to its storage capacity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Buffer. If name is None the Asset’s name with be
+changed to Buffer_&lt;id&gt;</p></li>
+<li><p><strong>upstream</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – A list of upstream Devices.</p></li>
+<li><p><strong>cycle_time</strong> (<em>float</em><em>, </em><em>default=0</em>) – How long it takes to receive a Part.</p></li>
+<li><p><strong>capacity</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of Parts that can be stored in the Buffer. No
+maximum if not set.</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the machine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.give_part">
+<span class="sig-name descname"><span class="pre">give_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.give_part" title="Permalink to this definition"></a></dt>
+<dd><p>Try to pass a Part to this Device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>part</strong> (<a class="reference internal" href="#simprocesd.model.factory_floor.part.Part" title="simprocesd.model.factory_floor.part.Part"><em>Part</em></a>) – Part that is being passed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the Part has been accepted, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.level">
+<span class="sig-name descname"><span class="pre">level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.level" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of Parts held by the buffer.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.notify_upstream_of_available_space">
+<span class="sig-name descname"><span class="pre">notify_upstream_of_available_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.notify_upstream_of_available_space" title="Permalink to this definition"></a></dt>
+<dd><p>Communicate to all immediate upstream Devices that this
+Device can accept a new Part.</p>
+<p>If upstream Devices have a Part waiting to be passed they will
+try to do so in a separate Event scheduled for the current
+simulation time.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.decision_gate">
+<span id="simprocesd-model-factory-floor-decision-gate-module"></span><h2>simprocesd.model.factory_floor.decision_gate module<a class="headerlink" href="#module-simprocesd.model.factory_floor.decision_gate" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.decision_gate.DecisionGate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.decision_gate.</span></span><span class="sig-name descname"><span class="pre">DecisionGate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">should_pass_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.decision_gate.DecisionGate" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.device.Device" title="simprocesd.model.factory_floor.device.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
+<p>Device that can conditionally prevent Parts from passing between
+upstream and downstream Devices.</p>
+<p>DecisionGate does not hold/buffer any parts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>should_pass_part</strong> (<em>function</em>) – Function receives one argument: Part to be passed and should
+return True if the Part can pass or False if it cannot.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the DecisionGate. If name is None then the
+DecisionGate’s name will be changed to DecisionGate_&lt;id&gt;</p></li>
+<li><p><strong>upstream</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – A list of upstream Devices.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.decision_gate.DecisionGate.give_part">
+<span class="sig-name descname"><span class="pre">give_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.decision_gate.DecisionGate.give_part" title="Permalink to this definition"></a></dt>
+<dd><p>Try to pass a Part to this Device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>part</strong> (<a class="reference internal" href="#simprocesd.model.factory_floor.part.Part" title="simprocesd.model.factory_floor.part.Part"><em>Part</em></a>) – Part that is being passed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the Part has been accepted, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.decision_gate.DecisionGate.space_available_downstream">
+<span class="sig-name descname"><span class="pre">space_available_downstream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.decision_gate.DecisionGate.space_available_downstream" title="Permalink to this definition"></a></dt>
+<dd><p>Notify this Device that downstream now can accept a Part.</p>
+<p>This does not guarantee that this Device will pass a Part
+downstream because space could become unavailable before this
+Device gets the chance to pass its Part.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.device">
+<span id="simprocesd-model-factory-floor-device-module"></span><h2>simprocesd.model.factory_floor.device module<a class="headerlink" href="#module-simprocesd.model.factory_floor.device" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.device.</span></span><span class="sig-name descname"><span class="pre">Device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.asset.Asset" title="simprocesd.model.factory_floor.asset.Asset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asset</span></code></a></p>
+<p>Base class for production devices.</p>
+<p>Contains common logic for handling parts as they pass between
+Devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Device. If name is None then the Device’s name will
+be changed to Device_&lt;id&gt;</p></li>
+<li><p><strong>upstream</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – A list of upstream Device objects.</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Device.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.downstream">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">downstream</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.downstream" title="Permalink to this definition"></a></dt>
+<dd><p>List of downstream Devices, Devices that can receive Parts
+from this Device.</p>
+<p>This list should not be set or modified directly because it’s
+dependent on upstream settings of other Devices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.give_part">
+<span class="sig-name descname"><span class="pre">give_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.give_part" title="Permalink to this definition"></a></dt>
+<dd><p>Try to pass a Part to this Device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>part</strong> (<a class="reference internal" href="#simprocesd.model.factory_floor.part.Part" title="simprocesd.model.factory_floor.part.Part"><em>Part</em></a>) – Part that is being passed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the Part has been accepted, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.is_operational">
+<span class="sig-name descname"><span class="pre">is_operational</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.is_operational" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether the Device is operational.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True is the Device can perform part handling and
+processing functions, otherwise False.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.notify_upstream_of_available_space">
+<span class="sig-name descname"><span class="pre">notify_upstream_of_available_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.notify_upstream_of_available_space" title="Permalink to this definition"></a></dt>
+<dd><p>Communicate to all immediate upstream Devices that this
+Device can accept a new Part.</p>
+<p>If upstream Devices have a Part waiting to be passed they will
+try to do so in a separate Event scheduled for the current
+simulation time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.set_upstream">
+<span class="sig-name descname"><span class="pre">set_upstream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_upstream_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.set_upstream" title="Permalink to this definition"></a></dt>
+<dd><p>Replace a set of upstream Devices with a new one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_upstream_list</strong> (<em>list</em>) – List of Devices that will replace the previous set of
+upstream Devices.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If an object in the list is not a Device and does not extend
+    the Device class.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>A device cannot have itself as the upstream.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.space_available_downstream">
+<span class="sig-name descname"><span class="pre">space_available_downstream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.space_available_downstream" title="Permalink to this definition"></a></dt>
+<dd><p>Notify this Device that downstream now can accept a Part.</p>
+<p>This does not guarantee that this Device will pass a Part
+downstream because space could become unavailable before this
+Device gets the chance to pass its Part.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.upstream">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upstream</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.upstream" title="Permalink to this definition"></a></dt>
+<dd><p>List of upstream Devices, Devices that can feed Parts to
+this Device.</p>
+<p>Can be changed using set_upstream(new_list).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.device.Device.waiting_for_part_start_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">waiting_for_part_start_time</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.device.Device.waiting_for_part_start_time" title="Permalink to this definition"></a></dt>
+<dd><p>Simulation time of when this device started waiting for the
+next Part. Is set to None if the device is not currently waiting
+for a Part.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.machine">
+<span id="simprocesd-model-factory-floor-machine-module"></span><h2>simprocesd.model.factory_floor.machine module<a class="headerlink" href="#module-simprocesd.model.factory_floor.machine" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.machine.</span></span><span class="sig-name descname"><span class="pre">Machine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.device.Device" title="simprocesd.model.factory_floor.device.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>, <a class="reference internal" href="#simprocesd.model.factory_floor.maintainer.Maintainable" title="simprocesd.model.factory_floor.maintainer.Maintainable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maintainable</span></code></a></p>
+<p>Machine is a Device that can process parts.</p>
+<p>Machine accepts a Part, holds onto it for the duration of a cycle
+(processing time) and then passes it to a downstream Device when
+possible before accepting a new Part to process. To change the Part
+in some way when processing is done use
+add_finish_processing_callback.</p>
+<p>Callback functions can be added to this machine by using functions:
+add_&lt;trigger&gt;_callback such as add_shutdown_callback.</p>
+<p>Machine extends Maintainable class with basic functionality and the
+class should be extended to simulate a more complex maintenance
+scheme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Device. If name is None then the Device’s name will
+be changed to Machine_&lt;id&gt;</p></li>
+<li><p><strong>upstream</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – A list of upstream Devices.</p></li>
+<li><p><strong>cycle_time</strong> (<em>float</em><em>, </em><em>default=0</em>) – How long it takes to process a Part.</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Machine.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If Machine fails with a Part that hasn’t been fully processed then
+the Part is lost. A lost Part can be detected by using
+add_shutdown_callback and checking if part != None in the callback.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.add_finish_processing_callback">
+<span class="sig-name descname"><span class="pre">add_finish_processing_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.add_finish_processing_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Setup a function to be called when the Machine finishes
+processing a Part.</p>
+<div class="line-block">
+<div class="line">Callback signature: callback(machine, part)</div>
+<div class="line">machine - Machine to which the callback was added.</div>
+<div class="line">part - Part that was received.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callback</strong> (<em>function</em>) – Function to be called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.add_receive_part_callback">
+<span class="sig-name descname"><span class="pre">add_receive_part_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.add_receive_part_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Setup a function to be called when the Machine receives a
+new Part.</p>
+<div class="line-block">
+<div class="line">Callback signature: callback(machine, part)</div>
+<div class="line">machine - Machine to which the callback was added.</div>
+<div class="line">part - Part that was lost or None if no Part was lost.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callback</strong> (<em>function</em>) – Function to be called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.add_restored_callback">
+<span class="sig-name descname"><span class="pre">add_restored_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.add_restored_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Setup a function to be called when the Machine is restored
+after a shutdown or failure.</p>
+<div class="line-block">
+<div class="line">Callback signature: callback(machine)</div>
+<div class="line">machine - Machine to which the callback was added.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callback</strong> (<em>function</em>) – Function to be called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.add_shutdown_callback">
+<span class="sig-name descname"><span class="pre">add_shutdown_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.add_shutdown_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Setup a function to be called when the Machine shuts down.</p>
+<div class="line-block">
+<div class="line">Callback signature: callback(machine, part)</div>
+<div class="line">machine - Machine to which the callback was added.</div>
+<div class="line">is_failure - True if the shutdown occurred due to failure,
+False otherwise.</div>
+<div class="line">part - Part that was received.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callback</strong> (<em>function</em>) – Function to be called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.cycle_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cycle_time</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.cycle_time" title="Permalink to this definition"></a></dt>
+<dd><p>How long it takes to process one Part.</p>
+<p>Setting a new cycle time will affect all future process cycles
+but not a cycle that is already in progress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.end_work">
+<span class="sig-name descname"><span class="pre">end_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.end_work" title="Permalink to this definition"></a></dt>
+<dd><p>Called by Maintainer when it finishes working on the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.get_work_order_capacity">
+<span class="sig-name descname"><span class="pre">get_work_order_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.get_work_order_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Called once when the work order is created to determine how
+much of the Maintainer’s capacity is needed to perform the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Needed capacity to perform the work order indicated by the
+tag.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.get_work_order_cost">
+<span class="sig-name descname"><span class="pre">get_work_order_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.get_work_order_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Called once to get the cost to Maintainer to perform the
+work order.</p>
+<p>Returned value will be subtracted from Maintainer’s value. If
+the work order cost is tracked elsewhere then this should return
+0 (default implementation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Needed capacity to perform the work order indicated by the
+tag.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.get_work_order_duration">
+<span class="sig-name descname"><span class="pre">get_work_order_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.get_work_order_duration" title="Permalink to this definition"></a></dt>
+<dd><p>Called at the beginning of performing a work order to
+determine how long the work order will take.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>How long it will take to perform the work order indicated
+by the tag. Duration is measured in simulation time units.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.is_operational">
+<span class="sig-name descname"><span class="pre">is_operational</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.is_operational" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether the Device is operational.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True is the Device can perform part handling and
+processing functions, otherwise False.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.restore_functionality">
+<span class="sig-name descname"><span class="pre">restore_functionality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.restore_functionality" title="Permalink to this definition"></a></dt>
+<dd><p>Restore Part related functionality and/or recover from a
+failed state.</p>
+<p>Does nothing if machine is not in a shutdown or failed state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.schedule_failure">
+<span class="sig-name descname"><span class="pre">schedule_failure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.schedule_failure" title="Permalink to this definition"></a></dt>
+<dd><p>Schedule a failure for this Machine.</p>
+<p>When the Machine fails it will lose functionality any Part in
+the middle of processing will be lost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>float</em>) – Simulation time when the failure should occur.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>default=''</em>) – Message that will be associated with the failure event.
+Useful for debugging.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.shutdown" title="Permalink to this definition"></a></dt>
+<dd><p>Shutdown Part related functionality.</p>
+<p>Part being processed will pause and resume processing when
+Machine is restored. New parts cannot be accepted but any Part
+that was already processed may still move downstream.</p>
+<p>Call restore_functionality to bring Machine back online.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not to call in the middle of another operation from this
+Machine, safest way to call it is to schedule it as a separate
+event.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.machine.Machine.start_work">
+<span class="sig-name descname"><span class="pre">start_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.machine.Machine.start_work" title="Permalink to this definition"></a></dt>
+<dd><p>Called by Maintainer when it begins working on the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.maintainer">
+<span id="simprocesd-model-factory-floor-maintainer-module"></span><h2>simprocesd.model.factory_floor.maintainer module<a class="headerlink" href="#module-simprocesd.model.factory_floor.maintainer" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.maintainer.</span></span><span class="sig-name descname"><span class="pre">Maintainable</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An interface the Maintainer uses to create, prioritize, and
+execute work orders.</p>
+<p>Maintainer can only perform work orders on classes that use
+Maintainable as one of their base classes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable.end_work">
+<span class="sig-name descname"><span class="pre">end_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable.end_work" title="Permalink to this definition"></a></dt>
+<dd><p>Called by Maintainer when it finishes working on the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_capacity">
+<span class="sig-name descname"><span class="pre">get_work_order_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Called once when the work order is created to determine how
+much of the Maintainer’s capacity is needed to perform the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Needed capacity to perform the work order indicated by the
+tag.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_cost">
+<span class="sig-name descname"><span class="pre">get_work_order_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Called once to get the cost to Maintainer to perform the
+work order.</p>
+<p>Returned value will be subtracted from Maintainer’s value. If
+the work order cost is tracked elsewhere then this should return
+0 (default implementation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Needed capacity to perform the work order indicated by the
+tag.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_duration">
+<span class="sig-name descname"><span class="pre">get_work_order_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_duration" title="Permalink to this definition"></a></dt>
+<dd><p>Called at the beginning of performing a work order to
+determine how long the work order will take.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>How long it will take to perform the work order indicated
+by the tag. Duration is measured in simulation time units.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainable.start_work">
+<span class="sig-name descname"><span class="pre">start_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainable.start_work" title="Permalink to this definition"></a></dt>
+<dd><p>Called by Maintainer when it begins working on the work
+order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>object</em>) – Identifier for the work order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.maintainer.</span></span><span class="sig-name descname"><span class="pre">Maintainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'maintainer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.asset.Asset" title="simprocesd.model.factory_floor.asset.Asset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asset</span></code></a></p>
+<p>Asset that is responsible for performing requested work orders.</p>
+<p>Requests are generally worked in a first come first serve order
+but a later request may be worked first when available capacity is
+insufficient for the earlier request.</p>
+<p>Maintainer can work on multiple work orders at the same time as long
+the the combined needed capacity of the work orders is less than or
+equal to the Maintainer’s maximum capacity. Needed capacity is
+determined by Maintainable.get_work_order_capacity</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Capacity units are not defined but need to be consistent across work
+order capacity requirements and Maintainer’s maximum capacity.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Maintainer. If name is None then the Maintainer’s
+name will be changed to Maintainer_&lt;id&gt;</p></li>
+<li><p><strong>capacity</strong> (<em>float</em><em>, </em><em>optional</em>) – Maintainer’s maximum capacity.</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Asset.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer.available_capacity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_capacity</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer.available_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>How much of the Maintainer’s capacity is currently not being
+used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer.create_work_order">
+<span class="sig-name descname"><span class="pre">create_work_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer.create_work_order" title="Permalink to this definition"></a></dt>
+<dd><p>Request a new work order to be performed.</p>
+<p>Creates a new work order and adds it to the back of the queue of
+work orders to be executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<a class="reference internal" href="#simprocesd.model.factory_floor.maintainer.Maintainable" title="simprocesd.model.factory_floor.maintainer.Maintainable"><em>Maintainable</em></a>) – Target of the work order to be performed.</p></li>
+<li><p><strong>tag</strong> (<em>object</em><em>, </em><em>default=None</em>) – Identifier the target uses to differentiate between various
+work orders that could be performed on it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the work order was added to the queue and
+False if it was rejected. Request will be rejected if the
+same work order request is already in the queue or is being
+worked on.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer.total_capacity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_capacity</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer.total_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum capacity of the maintainer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.Maintainer.try_working_requests">
+<span class="sig-name descname"><span class="pre">try_working_requests</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.Maintainer.try_working_requests" title="Permalink to this definition"></a></dt>
+<dd><p>Maintainer will look through the work order queue and
+attempt to start working on each one.</p>
+<p>Work orders will be started if the Maintainer has enough
+available capacity to perform that work order.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is called automatically when requests are made
+and when requests are completed. Normally there should be no
+need to call it manually.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.maintainer.WorkOrder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.maintainer.</span></span><span class="sig-name descname"><span class="pre">WorkOrder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">needed_capacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.maintainer.WorkOrder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.part">
+<span id="simprocesd-model-factory-floor-part-module"></span><h2>simprocesd.model.factory_floor.part module<a class="headerlink" href="#module-simprocesd.model.factory_floor.part" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.part.Part">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.part.</span></span><span class="sig-name descname"><span class="pre">Part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.part.Part" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.asset.Asset" title="simprocesd.model.factory_floor.asset.Asset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asset</span></code></a></p>
+<p>Representation of an item/part that passes between Devices in a
+production line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Part. If name is None then the Part’s name will be
+changed to Part_&lt;id&gt;</p></li>
+<li><p><strong>value</strong> (<em>float</em><em>, </em><em>default=0</em>) – Starting value of the Part.</p></li>
+<li><p><strong>quality</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – Starting quality of the Part.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.part.Part.quality">
+<span class="sig-name descname"><span class="pre">quality</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.part.Part.quality" title="Permalink to this definition"></a></dt>
+<dd><p>A numerical representation for the quality of the Part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.part.Part.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.part.Part.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.part.Part.make_copy">
+<span class="sig-name descname"><span class="pre">make_copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.part.Part.make_copy" title="Permalink to this definition"></a></dt>
+<dd><p>Create a copy of this Part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a copy of this Part with a unique ID and an empty
+routing_history.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#simprocesd.model.factory_floor.part.Part" title="simprocesd.model.factory_floor.part.Part">Part</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.part.Part.routing_history">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">routing_history</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.part.Part.routing_history" title="Permalink to this definition"></a></dt>
+<dd><p>Ordered list of devices that the part passed
+through. First entry is usually a Source.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Predefined classes (Source, Device, etc) contain code for
+updating the routing history so a custom subclass is responsible
+for ensuring those updates still happen or it might not appear
+in the routing history.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.sink">
+<span id="simprocesd-model-factory-floor-sink-module"></span><h2>simprocesd.model.factory_floor.sink module<a class="headerlink" href="#module-simprocesd.model.factory_floor.sink" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.sink.Sink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.sink.</span></span><span class="sig-name descname"><span class="pre">Sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collect_parts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.sink.Sink" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.machine.Machine" title="simprocesd.model.factory_floor.machine.Machine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Machine</span></code></a></p>
+<p>A Device that can receive any number of Parts but not pass
+those Parts. It is the end of a production line.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Sink’s value will increase by the value attribute of each received
+Part. This is how Sink tracks the output value of produced Parts.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Sink. If name is None then the Sink’s name will
+be changed to Sink_&lt;id&gt;</p></li>
+<li><p><strong>upstream</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – A list of upstream Devices.</p></li>
+<li><p><strong>cycle_time</strong> (<em>float</em><em>, </em><em>default=0</em>) – Minimum time between receiving Parts.</p></li>
+<li><p><strong>collect_parts</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True then received Parts are stored throughout the simulation
+and can be accessed under ‘collected_parts’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.sink.Sink.collected_parts">
+<span class="sig-name descname"><span class="pre">collected_parts</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.sink.Sink.collected_parts" title="Permalink to this definition"></a></dt>
+<dd><p>List of received Parts in the order they were received.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.sink.Sink.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.sink.Sink.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.sink.Sink.received_parts_count">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">received_parts_count</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.sink.Sink.received_parts_count" title="Permalink to this definition"></a></dt>
+<dd><p>Count of all received Parts.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.sink.Sink.value_of_received_parts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value_of_received_parts</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.sink.Sink.value_of_received_parts" title="Permalink to this definition"></a></dt>
+<dd><p>Summed value of all received Parts.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor.source">
+<span id="simprocesd-model-factory-floor-source-module"></span><h2>simprocesd.model.factory_floor.source module<a class="headerlink" href="#module-simprocesd.model.factory_floor.source" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.source.Source">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.factory_floor.source.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_produced_parts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.source.Source" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simprocesd.model.factory_floor.machine.Machine" title="simprocesd.model.factory_floor.machine.Machine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Machine</span></code></a></p>
+<p>A Device that produces Part objects and supplies them to Devices
+downstream. It is the start of a production line.</p>
+<p>Source will not start producing a next Part until previous Part is
+passed downstream.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Source value will decrease by sample_part.value every time a new
+Part is created. This is how Source tracks the costs of producing
+Parts.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>default=None</em>) – Name of the Source. If name is None then the Source’s name will
+be changed to Source_&lt;id&gt;</p></li>
+<li><p><strong>sample_part</strong> (<a class="reference internal" href="#simprocesd.model.factory_floor.part.Part" title="simprocesd.model.factory_floor.part.Part"><em>Part</em></a><em>, </em><em>default=None</em>) – Source will produce copies of this Part and pass them
+downstream, sample_part itself is never passed.
+If sample_part is None then it will be set to Part()</p></li>
+<li><p><strong>cycle_time</strong> (<em>float</em><em>, </em><em>default=0</em>) – How long it takes to produce a Part.</p></li>
+<li><p><strong>max_produced_parts</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of Parts to produce. No maximum if not set.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.source.Source.cost_of_produced_parts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cost_of_produced_parts</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.source.Source.cost_of_produced_parts" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the summed value of the parts that have been
+produced by this Source and passed downstream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.source.Source.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.source.Source.initialize" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.source.Source.produced_parts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produced_parts</span></span><a class="headerlink" href="#simprocesd.model.factory_floor.source.Source.produced_parts" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the count of the parts that have been produced by
+this Source and passed downstream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.source.Source.set_upstream">
+<span class="sig-name descname"><span class="pre">set_upstream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_upstream_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.source.Source.set_upstream" title="Permalink to this definition"></a></dt>
+<dd><p>Source cannot have upstream Devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if new_upstream_list is not an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simprocesd.model.factory_floor">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.model.factory_floor" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simprocesd.model.cms.html" class="btn btn-neutral float-left" title="simprocesd.model.cms package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="simprocesd.model.sensors.html" class="btn btn-neutral float-right" title="simprocesd.model.sensors package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
