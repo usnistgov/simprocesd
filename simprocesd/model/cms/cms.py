@@ -29,8 +29,6 @@ class Cms(Asset):
     def initialize(self, env):
         super().initialize(env)
         self.maintainer.initialize(env)
-        for s in self._sensors:
-            s.initialize(env)
 
     def add_sensor(self, sensor):
         '''Register a sensor for the CMS.
