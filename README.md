@@ -4,10 +4,12 @@ SimPROCESD is a discrete event simulation package written in Python that is desi
 
 In addition to modeling the behavior of existing systems, SimPROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
 
-The software is available for public use through a publicly available Github repository. Any user may create a fork (copy) of the repository to freely experiment (e.g., class extensions to model complex processes) with the code without affecting the original source code.
+The software is available for public use through a publicly available GitHub repository. Any user may create a fork (copy) of the repository to freely experiment (e.g., class extensions to model complex processes) with the code without affecting the original source code.
 
 **NOTE:** SimPROCESD project is in early development and may receive updates that are not backwards compatible.
 
+## GitHub Pages
+Additional documentation, including API, is available at: [https://usnistgov.github.io/simprocesd/](https://usnistgov.github.io/simprocesd/)
 
 ## Installation
 

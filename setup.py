@@ -9,7 +9,7 @@ long_description = long_description + \
 
 setup(
     name = 'simprocesd',
-    version = '0.1.6',
+    version = '0.1.7',
     author = 'Serghei Drozdov',
     author_email = 'serghei.drozdov@nist.gov',
     description = 'Discreet event simulator for manufacturing systems.',
