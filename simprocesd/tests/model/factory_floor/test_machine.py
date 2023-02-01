@@ -60,8 +60,12 @@ class MachineTestCase(TestCase):
         machine.initialize(self.env)
         machine.shutdown()
 
-        self.env.pause_matching_events.assert_called_with(asset_id = machine.id)
+        self.env.pause_matching_events.assert_called_once_with(asset_id = machine.id)
         self.assertFalse(machine.is_operational())
+        # Shutdown call should do nothing if Machine is already
+        # shutdown.
+        machine.shutdown()
+        self.env.pause_matching_events.assert_called_once()
 
     def test_restore(self):
         machine = Machine(upstream = self.upstream)
@@ -202,6 +206,66 @@ class MachineTestCase(TestCase):
         machine.give_part(Part())
         self.assert_last_scheduled_event(self.env.now + 12, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
+    def test_uptime_tracking(self):
+        machine = Machine()
+        machine.initialize(self.env)
+        self.assertEqual(machine.uptime, 0)
+
+        self.env.now += 5
+        self.assertEqual(machine.uptime, 5)
+        self.env.now += 7
+        self.assertEqual(machine.uptime, 12)
+
+        machine.shutdown()
+        self.env.now += 4
+        self.assertEqual(machine.uptime, 12)
+        self.env.now += 15
+        machine.restore_functionality()
+        self.assertEqual(machine.uptime, 12)
+        self.env.now += 12
+        self.assertEqual(machine.uptime, 24)
+
+    def test_utilization_tracking(self):
+        machine = Machine()
+        machine.initialize(self.env)
+        self.assertEqual(machine.utilization_time, 0)
+
+        self.env.now += 3
+        machine.give_part(Part())
+        self.assertEqual(machine.utilization_time, 0)
+        self.env.now += 4
+        self.assertEqual(machine.utilization_time, 4)
+        self.env.now += 5
+        self.assertEqual(machine.utilization_time, 9)
+        machine.shutdown()
+        self.assertEqual(machine.utilization_time, 9)
+        self.env.now += 6
+        machine.restore_functionality()
+        self.assertEqual(machine.utilization_time, 9)
+        self.env.now += 7
+        self.assertEqual(machine.utilization_time, 16)
+        machine._finish_processing_part()
+        self.env.now += 8
+        self.assertEqual(machine.utilization_time, 16)
+
+    def test_utilization_tracking_with_failure(self):
+        machine = Machine()
+        machine.initialize(self.env)
+
+        machine.give_part(Part())
+        self.env.now += 3
+        self.assertEqual(machine.utilization_time, 3)
+        machine._fail()
+        self.env.now += 4
+        self.assertEqual(machine.utilization_time, 3)
+        machine.restore_functionality()
+        self.env.now += 5
+        self.assertEqual(machine.utilization_time, 3)
+
+        machine.give_part(Part())
+        self.env.now += 6
+        self.assertEqual(machine.utilization_time, 9)
 
 
 if __name__ == '__main__':

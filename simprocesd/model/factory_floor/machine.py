@@ -44,17 +44,21 @@ class Machine(Device, Maintainable):
                  upstream = [],
                  cycle_time = 0,
                  value = 0):
-        assert cycle_time >= 0, 'Cycle time cannot be negative.'
         super().__init__(name, upstream, value)
 
         self.cycle_time = self._initial_cycle_time = cycle_time
-
         self._is_part_processed = False
         self._is_shut_down = False
+
         self._received_part_callbacks = []
         self._finish_processing_callbacks = []
         self._shutdown_callbacks = []
         self._restored_callbacks = []
+
+        self._uptime = 0
+        self._last_restore = 0
+        self._time_in_use = 0
+        self._last_use_start = None
 
     @property
     def cycle_time(self):
@@ -67,7 +71,27 @@ class Machine(Device, Maintainable):
 
     @cycle_time.setter
     def cycle_time(self, new_value):
+        assert new_value >= 0, 'Cycle time cannot be negative.'
         self._cycle_time = new_value
+
+    @property
+    def uptime(self):
+        ''' How much time has the Machine been operational (not
+        shutdown).
+        '''
+        if self._last_restore == None:
+            return self._uptime
+        else:
+            return self._uptime + (self.env.now - self._last_restore)
+
+    @property
+    def utilization_time(self):
+        ''' How much time has the Machine spent on processing Parts.
+        '''
+        if self._last_use_start == None:
+            return self._time_in_use
+        else:
+            return self._time_in_use + (self.env.now - self._last_use_start)
 
     def is_operational(self):
         return not self._is_shut_down
@@ -77,6 +101,10 @@ class Machine(Device, Maintainable):
         self.cycle_time = self._initial_cycle_time
         self._is_part_processed = False
         self._is_shut_down = False
+        self._uptime = 0
+        self._last_restore = self.env.now
+        self._time_in_use = 0
+        self._last_use_start = None
 
     def _on_received_new_part(self):
         self._env.add_datapoint('received_parts', self.name, (self._env.now,
@@ -89,6 +117,7 @@ class Machine(Device, Maintainable):
 
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
+            self._last_use_start = self.env.now
             self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self):
@@ -108,6 +137,8 @@ class Machine(Device, Maintainable):
         assert self._output == None, f'Output part slot is already full.'
 
         self._output = self._part
+        self._time_in_use += self.env.now - self._last_use_start
+        self._last_use_start = None
         self._schedule_pass_part_downstream()
         self._part = None
         for c in self._finish_processing_callbacks:
@@ -140,10 +171,7 @@ class Machine(Device, Maintainable):
         self._part = None
         self._env.add_datapoint('device_failure', self.name,
                 (self._env.now, lost_part.id if lost_part else None))
-        self._env.cancel_matching_events(asset_id = self.id)
-        self._set_waiting_for_part(False)
-        for c in self._shutdown_callbacks:
-            c(self, True, lost_part)
+        self._shutdown(True, lost_part)
 
     def shutdown(self):
         '''Shutdown Part related functionality.
@@ -151,6 +179,9 @@ class Machine(Device, Maintainable):
         Part being processed will pause and resume processing when
         Machine is restored. New parts cannot be accepted but any Part
         that was already processed may still move downstream.
+
+        Does nothing if machine is already in a shutdown or failed
+        state.
 
         Call restore_functionality to bring Machine back online.
 
@@ -160,11 +191,26 @@ class Machine(Device, Maintainable):
         Machine, safest way to call it is to schedule it as a separate
         event.
         '''
+        self._shutdown(False, None)
+
+    def _shutdown(self, is_failure, lost_part):
+        if self._is_shut_down:
+            return
         self._is_shut_down = True
-        self._env.pause_matching_events(asset_id = self.id)
+        if is_failure:
+            self._env.cancel_matching_events(asset_id = self.id)
+        else:
+            self._env.pause_matching_events(asset_id = self.id)
+
+        self._uptime += self.env.now - self._last_restore
+        self._last_restore = None
+        if self._last_use_start != None:
+            self._time_in_use += self.env.now - self._last_use_start
+            self._last_use_start = None
+
         self._set_waiting_for_part(False)
         for c in self._shutdown_callbacks:
-            c(self, False, None)
+            c(self, is_failure, lost_part)
 
     def restore_functionality(self):
         '''Restore Part related functionality and/or recover from a
@@ -175,11 +221,16 @@ class Machine(Device, Maintainable):
         if not self._is_shut_down:
             return
         self._is_shut_down = False
+        self._last_restore = self.env.now
         self._env.unpause_matching_events(asset_id = self.id)
+        # Ensure part flow is restored.
         if self._output != None:
             self._schedule_pass_part_downstream()
         elif self._part == None:
             self.notify_upstream_of_available_space()
+        # Restart utilization tracker if a part is being processed.
+        if self._part != None:
+            self._last_use_start = self.env.now
 
         for c in self._restored_callbacks:
             c(self)

@@ -3,10 +3,11 @@ An example of Markovian degradation of a single machine. Once the
 machine reaches the zero health it will shut down and stop receiving
 and processing parts until maintained. Machine degradation is simulated
 by a periodic fault.
-Expected parts produced: about 8000
+Expected to produce about 4000-4200 parts.
+Expected uptime %: ~80%
+    - average time to break 40, average maintenance duration 10
+Expected productive %: slightly above 50%
 '''
-
-import random
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Sink, Maintainer
@@ -19,7 +20,7 @@ def main():
     system = System()
     maintainer = Maintainer()
 
-    source = Source()
+    source = Source(cycle_time = 2)
     M1 = MachineWithFaults('M1', cycle_time = 1, upstream = [source])
     M1.add_recurring_fault('Fault',
         get_time_to_fault = lambda: geometric_distribution_sample(0.1, 4),
@@ -29,9 +30,14 @@ def main():
     M1.add_shutdown_callback(on_shutdown_cb)
     sink = Sink(upstream = [M1])
 
-    random.seed(1)
     # If time units are minutes then simulation period is a week.
-    system.simulate(simulation_duration = 60 * 24 * 7)
+    total_time = 60 * 24 * 7
+    system.simulate(simulation_duration = total_time)
+
+    percent_uptime = (M1.uptime / total_time) * 100
+    percent_utilization = (M1.utilization_time / M1.uptime) * 100
+    print(f'Machine {M1.name} uptime % of total simulation time: {percent_uptime:.2f}%')
+    print(f'Machine {M1.name} productive time as % of uptime: {percent_utilization:.2f}%')
 
 
 if __name__ == '__main__':
