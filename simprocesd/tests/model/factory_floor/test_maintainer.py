@@ -123,13 +123,33 @@ class MaintainerTestCase(TestCase):
             self.assertTrue(mt.create_work_order(m))
         # Make sure only one of the requests was scheduled to be worked.
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
-        # Execute next 2 events which will finish processing 1st request.
+        # Execute events until no new event is scheduled, this will
+        # finish processing all requests.
         last_action = None
         while last_action != self.env.schedule_event.call_args[0][2]:
             last_action = self.env.schedule_event.call_args[0][2]
             last_action()
         for m in self.machines:
             m.end_work.assert_called_once()
+
+    def test_avoid_simultaneous_work_on_same_target(self):
+        mt = Maintainer(capacity = 999)
+        mt.initialize(self.env)
+
+        machine = self.machines[0]
+        for x in range(5):
+            self.assertTrue(mt.create_work_order(machine, f'tag{x}'))
+
+        self.assertEqual(1, len(mt._active_requests))
+        self.assertEqual(4, len(mt._request_queue))
+        # Execute events until no new even is scheduled.
+        last_action = None
+        while last_action != self.env.schedule_event.call_args[0][2]:
+            last_action = self.env.schedule_event.call_args[0][2]
+            last_action()
+            # There should never be more than one work order being
+            # performed on the same target.
+            self.assertTrue(len(mt._active_requests) <= 1)
 
 
 if __name__ == '__main__':

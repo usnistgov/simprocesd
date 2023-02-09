@@ -3,102 +3,6 @@ from ..simulation import EventType
 from .asset import Asset
 
 
-class Maintainable:
-    '''An interface the Maintainer uses to create, prioritize, and
-    execute work orders.
-
-    Maintainer can only perform work orders on classes that use
-    Maintainable as one of their base classes.
-    '''
-
-    def get_work_order_duration(self, tag):
-        '''Called at the beginning of performing a work order to
-        determine how long the work order will take.
-
-        Arguments
-        ---------
-        tag: object
-            Identifier for the work order.
-
-        Returns
-        -------
-        float
-            How long it will take to perform the work order indicated
-            by the tag. Duration is measured in simulation time units.
-        '''
-        return 0
-
-    def get_work_order_capacity(self, tag):
-        ''' Called once when the work order is created to determine how
-        much of the Maintainer's capacity is needed to perform the work
-        order.
-
-        Arguments
-        ---------
-        tag: object
-            Identifier for the work order.
-
-        Returns
-        -------
-        float
-            Needed capacity to perform the work order indicated by the
-            tag.
-        '''
-        return 0
-
-    def get_work_order_cost(self, tag):
-        ''' Called once to get the cost to Maintainer to perform the
-        work order.
-
-        Returned value will be subtracted from Maintainer's value. If
-        the work order cost is tracked elsewhere then this should return
-        0 (default implementation).
-
-        Arguments
-        ---------
-        tag: object
-            Identifier for the work order.
-
-        Returns
-        -------
-        float
-            Needed capacity to perform the work order indicated by the
-            tag.
-        '''
-        return 0
-
-    def start_work(self, tag):
-        ''' Called by Maintainer when it begins working on the work
-        order.
-
-        Arguments
-        ---------
-        tag: object
-            Identifier for the work order.
-        '''
-        pass
-
-    def end_work(self, tag):
-        ''' Called by Maintainer when it finishes working on the work
-        order.
-
-        Arguments
-        ---------
-        tag: object
-            Identifier for the work order.
-        '''
-        pass
-
-
-class WorkOrder:
-
-    def __init__(self, target, tag, needed_capacity):
-        assert_is_instance(target, Maintainable)
-        self.target = target
-        self.tag = tag
-        self.needed_capacity = needed_capacity
-
-
 class Maintainer(Asset):
     '''Asset that is responsible for performing requested work orders.
 
@@ -110,6 +14,10 @@ class Maintainer(Asset):
     the the combined needed capacity of the work orders is less than or
     equal to the Maintainer's maximum capacity. Needed capacity is
     determined by Maintainable.get_work_order_capacity
+
+    Maintainer will not perform simultaneous work orders on the same
+    target and will instead perform them sequentially even if there is
+    enough capacity.
 
     Note
     ----
@@ -213,7 +121,11 @@ class Maintainer(Asset):
         i = 0
         while i < len(self._request_queue):
             req = self._request_queue[i]
-            if self._utilization <= self._capacity - req.needed_capacity:
+            # Find other active work orders on the same target.
+            other_work_orders = [x for x in self._active_requests if x.target == req.target]
+
+            if self._utilization <= self._capacity - req.needed_capacity \
+                    and len(other_work_orders) == 0:
                 self._request_queue.pop(i)
                 self._active_requests.append(req)
 
@@ -252,3 +164,98 @@ class Maintainer(Asset):
 
         self.try_working_requests()
 
+
+class Maintainable:
+    '''An interface the Maintainer uses to create, prioritize, and
+    execute work orders.
+
+    Maintainer can only perform work orders on classes that use
+    Maintainable as one of their base classes.
+    '''
+
+    def get_work_order_duration(self, tag):
+        '''Called at the beginning of performing a work order to
+        determine how long the work order will take.
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            How long it will take to perform the work order indicated
+            by the tag. Duration is measured in simulation time units.
+        '''
+        return 0
+
+    def get_work_order_capacity(self, tag):
+        ''' Called once when the work order is created to determine how
+        much of the Maintainer's capacity is needed to perform the work
+        order.
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            Needed capacity to perform the work order indicated by the
+            tag.
+        '''
+        return 0
+
+    def get_work_order_cost(self, tag):
+        ''' Called once to get the cost to Maintainer to perform the
+        work order.
+
+        Returned value will be subtracted from Maintainer's value. If
+        the work order cost is tracked elsewhere then this should return
+        0 (default implementation).
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+
+        Returns
+        -------
+        float
+            Needed capacity to perform the work order indicated by the
+            tag.
+        '''
+        return 0
+
+    def start_work(self, tag):
+        ''' Called by Maintainer when it begins working on the work
+        order.
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+        '''
+        pass
+
+    def end_work(self, tag):
+        ''' Called by Maintainer when it finishes working on the work
+        order.
+
+        Arguments
+        ---------
+        tag: object
+            Identifier for the work order.
+        '''
+        pass
+
+
+class WorkOrder:
+
+    def __init__(self, target, tag, needed_capacity):
+        assert_is_instance(target, Maintainable)
+        self.target = target
+        self.tag = tag
+        self.needed_capacity = needed_capacity
