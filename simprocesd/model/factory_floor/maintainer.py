@@ -63,7 +63,7 @@ class Maintainer(Asset):
         self._request_queue = []
         self._active_requests = []
 
-    def create_work_order(self, target, tag = None):
+    def create_work_order(self, target, tag = None, info = None):
         '''Request a new work order to be performed.
 
         Creates a new work order and adds it to the back of the queue of
@@ -75,7 +75,12 @@ class Maintainer(Asset):
             Target of the work order to be performed.
         tag: object, default=None
             Identifier the target uses to differentiate between various
-            work orders that could be performed on it.
+            types of work orders that could be performed on it.
+        info: str, default=None
+            A string to be included with datapoints that track the
+            lifecycle of the order.
+            Example uses: reason for the work order, source of the work
+            order, a unique identifier, etc.
 
         Returns
         -------
@@ -90,9 +95,9 @@ class Maintainer(Asset):
             return False
 
         capacity = target.get_work_order_capacity(tag)
-        name = getattr(target, 'name', 'N/A')
-        self._env.add_datapoint('enter_queue', self.name, (self._env.now, name, tag))
-        self._request_queue.append(WorkOrder(target, tag, capacity))
+        request = _WorkOrder(target, tag, capacity, info)
+        self._record_work_order_datapoint('enter_queue', request)
+        self._request_queue.append(request)
         self.try_working_requests()
         return True
 
@@ -141,8 +146,7 @@ class Maintainer(Asset):
 
     def _start_work_order(self, request):
         ttm = request.target.get_work_order_duration(request.tag)
-        self._env.add_datapoint('start_work_order', self.name,
-                                (self._env.now, request.target.name, request.tag))
+        self._record_work_order_datapoint('start_work_order', request)
 
         cost = request.target.get_work_order_cost(request.tag)
         self.add_cost(f'work order - tag:{request.tag} target:{request.target.name}', cost)
@@ -159,10 +163,24 @@ class Maintainer(Asset):
         request.target.end_work(request.tag)
         self._utilization -= request.needed_capacity
         self._active_requests.remove(request)
-        self._env.add_datapoint('finish_work_order', self.name,
-                                (self._env.now, request.target.name, request.tag))
+        self._record_work_order_datapoint('finish_work_order', request)
 
         self.try_working_requests()
+
+    def _record_work_order_datapoint(self, list_label, request):
+        name = getattr(request.target, 'name', 'N/A')
+        self._env.add_datapoint(list_label, self.name,
+                                (self._env.now, name, request.tag, request.info))
+
+
+class _WorkOrder:
+
+    def __init__(self, target, tag, needed_capacity, info):
+        assert_is_instance(target, Maintainable)
+        self.target = target
+        self.tag = tag
+        self.needed_capacity = needed_capacity
+        self.info = info
 
 
 class Maintainable:
@@ -250,12 +268,3 @@ class Maintainable:
             Identifier for the work order.
         '''
         pass
-
-
-class WorkOrder:
-
-    def __init__(self, target, tag, needed_capacity):
-        assert_is_instance(target, Maintainable)
-        self.target = target
-        self.tag = tag
-        self.needed_capacity = needed_capacity

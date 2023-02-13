@@ -57,13 +57,14 @@ class MaintainerTestCase(TestCase):
 
         self.machines[0].get_work_order_capacity.assert_not_called()
         tag = object()  # Tag should support any object type.
-        self.assertTrue(mt.create_work_order(self.machines[0], tag))
+        order_info = 'test'
+        self.assertTrue(mt.create_work_order(self.machines[0], tag, order_info))
         self.assertEqual(mt.total_capacity, 5)
         self.assertEqual(mt.available_capacity, 5 - 1)
         self.assert_last_scheduled_event(self.env.now, mt.id, None, EventType.START_WORK)
         self.machines[0].get_work_order_capacity.assert_called_once_with(tag)
         self.env.add_datapoint.assert_called_once_with(
-            'enter_queue', mt.name, (self.env.now, self.machines[0].name, tag))
+            'enter_queue', mt.name, (self.env.now, self.machines[0].name, tag, order_info))
 
         self.machines[0].get_work_order_duration.assert_not_called()
         self.machines[0].start_work.assert_not_called()
@@ -78,7 +79,7 @@ class MaintainerTestCase(TestCase):
         self.machines[0].get_work_order_cost.assert_called_once_with(tag)
         self.assertEqual(mt.value, -100)
         self.env.add_datapoint.assert_called_with(
-            'start_work_order', mt.name, (self.env.now, self.machines[0].name, tag))
+            'start_work_order', mt.name, (self.env.now, self.machines[0].name, tag, order_info))
 
         self.machines[0].end_work.assert_not_called()
         # Execute end of the work order.
@@ -86,7 +87,7 @@ class MaintainerTestCase(TestCase):
         self.assertEqual(mt.available_capacity, 5)
         self.machines[0].end_work.assert_called_once_with(tag)
         self.env.add_datapoint.assert_called_with(
-            'finish_work_order', mt.name, (self.env.now, self.machines[0].name, tag))
+            'finish_work_order', mt.name, (self.env.now, self.machines[0].name, tag, order_info))
 
     def test_max_capacity(self):
         mt = Maintainer(capacity = 5)
