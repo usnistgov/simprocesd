@@ -1,6 +1,6 @@
 import time
 
-from . import Environment
+from . import Environment, ResourceManager
 from ..utils import DataStorageType
 
 
@@ -23,6 +23,9 @@ class System:
     simulation_data_storage_type: DataStorageType, default=DataStorageType.MEMORY
         How to store <simulation_data>. Does not currently support
         DataStorageType.FILE
+    resource_manager: ResourceManager, default=None
+        A ResourceManager instance to use for this simulation. If None
+        then the default ResourceManager will be used.
     '''
 
     _instance = None  # Last initialized System.
@@ -53,9 +56,12 @@ class System:
         if new_asset not in System._instance._assets:
             System._instance._assets.append(new_asset)
 
-    def __init__(self, simulation_data_storage_type = DataStorageType.MEMORY):
+    def __init__(self, simulation_data_storage_type = DataStorageType.MEMORY, resource_manager = None):
         self._assets = []
-        self._env = Environment(simulation_data_storage_type = simulation_data_storage_type)
+        if resource_manager == None:
+            resource_manager = ResourceManager()
+        self._env = Environment(simulation_data_storage_type = simulation_data_storage_type,
+                                resource_manager = resource_manager)
         self._simulation_is_initialized = False
 
         System._instance = self
@@ -63,15 +69,18 @@ class System:
     @property
     def simulation_data(self):
         '''Stored datapoints added with
-        environment.add_datapoint(list_label, sub_label, datapoint)
+        Environment.add_datapoint(list_label, sub_label, datapoint)
 
         | To retrieving a list of datapoints call:
         | system.simulation_data[list_label][sub_label]
         '''
-        if self._env is not None:
-            return self._env.simulation_data
-        else:
-            return None
+        return self._env.simulation_data
+
+    @property
+    def resource_manager(self):
+        '''ResourceManager instance.
+        '''
+        return self._env.resource_manager
 
     def simulate(self, simulation_duration, reset = True, trace = False, print_summary = True):
         '''Run the simulation for the specified duration.
@@ -102,6 +111,7 @@ class System:
 
         if not self._simulation_is_initialized or reset == True:
             self._env.reset()
+            self.resource_manager.initialize(self._env)
             for asset in self._assets:
                 asset.initialize(self._env)
             self._simulation_is_initialized = True

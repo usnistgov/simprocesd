@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from .. import add_side_effect_to_class_method
-from ...model import Environment, System
+from ...model import Environment, System, ResourceManager
 from ...model.factory_floor import Asset, Machine, Sink
 from ...utils import DataStorageType
 
@@ -16,6 +16,7 @@ class SystemTestCase(TestCase):
         self.sys = System(DataStorageType.MEMORY)
         # Mock out the Environment class.
         self.env_mock = MagicMock(spec = Environment)
+        self.env_mock.resource_manager = MagicMock(spec = ResourceManager)
         self.env_mock.now = 0
         self.sys._env = self.env_mock
         # Mock out time getting method to keep it predictable.
@@ -24,11 +25,13 @@ class SystemTestCase(TestCase):
         self.time_mock.side_effect = [i for i in range(10)]
 
     def test_initialize(self):
-        sys = System(DataStorageType.MEMORY)
+        res_manager = ResourceManager()
+        sys = System(DataStorageType.MEMORY, res_manager)
         assets = [Asset()]  # Adds to System automatically.
 
         self.assertEqual(sys._assets, assets)
         self.assertEqual(sys._env._simulation_data_storage_type, DataStorageType.MEMORY)
+        self.assertEqual(sys._env.resource_manager, res_manager)
 
     def test_simulation_data(self):
         self.env_mock.simulation_data = {'label': {'asset_name': [1, 5, 9]}}
@@ -69,12 +72,15 @@ class SystemTestCase(TestCase):
         self.sys._assets.append(sink)
 
         self.sys.simulate(5, print_summary = False)
+        self.env_mock.resource_manager.initialize.assert_called_once_with(self.env_mock)
         sink.initialize.assert_called_once_with(self.env_mock)
 
         self.sys.simulate(5, reset = False, print_summary = False)
+        self.env_mock.resource_manager.initialize.assert_called_once_with(self.env_mock)
         sink.initialize.assert_called_once_with(self.env_mock)
 
         self.sys.simulate(5, print_summary = False)
+        self.assertEqual(len(self.env_mock.resource_manager.initialize.call_args_list), 2)
         self.assertEqual(len(sink.initialize.call_args_list), 2)
 
     def test_get_net_value(self):

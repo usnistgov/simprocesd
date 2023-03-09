@@ -135,11 +135,13 @@ class Environment:
         Stored datapoints added with Environment.add_datapoint
     '''
 
-    def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE):
+    def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE,
+                 resource_manager = None):
         self.name = name
         self._simulation_data_storage_type = simulation_data_storage_type
         if self._simulation_data_storage_type == DataStorageType.FILE:
             raise NotImplementedError('Storing to file/disk is not supported yet.')
+        self.resource_manager = resource_manager
         self.reset()
 
     def reset(self):
@@ -154,7 +156,7 @@ class Environment:
         self.simulation_data = {}
         self._events = []
         self._paused_events = []
-        self._terminated = False
+        self._terminated = True
         self._event_trace = {}
         self._trace = False
         self._event_index = 0
@@ -174,6 +176,7 @@ class Environment:
             If True then executed Events will be recorded and exported
             to a file at: '~/Downloads/{environment.name}_trace.json'
         '''
+        self._terminated = False
         self._trace = trace
 
         self.schedule_event(self.now + simulation_duration, -1, self._terminate, EventType.TERMINATE)
@@ -181,7 +184,6 @@ class Environment:
         try:
             while self._events and not self._terminated:
                 self.step()
-            self._terminated = False
         finally:
             if self._trace:
                 self._export_trace()
@@ -232,6 +234,15 @@ class Environment:
             raise ValueError(f'Can not schedule _events in the past: now={self.now}, time={time}')
         new_event = Event(time, asset_id, action, event_type, message)
         bisect.insort(self._events, new_event)
+
+    def is_simulation_in_progress(self):
+        '''Indicates whether a simulation is in progress or not.
+
+        Returns
+        -------
+        True if the simulation is currently in progress, otherwise False.
+        '''
+        return not self._terminated
 
     def _terminate(self):
         self._terminated = True
@@ -325,8 +336,6 @@ class Environment:
             try:
                 table_dictionary = self.simulation_data[list_label]
             except KeyError:
-                # Using KeyError to indicate dictionary entry needs
-                # initialization for better overall performance.
                 table_dictionary = {}
                 self.simulation_data[list_label] = table_dictionary
 
@@ -335,4 +344,4 @@ class Environment:
             except KeyError:
                 table_dictionary[sub_label] = [datapoint]
         elif self._simulation_data_storage_type == DataStorageType.FILE:
-            raise NotImplementedError('Storing to file/disk is not supported yet.')
+            raise NotImplementedError('Storing to file/disk is not supported.')

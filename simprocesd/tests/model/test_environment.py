@@ -39,6 +39,7 @@ class EnvironmentTestCase(TestCase):
         self.assertEqual(self.env.name, 'env')
         self.assertEqual(self.env.now, 0)
         self.assertEqual(self.env._paused_events, [])
+        self.assertFalse(self.env.is_simulation_in_progress())
 
     def test_file_storage(self):
         self.assertRaises(NotImplementedError,
@@ -207,6 +208,17 @@ class EnvironmentTestCase(TestCase):
 
         self.assertListEqual(self.env.simulation_data['label']['asset_name'],
                              [[1], [8, 3], [1, 4, 7, 3]])
+
+    def test_is_simulation_in_progress(self):
+        self.was_called = False
+
+        def sub_test():
+            self.assertTrue(self.env.is_simulation_in_progress())
+            self.was_called = True
+
+        self.env.schedule_event(1, 0, sub_test, EventType.OTHER_HIGH_PRIORITY)
+        self.env.run(100)
+        self.assertTrue(self.was_called)
 
 
 if __name__ == '__main__':
