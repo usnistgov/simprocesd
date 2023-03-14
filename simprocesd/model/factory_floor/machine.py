@@ -21,7 +21,7 @@ class Machine(Device, Maintainable):
     scheme.
 
     Arguments
-    ----------
+    ---------
     name: str, default=None
         Name of the Device. If name is None then the Device's name will
         be changed to Machine_<id>
@@ -31,6 +31,14 @@ class Machine(Device, Maintainable):
         How long it takes to process a Part.
     value: float, default=0
         Starting value of the Machine.
+    resources_for_processing: Dictionary, default=None
+        A dictionary specifying resources needed for this Machine to
+        process Parts. Each key-value entry in the dictionary identifies
+        what resource (key) needs to be reserved and how much(value) of
+        it needs to be reserved.
+        These resources will be reserved at the beginning of Part
+        processing and they will be released when the processing is
+        done.
 
     Warning
     -------
@@ -43,12 +51,14 @@ class Machine(Device, Maintainable):
                  name = None,
                  upstream = [],
                  cycle_time = 0,
-                 value = 0):
+                 value = 0,
+                 resources_for_processing = None):
         super().__init__(name, upstream, value)
 
         self.cycle_time = self._initial_cycle_time = cycle_time
-        self._is_part_processed = False
         self._is_shut_down = False
+        self._resources_for_processing = resources_for_processing
+        self._reserved_resources = None
 
         self._received_part_callbacks = []
         self._finish_processing_callbacks = []
@@ -93,18 +103,32 @@ class Machine(Device, Maintainable):
         else:
             return self._time_in_use + (self.env.now - self._last_use_start)
 
-    def is_operational(self):
-        return not self._is_shut_down
-
     def initialize(self, env):
         super().initialize(env)
         self.cycle_time = self._initial_cycle_time
-        self._is_part_processed = False
         self._is_shut_down = False
         self._uptime = 0
         self._last_restore = self.env.now
         self._time_in_use = 0
         self._last_use_start = None
+        self._reserved_resources = None
+
+    def _can_accept_part(self, part):
+        '''Override the standard function for deciding whether to accept
+        an incoming Part. This version also tries to reserve the needed
+        resources before accepting the Part.
+        '''
+        if not super()._can_accept_part(part):
+            return False
+        # Reserving resources if any are needed for Part processing.
+        if self._resources_for_processing != None:
+            self._reserved_resources = self.env.resource_manager.reserve_resources(
+                    self._resources_for_processing)
+            if self._reserved_resources == None:
+                self.env.resource_manager.reserve_resources_with_callback(self._resources_for_processing,
+                                                                          self._reserve_resource_callback)
+                return False
+        return True
 
     def _on_received_new_part(self):
         self._env.add_datapoint('received_parts', self.name, (self._env.now,
@@ -137,10 +161,12 @@ class Machine(Device, Maintainable):
         assert self._output == None, f'Output part slot is already full.'
 
         self._output = self._part
+        self._part = None
         self._time_in_use += self.env.now - self._last_use_start
         self._last_use_start = None
         self._schedule_pass_part_downstream()
-        self._part = None
+        self._release_reserved_resources()
+
         for c in self._finish_processing_callbacks:
             c(self, self._output)
         if record_produced_part_data:
@@ -169,6 +195,7 @@ class Machine(Device, Maintainable):
         # Processed part (_output) is not lost but input part is.
         lost_part = self._part
         self._part = None
+        self._release_reserved_resources()
         self._env.add_datapoint('device_failure', self.name,
                 (self._env.now, lost_part.id if lost_part else None))
         self._shutdown(True, lost_part)
@@ -234,6 +261,21 @@ class Machine(Device, Maintainable):
 
         for c in self._restored_callbacks:
             c(self)
+
+    def is_operational(self):
+        return not self._is_shut_down
+
+    def _reserve_resource_callback(self, request):
+        '''When requested resources are available the Machine will
+        signal that it can receive a Part. When a new Part is offered to
+        the Machine, it will try to reserve the resources.
+        '''
+        self.notify_upstream_of_available_space()
+
+    def _release_reserved_resources(self):
+        if self._reserved_resources != None:
+            self._reserved_resources.release()
+            self._reserved_resources = None
 
     def add_receive_part_callback(self, callback):
         '''Setup a function to be called when the Machine receives a

@@ -2,16 +2,21 @@ from unittest import TestCase
 import unittest
 from unittest.mock import MagicMock
 
-from ....model import Environment, EventType, System
+from ....model import Environment, EventType, System, ResourceManager
 from ....model.factory_floor import Part, Machine
+from ....model.resource_manager import ReservedResources
 
 
 class MachineTestCase(TestCase):
 
     def setUp(self):
         self.sys = System()
+        self.rm = MagicMock(spec = ResourceManager)
+        self.rm._init_count = 1
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
+        self.env.resource_manager = self.rm
+        self.rm._env = self.env
         self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
@@ -266,6 +271,60 @@ class MachineTestCase(TestCase):
         machine.give_part(Part())
         self.env.now += 6
         self.assertEqual(machine.utilization_time, 9)
+
+    def test_resource_request(self):
+        rr = MagicMock(spec = ReservedResources)
+        rr.reserved_resources.return_value = {'tool': 1}
+        self.rm.reserve_resources.return_value = rr
+        machine = Machine(cycle_time = 1, resources_for_processing = {'tool': 1})
+
+        machine.initialize(self.env)
+        part = Part()
+
+        self.assertTrue(machine.give_part(part))
+        self.assertEqual(machine._part, part)
+        self.assertEqual(machine._reserved_resources, rr)
+        self.rm.reserve_resources.assert_called_once_with({'tool': 1})
+        rr.release.assert_not_called()
+
+        machine._finish_processing_part()
+        rr.release.assert_called_once()
+
+    def test_resource_request_fail(self):
+        # Setup a failed attempt at reserving resources.
+        self.rm.reserve_resources.return_value = None
+        machine = Machine(cycle_time = 1, upstream = self.upstream, resources_for_processing = {'tool': 1})
+
+        machine.initialize(self.env)
+        part = Part()
+        self.rm.reserve_resources_with_callback.assert_not_called()
+
+        self.assertFalse(machine.give_part(part))
+        self.assertEqual(machine._part, None)
+        self.rm.reserve_resources_with_callback.assert_called_once_with(
+                {'tool': 1}, machine._reserve_resource_callback)
+
+        self.upstream[0].space_available_downstream.assert_not_called()
+        machine._reserve_resource_callback({'tool': 1})
+        self.upstream[0].space_available_downstream.assert_called_once()
+
+    def test_resource_request_with_failure(self):
+        rr = MagicMock(spec = ReservedResources)
+        self.rm.reserve_resources.return_value = rr
+        machine = Machine(cycle_time = 1, resources_for_processing = {'tool': 1})
+
+        machine.initialize(self.env)
+        part = Part()
+
+        self.assertTrue(machine.give_part(part))
+        rr.release.assert_not_called()
+
+        machine.shutdown()
+        machine.restore_functionality()
+        rr.release.assert_not_called()
+
+        machine._fail()
+        rr.release.assert_called_once()
 
 
 if __name__ == '__main__':

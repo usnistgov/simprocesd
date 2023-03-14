@@ -29,7 +29,6 @@ class Device(Asset):
         self._output = None
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
-        self._env = None
 
         self.set_upstream(upstream)
 
@@ -194,17 +193,22 @@ class Device(Asset):
         bool
             True if the Part has been accepted, otherwise False.
         '''
-        assert part != None, 'part should never be None.'
-        if (not self.is_operational() or part == None
-                                      or self._part != None
-                                      or self._output != None):
+        if not self._can_accept_part(part):
             return False
+        self._accept_part(part)
+        return True
 
+    def _can_accept_part(self, part):
+        return (self.is_operational() and part != None
+                                      and self._part == None
+                                      and self._output == None)
+
+    def _accept_part(self, part):
+        assert part != None, 'part cannot be None.'
         self._part = part
         self._part.routing_history.append(self)
         self._set_waiting_for_part(False)
         self._on_received_new_part()
-        return True
 
     def _on_received_new_part(self):
         if self._output == None:

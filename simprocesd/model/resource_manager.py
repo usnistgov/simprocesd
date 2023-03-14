@@ -232,7 +232,7 @@ class ReservedResources():
 
     def __del__(self):
         if (self._init_count_when_made != self._resource_manager._init_count
-            or self._resource_manager._env.is_simulation_in_progress()):
+            or not self._resource_manager._env.is_simulation_in_progress()):
             # Simulation is over or it has been reset since the
             # resources were reserved.
             return
