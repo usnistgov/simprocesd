@@ -22,7 +22,7 @@ def print_produced_parts_and_average_quality(system, machines):
         machine_production_data = all_production_data.get(machine.name, [])
         quality_sum = 0
         for d in machine_production_data:
-            quality_sum += d[1]
+            quality_sum += d[2]
         try:
             average_quality = round(quality_sum / len(machine_production_data), 4)
         except ZeroDivisionError:
