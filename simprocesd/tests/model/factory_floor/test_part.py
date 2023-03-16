@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment
-from ....model.factory_floor import Asset, Part, Machine
+from ....model.factory_floor import Part, Machine
 
 
 class PartTestCase(TestCase):

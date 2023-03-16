@@ -21,7 +21,7 @@ class DecisionGateTestCase(TestCase):
         gate_ = DecisionGate(lambda gate, part: True, 'name', self.upstream)
         self.assertIn(gate_, self.sys._assets)
         self.assertEqual(gate_.name, 'name')
-        self.assertEqual(gate_.upstream, self.upstream)
+        self.assertCountEqual(gate_.upstream, self.upstream)
         self.assertEqual(gate_.value, 0)
 
     def test_notify_upstream_of_available_space(self):

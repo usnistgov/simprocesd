@@ -143,6 +143,8 @@ class Device(Asset):
                 self._output = None
                 if self._part == None:
                     self.notify_upstream_of_available_space()
+                else:
+                    self._try_move_part_to_output()
                 return
         # Could not pass part downstream
         self._waiting_for_space_availability = True

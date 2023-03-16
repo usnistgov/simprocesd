@@ -54,7 +54,7 @@ class Part(Asset):
         -------
         Part
             a copy of this Part with a unique ID and an empty
-            routing_history.
+            routing_history. Returned Part is not initialized.
         '''
         self.copy_counter += 1
         new_part = Part(f'{self.name}_{self.copy_counter}', self.value, self.quality)
