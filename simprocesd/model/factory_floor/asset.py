@@ -37,7 +37,7 @@ class Asset:
             System.add_asset(self)
 
     def initialize(self, env):
-        '''Prepare asset for simulation and reset attributes to
+        '''Prepare Asset for simulation and reset attributes to
         starting values.
 
         In most cases this is called automatically by the System. Needs

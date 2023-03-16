@@ -1,6 +1,7 @@
-from . import Machine, Part
 from .. import EventType
 from ...utils import assert_is_instance
+from .machine import Machine
+from .part import Part
 
 
 class Source(Machine):
@@ -90,7 +91,7 @@ class Source(Machine):
     def _prepare_next_part(self):
         self._output = self._sample_part.make_copy()
         self._output.initialize(self._env)
-        self._output.routing_history.append(self)
+        self._output.add_routing_history(self)
 
         self._schedule_pass_part_downstream()
 

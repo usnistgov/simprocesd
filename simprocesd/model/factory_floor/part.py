@@ -1,4 +1,6 @@
+from ...utils.utils import assert_is_instance
 from .asset import Asset
+from .device import Device
 
 
 class Part(Asset):
@@ -36,17 +38,14 @@ class Part(Asset):
 
     @property
     def routing_history(self):
-        ''' Ordered list of devices that the part passed
-        through. First entry is usually a Source.
-
-        Warning
-        -------
-        Predefined classes (Source, Device, etc) contain code for
-        updating the routing history so a custom subclass is responsible
-        for ensuring those updates still happen or it might not appear
-        in the routing history.
+        '''Ordered list of devices that the part passed through.
+        First entry is usually a Source.
         '''
-        return self._routing_history
+        return self._routing_history.copy()
+
+    def add_routing_history(self, device):
+        assert_is_instance(device, Device)
+        self._routing_history.append(device)
 
     def make_copy(self):
         ''' Create a copy of this Part.

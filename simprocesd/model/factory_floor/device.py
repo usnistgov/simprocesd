@@ -206,7 +206,7 @@ class Device(Asset):
     def _accept_part(self, part):
         assert part != None, 'part cannot be None.'
         self._part = part
-        self._part.routing_history.append(self)
+        self._part.add_routing_history(self)
         self._set_waiting_for_part(False)
         self._on_received_new_part()
 

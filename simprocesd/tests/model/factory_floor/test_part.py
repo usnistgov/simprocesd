@@ -24,7 +24,7 @@ class PartTestCase(TestCase):
         machine = MagicMock(spec = Machine)
         part.add_cost('', 1)
         part.quality = 3.14
-        part.routing_history.append(machine)
+        part.add_routing_history(machine)
         self.assertEqual(part.value, 2 - 1)
         self.assertEqual(part.quality, 3.14)
         self.assertEqual(part.routing_history, [machine])
@@ -38,7 +38,7 @@ class PartTestCase(TestCase):
     def test_make_copy(self):
         ids = []
         part = Part('name', 100, 3)
-        part.routing_history.append(MagicMock(spec = Asset))
+        part.add_routing_history(MagicMock(spec = Machine))
         parts = [part]
         # Make 10 parts and ensure attributes are set correctly.
         for i in range(10):
