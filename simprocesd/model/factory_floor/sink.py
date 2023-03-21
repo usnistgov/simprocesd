@@ -15,7 +15,7 @@ class Sink(Machine):
     name: str, default=None
         Name of the Sink. If name is None then the Sink's name will
         be changed to Sink_<id>
-    upstream: list, default=[]
+    upstream: list, default=None
         A list of upstream Devices.
     cycle_time: float, default=0
         Minimum time between receiving Parts.
@@ -31,7 +31,7 @@ class Sink(Machine):
 
     def __init__(self,
                  name = None,
-                 upstream = [],
+                 upstream = None,
                  cycle_time = 0,
                  collect_parts = False):
         super().__init__(name, upstream, cycle_time = cycle_time, value = 0)

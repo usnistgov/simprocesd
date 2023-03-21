@@ -34,7 +34,7 @@ class Source(Machine):
 
     def __init__(self, name = None, sample_part = None, cycle_time = 0.0,
                  max_produced_parts = float('inf')):
-        super().__init__(name, [], cycle_time, value = 0)
+        super().__init__(name, None, cycle_time, value = 0)
 
         if sample_part == None:
             sample_part = Part()

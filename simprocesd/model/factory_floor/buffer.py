@@ -13,7 +13,7 @@ class Buffer(Machine):
     name : str, default=None
         Name of the Buffer. If name is None the Asset's name with be
         changed to Buffer_<id>
-    upstream: list, default=[]
+    upstream: list, default=None
         A list of upstream Devices.
     cycle_time: float, default=0
         How long it takes to receive a Part.
@@ -24,7 +24,7 @@ class Buffer(Machine):
         Starting value of the machine.
     '''
 
-    def __init__(self, name = None, upstream = [], cycle_time = 0,
+    def __init__(self, name = None, upstream = None, cycle_time = 0,
                  capacity = float('inf'), value = 0):
         assert int(capacity) >= 1, 'Capacity has to be at least 2.'
         super().__init__(name, upstream, cycle_time, value = value)

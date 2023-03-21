@@ -15,14 +15,14 @@ class DecisionGate(Device):
     name: str, default=None
         Name of the DecisionGate. If name is None then the
         DecisionGate's name will be changed to DecisionGate_<id>
-    upstream: list, default=[]
+    upstream: list, default=None
         A list of upstream Devices.
     '''
 
     def __init__(self,
                  should_pass_part,
                  name = None,
-                 upstream = []):
+                 upstream = None):
         super().__init__(name, upstream, 0)
         self._should_pass_part = should_pass_part
 

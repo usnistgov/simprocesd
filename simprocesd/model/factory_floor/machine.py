@@ -25,7 +25,7 @@ class Machine(Device, Maintainable):
     name: str, default=None
         Name of the Device. If name is None then the Device's name will
         be changed to Machine_<id>
-    upstream: list, default=[]
+    upstream: list, default=None
         A list of upstream Devices.
     cycle_time: float, default=0
         How long it takes to process a Part.
@@ -49,7 +49,7 @@ class Machine(Device, Maintainable):
 
     def __init__(self,
                  name = None,
-                 upstream = [],
+                 upstream = None,
                  cycle_time = 0,
                  value = 0,
                  resources_for_processing = None):

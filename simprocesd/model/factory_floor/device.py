@@ -14,13 +14,13 @@ class Device(Asset):
     name: str, default=None
         Name of the Device. If name is None then the Device's name will
         be changed to Device_<id>
-    upstream: list, default=[]
+    upstream: list, default=None
         A list of upstream Device objects.
     value: float, default=0
         Starting value of the Device.
     '''
 
-    def __init__(self, name = None, upstream = [], value = 0):
+    def __init__(self, name = None, upstream = None, value = 0):
         super().__init__(name, value)
 
         self._downstream = []
@@ -30,6 +30,8 @@ class Device(Asset):
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
 
+        if upstream == None:
+            upstream = []
         self.set_upstream(upstream)
 
     def initialize(self, env):
