@@ -135,9 +135,9 @@ class Machine(Device, Maintainable):
                                                               self._part.id,
                                                               self._part.quality,
                                                               self._part.value))
-        super()._on_received_new_part()
         for c in self._received_part_callbacks:
             c(self, self._part)
+        super()._on_received_new_part()
 
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
@@ -284,6 +284,10 @@ class Machine(Device, Maintainable):
         | Callback signature: callback(machine, part)
         | machine - Machine to which the callback was added.
         | part - Part that was lost or None if no Part was lost.
+
+        If Machine cycle time is changed within the callback then it
+        will be used as the processing time for the Part that was just
+        received as well as all the future Parts.
 
         Arguments
         ---------

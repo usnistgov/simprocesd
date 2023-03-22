@@ -172,6 +172,25 @@ class MachineTestCase(TestCase):
         self.assert_last_scheduled_event(self.env.now + 3, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
 
+    def test_receive_part_callback(self):
+        machine = Machine(cycle_time = 3)
+
+        def cb(m, p):
+            m.cycle_time += 1
+
+        machine.add_receive_part_callback(cb)
+        machine.initialize(self.env)
+
+        machine.give_part(Part())
+        self.assert_last_scheduled_event(self.env.now + 3 + 1, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+        machine._finish_processing_part()
+        machine._output = None
+
+        machine.give_part(Part())
+        self.assert_last_scheduled_event(self.env.now + 3 + 1 + 1, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
     def test_process_part(self):
         machine = Machine(cycle_time = 0, upstream = self.upstream)
         finished_processing_cb = MagicMock()
