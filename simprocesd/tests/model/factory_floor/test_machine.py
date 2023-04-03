@@ -84,7 +84,7 @@ class MachineTestCase(TestCase):
             u.space_available_downstream.assert_called_once()
 
     def test_restore_with_part(self):
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         machine.initialize(self.env)
         machine.give_part(Part())
         self.assertEqual(len(self.env.schedule_event.call_args_list), 1)
@@ -112,7 +112,7 @@ class MachineTestCase(TestCase):
         shutdown_cb.assert_called_once_with(machine, False, None)
 
     def test_shutdown_callback_on_fail(self):
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         shutdown_cb = MagicMock()
         machine.add_shutdown_callback(shutdown_cb)
         machine.initialize(self.env)
@@ -124,7 +124,7 @@ class MachineTestCase(TestCase):
         shutdown_cb.assert_called_once_with(machine, True, part)
 
     def test_restore_callback(self):
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         restore_cb = MagicMock()
         machine.add_restored_callback(restore_cb)
         machine.initialize(self.env)
@@ -145,7 +145,7 @@ class MachineTestCase(TestCase):
 
     def test_failure_with_parts(self):
         part1, part2 = Part(), Part()
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         machine.initialize(self.env)
         machine.give_part(part1)
 
@@ -192,7 +192,7 @@ class MachineTestCase(TestCase):
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
 
     def test_process_part(self):
-        machine = Machine(cycle_time = 0, upstream = self.upstream)
+        machine = Machine(cycle_time = 1, upstream = self.upstream)
         finished_processing_cb = MagicMock()
         machine.add_finish_processing_callback(finished_processing_cb)
         machine.initialize(self.env)
@@ -251,7 +251,7 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine.uptime, 24)
 
     def test_utilization_tracking(self):
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         machine.initialize(self.env)
         self.assertEqual(machine.utilization_time, 0)
 
@@ -274,7 +274,7 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine.utilization_time, 16)
 
     def test_utilization_tracking_with_failure(self):
-        machine = Machine()
+        machine = Machine(cycle_time = 1)
         machine.initialize(self.env)
 
         machine.give_part(Part())
@@ -344,6 +344,15 @@ class MachineTestCase(TestCase):
 
         machine._fail()
         rr.release.assert_called_once()
+
+    def test_process_part_instant(self):
+        machine = Machine(cycle_time = 0)
+        machine.initialize(self.env)
+        part = Part()
+        machine.give_part(part)
+        self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
+        self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
+                                    EventType.PASS_PART)
 
 
 if __name__ == '__main__':
