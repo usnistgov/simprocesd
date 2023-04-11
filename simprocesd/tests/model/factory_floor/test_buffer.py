@@ -37,49 +37,53 @@ class BufferTestCase(TestCase):
         self.assertEqual(buffer.upstream, self.upstream)
         self.assertEqual(buffer.value, 20)
         self.assertEqual(buffer.level(), 0)
+        self.assertListEqual(buffer.stored_parts, [])
 
     def test_re_initialize(self):
         buffer = Buffer('name', self.upstream, 5, 10, 20)
         buffer.initialize(self.env)
 
-        buffer.give_part(Part())
+        part = Part()
+        buffer.give_part(part)
         buffer.add_cost('', 3)
+        self.assertListEqual(buffer.upstream, self.upstream)
         self.assertEqual(buffer.level(), 1)
         self.assertEqual(buffer.value, 20 - 3)
+        self.assertListEqual(buffer.stored_parts, [part])
 
         buffer.initialize(self.env)
         self.assertEqual(buffer.upstream, self.upstream)
         self.assertEqual(buffer.value, 20)
         self.assertEqual(buffer.level(), 0)
+        self.assertListEqual(buffer.stored_parts, [])
 
     def test_give_pass_part(self):
         part = Part()
-        buffer = Buffer('name', self.upstream, 5, 10, 20)
+        buffer = Buffer('name', self.upstream, minimum_delay = 5, capacity = 10)
         buffer.initialize(self.env)
         buffer._add_downstream(self.downstream)
 
         self.assertEqual(buffer.level(), 0)
         self.assertEqual(buffer.waiting_for_part_start_time, 0)
+
+        self.env.now = 3
         self.assertTrue(buffer.give_part(part))
         self.assertEqual(buffer.level(), 1)
-        self.assertEqual(buffer.waiting_for_part_start_time, None)
-        self.assert_last_scheduled_event(5, buffer.id, buffer._finish_processing_part,
-                                         EventType.FINISH_PROCESSING)
-
-        self.env.now = 8
-        buffer._finish_processing_part()
+        self.assertEqual(buffer.waiting_for_part_start_time, 3)
+        self.env.now = 4
         self.assertEqual(buffer.level(), 1)
-        self.assertEqual(buffer.waiting_for_part_start_time, 8)
-        self.assert_last_scheduled_event(8, buffer.id, buffer._pass_part_downstream,
+        self.assertEqual(buffer.waiting_for_part_start_time, 3)
+        self.assert_last_scheduled_event(3 + 5, buffer.id, buffer._pass_part_downstream,
                                          EventType.PASS_PART)
 
+        self.env.now = 3 + 5
         buffer._pass_part_downstream()
-        self.assertEqual(buffer.waiting_for_part_start_time, 8)
+        self.assertEqual(buffer.waiting_for_part_start_time, 3)
         self.downstream.give_part.assert_called_once_with(part)
         self.assertEqual(buffer.level(), 0)
 
     def test_give_many_parts(self):
-        buffer = Buffer('name', self.upstream, 1, 4)
+        buffer = Buffer('name', self.upstream, minimum_delay = 1, capacity = 4)
         buffer.initialize(self.env)
         buffer._add_downstream(self.downstream)
         parts = []
@@ -88,7 +92,6 @@ class BufferTestCase(TestCase):
             parts.append(Part())
             if len(parts) <= 4:
                 self.assertTrue(buffer.give_part(parts[i]))
-                buffer._finish_processing_part()
                 self.assertEqual(buffer.level(), i + 1)
             else:
                 self.assertFalse(buffer.give_part(parts[i]))
@@ -96,6 +99,9 @@ class BufferTestCase(TestCase):
         for u in self.upstream:
             # Called after receiving first 3 (of 4) parts.
             self.assertEqual(len(u.space_available_downstream.call_args_list), 3)
+        self.assertListEqual(buffer.stored_parts, parts[:-2])
+
+        self.env.now += 1
         # One call will attempt to pass all the parts it can.
         buffer._pass_part_downstream()
         self.assertEqual(buffer.level(), 0)
@@ -108,6 +114,42 @@ class BufferTestCase(TestCase):
         for i in range(4):
             args, kwards = self.downstream.give_part.call_args_list[i]
             self.assertEqual(args[0], parts[i])
+
+    def test_minimum_delay(self):
+        buffer = Buffer(minimum_delay = 100, capacity = 4)
+        buffer.initialize(self.env)
+        buffer._add_downstream(self.downstream)
+        parts = []
+        # Attempt to pass more parts buffer than capacity will allow.
+        for i in range(4):
+            # Give parts at times: 0, 10, 20, and 30
+            parts.append(Part())
+            self.assertTrue(buffer.give_part(parts[i]))
+            self.env.now += 10
+        self.assertEqual(buffer.level(), 4)
+
+        # Try to pass before any Part spent the minimum time.
+        self.env.now = 90
+        buffer._pass_part_downstream()
+        self.assertEqual(buffer.level(), 4)
+
+        # Try to pass when 2 Parts can be passed.
+        self.env.now = 110
+        buffer._pass_part_downstream()
+        self.assertEqual(buffer.level(), 2)
+        self.assertEqual(len(self.downstream.give_part.call_args_list), 2)
+
+        # Try to pass when 1 more Part can be passed.
+        self.env.now = 120
+        buffer._pass_part_downstream()
+        self.assertEqual(buffer.level(), 1)
+        self.assertEqual(len(self.downstream.give_part.call_args_list), 3)
+
+        # Try to pass when the last Part can be passed.
+        self.env.now = 200
+        buffer._pass_part_downstream()
+        self.assertEqual(buffer.level(), 0)
+        self.assertEqual(len(self.downstream.give_part.call_args_list), 4)
 
 
 if __name__ == '__main__':

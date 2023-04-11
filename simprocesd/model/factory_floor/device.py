@@ -129,9 +129,9 @@ class Device(Asset):
     def _remove_downstream(self, downstream):
         self._downstream.remove(downstream)
 
-    def _schedule_pass_part_downstream(self):
+    def _schedule_pass_part_downstream(self, delay = 0):
         self._waiting_for_space_availability = False
-        self._env.schedule_event(self._env.now, self.id, self._pass_part_downstream,
+        self._env.schedule_event(self._env.now + delay, self.id, self._pass_part_downstream,
                                  EventType.PASS_PART, f'From {self.name}')
 
     def _pass_part_downstream(self):

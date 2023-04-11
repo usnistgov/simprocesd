@@ -1,7 +1,9 @@
-from .machine import Machine
+import math
+
+from .machine import Device
 
 
-class Buffer(Machine):
+class Buffer(Device):
     '''A device that can store multiple parts.
 
     Buffer stores received Parts and can pass the stored Parts
@@ -15,8 +17,9 @@ class Buffer(Machine):
         changed to Buffer_<id>
     upstream: list, default=None
         A list of upstream Devices.
-    cycle_time: float, default=0
-        How long it takes to receive a Part.
+    minimum_delay: float, default=0
+        Minimum time between any one Part being passed to the Buffer
+        and that same Part being passed to downstream Devices.
     capacity: int, optional
         Maximum number of Parts that can be stored in the Buffer. No
         maximum if not set.
@@ -24,50 +27,75 @@ class Buffer(Machine):
         Starting value of the machine.
     '''
 
-    def __init__(self, name = None, upstream = None, cycle_time = 0,
-                 capacity = float('inf'), value = 0):
-        assert int(capacity) >= 1, 'Capacity has to be at least 2.'
-        super().__init__(name, upstream, cycle_time, value = value)
+    def __init__(self, name = None, upstream = None, minimum_delay = 0,
+                 capacity = None, value = 0):
+        super().__init__(name, upstream, value)
 
-        self._capacity = capacity
+        self._minimum_delay = minimum_delay
+        if capacity == None:
+            self._capacity = float('inf')
+        else:
+            self._capacity = math.floor(capacity)
+        assert self._capacity >= 1, 'Capacity has to be at least 1.'
         self._buffer = []
 
     def initialize(self, env):
         super().initialize(env)
         self._buffer = []
 
+    @property
+    def stored_parts(self):
+        '''List of Parts currently stored in the Buffer.
+        '''
+        return [x[1] for x in self._buffer]
+
     def level(self):
         '''Returns
         -------
         int
-            Number of Parts held by the buffer.
+            Number of Parts currently stored in the Buffer.
         '''
         return len(self._buffer) + (1 if self._part != None else 0)
 
-    def _finish_processing_part(self):
-        super()._finish_processing_part()
-        if self._output:
-            self._buffer.append(self._output)
-            self._output = None
+    def _can_accept_part(self, part):
+        if len(self._buffer) >= self._capacity:
+            return False
+        else:
+            return super()._can_accept_part(part)
+
+    def _try_move_part_to_output(self):
+        if not self.is_operational(): return
+
+        if self._part:
+            self._buffer.append((self.env.now, self._part))
+            self._part = None
             self.notify_upstream_of_available_space()
+            if len(self._buffer) == 1:
+                self._schedule_pass_part_downstream(delay = self._minimum_delay)
 
     def notify_upstream_of_available_space(self):
         if self.level() < self._capacity:
             super().notify_upstream_of_available_space()
 
     def _pass_part_downstream(self):
-        if not self.is_operational(): return
+        i = 0
+        while i < len(self._buffer):
+            if self._buffer[i][0] > self.env.now - self._minimum_delay:
+                # Not enough time passed for this Part.
+                break
+            for dwn in self._priority_sorted_downstream():
+                if dwn.give_part(self._buffer[i][1]):
+                    self._buffer.pop(i)
+                    i -= 1
+                    break
+            i += 1
 
-        # Try to pass parts to downstream machines.
-        for dwn in self._priority_sorted_downstream():
-            while len(self._buffer) > 0 and dwn.give_part(self._buffer[0]):
-                self._buffer.pop(0)
-
-        self.notify_upstream_of_available_space()
         if len(self._buffer) > 0:
-            self._waiting_for_space_availability = True
-
-    def give_part(self, part):
-        if len(self._buffer) >= self._capacity:
-            return False
-        return super().give_part(part)
+            # Only check first Part because later items guaranteed to
+            # have arrived at the same time or later.
+            time_passed = self.env.now - self._buffer[0][0]
+            if time_passed < self._minimum_delay:
+                self._schedule_pass_part_downstream(delay = self._minimum_delay - time_passed)
+            else:
+                self._waiting_for_space_availability = True
+        self.notify_upstream_of_available_space()
