@@ -1,4 +1,4 @@
-from ...utils.utils import assert_is_instance
+from ...utils.utils import assert_is_instance, assert_callable
 from ..simulation import EventType
 from .asset import Asset
 
@@ -29,6 +29,7 @@ class Device(Asset):
         self._output = None
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
+        self._received_part_callbacks = []
 
         if upstream == None:
             upstream = []
@@ -213,6 +214,12 @@ class Device(Asset):
         self._on_received_new_part()
 
     def _on_received_new_part(self):
+        self._env.add_datapoint('received_parts', self.name, (self._env.now,
+                                                              self._part.id,
+                                                              self._part.quality,
+                                                              self._part.value))
+        for c in self._received_part_callbacks:
+            c(self, self._part)
         if self._output == None:
             self._try_move_part_to_output()
 
@@ -223,4 +230,24 @@ class Device(Asset):
         self._part = None
         self._schedule_pass_part_downstream()
         return
+
+    def add_receive_part_callback(self, callback):
+        '''Setup a function to be called when the Machine receives a
+        new Part.
+
+        | Callback signature: callback(machine, part)
+        | machine - Machine to which the callback was added.
+        | part - Part that was lost or None if no Part was lost.
+
+        If Machine cycle time is changed within the callback then it
+        will be used as the processing time for the Part that was just
+        received as well as all the future Parts.
+
+        Arguments
+        ---------
+        callback: function
+            Function to be called.
+        '''
+        assert_callable(callback)
+        self._received_part_callbacks.append(callback)
 

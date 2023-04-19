@@ -122,6 +122,17 @@ class DeviceTestCase(TestCase):
         self.assertFalse(device.give_part(part2))
         self.assertEqual(part2.routing_history, [])
 
+    def test_receive_part_callback(self):
+        part = Part()
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
+        received_part_cb = MagicMock()
+        device.add_receive_part_callback(received_part_cb)
+
+        received_part_cb.assert_not_called()
+        device.give_part(part)
+        received_part_cb.assert_called_once_with(device, part)
+
     def test_give_part_when_not_operational(self):
         part = Part()
         device = Device(upstream = self.upstream)

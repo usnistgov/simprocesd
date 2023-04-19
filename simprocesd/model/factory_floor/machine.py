@@ -60,7 +60,6 @@ class Machine(Device, Maintainable):
         self._resources_for_processing = resources_for_processing
         self._reserved_resources = None
 
-        self._received_part_callbacks = []
         self._finish_processing_callbacks = []
         self._shutdown_callbacks = []
         self._restored_callbacks = []
@@ -129,15 +128,6 @@ class Machine(Device, Maintainable):
                                                                           self._reserve_resource_callback)
                 return False
         return True
-
-    def _on_received_new_part(self):
-        self._env.add_datapoint('received_parts', self.name, (self._env.now,
-                                                              self._part.id,
-                                                              self._part.quality,
-                                                              self._part.value))
-        for c in self._received_part_callbacks:
-            c(self, self._part)
-        super()._on_received_new_part()
 
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
@@ -279,26 +269,6 @@ class Machine(Device, Maintainable):
         if self._reserved_resources != None:
             self._reserved_resources.release()
             self._reserved_resources = None
-
-    def add_receive_part_callback(self, callback):
-        '''Setup a function to be called when the Machine receives a
-        new Part.
-
-        | Callback signature: callback(machine, part)
-        | machine - Machine to which the callback was added.
-        | part - Part that was lost or None if no Part was lost.
-
-        If Machine cycle time is changed within the callback then it
-        will be used as the processing time for the Part that was just
-        received as well as all the future Parts.
-
-        Arguments
-        ---------
-        callback: function
-            Function to be called.
-        '''
-        assert_callable(callback)
-        self._received_part_callbacks.append(callback)
 
     def add_finish_processing_callback(self, callback):
         '''Setup a function to be called when the Machine finishes
