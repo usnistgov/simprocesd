@@ -10,8 +10,9 @@ class DecisionGate(Device):
     Arguments
     ---------
     should_pass_part: function
-        Function receives one argument: Part to be passed and should
-        return True if the Part can pass or False if it cannot.
+        Function receives two arguments: this DecisionGate and the Part
+        to be passed. Function should return True if the Part can pass
+        and False otherwise.
     name: str, default=None
         Name of the DecisionGate. If name is None then the
         DecisionGate's name will be changed to DecisionGate_<id>
@@ -28,7 +29,7 @@ class DecisionGate(Device):
 
     def give_part(self, part):
         assert part != None, 'Part cannot be set to None.'
-        if not self.is_operational() or not self._should_pass_part(part):
+        if not self.is_operational() or not self._should_pass_part(self, part):
             return False
 
         for dwn in self._downstream:

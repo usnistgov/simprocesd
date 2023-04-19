@@ -18,14 +18,14 @@ class DecisionGateTestCase(TestCase):
             d.give_part.return_value = True
 
     def test_initialize(self):
-        gate_ = DecisionGate(lambda: True, 'name', self.upstream)
+        gate_ = DecisionGate(lambda gate, part: True, 'name', self.upstream)
         self.assertIn(gate_, self.sys._assets)
         self.assertEqual(gate_.name, 'name')
         self.assertEqual(gate_.upstream, self.upstream)
         self.assertEqual(gate_.value, 0)
 
     def test_notify_upstream_of_available_space(self):
-        gate_ = DecisionGate(lambda: True, 'name', self.upstream)
+        gate_ = DecisionGate(lambda g, p: True, 'name', self.upstream)
 
         for u in self.upstream:
             u.space_available_downstream.assert_not_called()
@@ -34,7 +34,7 @@ class DecisionGateTestCase(TestCase):
             u.space_available_downstream.assert_called_once()
 
     def test_pass_part(self):
-        gate_ = DecisionGate(lambda p: True)
+        gate_ = DecisionGate(lambda g, p: True)
         gate_._add_downstream(self.downstream[0])
         part = Part()
 
@@ -44,7 +44,7 @@ class DecisionGateTestCase(TestCase):
         self.downstream[0].give_part.assert_called_once_with(part)
 
     def test_pass_part_condition(self):
-        gate_ = DecisionGate(lambda p: p.value > 1)
+        gate_ = DecisionGate(lambda g, p: g == gate_ and p.value > 1)
         for d in self.downstream:
             gate_._add_downstream(d)
         bad_part = Part(value = 0)
@@ -59,7 +59,7 @@ class DecisionGateTestCase(TestCase):
         self.downstream[1].give_part.assert_not_called()
 
     def test_pass_part_blocked_downstream(self):
-        gate_ = DecisionGate(lambda p: True)
+        gate_ = DecisionGate(lambda g, p: True)
         for d in self.downstream:
             gate_._add_downstream(d)
         part1, part2 = Part(), Part()

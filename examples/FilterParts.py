@@ -26,8 +26,8 @@ def main():
     M1 = Machine('Processor', upstream = [source], cycle_time = 1)
     M1.add_finish_processing_callback(process_part)
 
-    gate1 = DecisionGate(should_pass_part = lambda part: part.quality >= 0.75)
-    gate2 = DecisionGate(should_pass_part = lambda part: part.quality < 0.75)
+    gate1 = DecisionGate(should_pass_part = lambda gate, part: part.quality >= 0.75)
+    gate2 = DecisionGate(should_pass_part = lambda gate, part: part.quality < 0.75)
 
     M2 = Machine('PartFixer', upstream = [gate2], cycle_time = 1)
     M2.add_finish_processing_callback(improve_part)
