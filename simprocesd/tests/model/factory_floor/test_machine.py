@@ -19,8 +19,8 @@ class MachineTestCase(TestCase):
         self.rm._env = self.env
         self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
 
-    def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
-        args, kwargs = self.env.schedule_event.call_args_list[-1]
+    def assert_scheduled_event(self, event_index, time, id_, action, event_type, message = None):
+        args, kwargs = self.env.schedule_event.call_args_list[event_index]
         self.assertEqual(args[0], time)
         self.assertEqual(args[1], id_)
         self.assertEqual(args[2], action)
@@ -96,8 +96,8 @@ class MachineTestCase(TestCase):
         # finish_processing_part schedules _pass_part_downstream,
         # shutdown+restore should schedule _pass_part_downstream again.
         self.assertEqual(len(self.env.schedule_event.call_args_list), 3)
-        self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
-                                         EventType.PASS_PART)
+        self.assert_scheduled_event(-1, self.env.now, machine.id, machine._pass_part_downstream,
+                                    EventType.PASS_PART)
 
     def test_shutdown_callback(self):
         machine = Machine()
@@ -139,7 +139,7 @@ class MachineTestCase(TestCase):
         machine.initialize(self.env)
         machine.schedule_failure(10, 'fail_machine')
 
-        self.assert_last_scheduled_event(10, machine.id, machine._fail, EventType.FAIL)
+        self.assert_scheduled_event(-1, 10, machine.id, machine._fail, EventType.FAIL)
         machine._fail()
         self.env.cancel_matching_events.assert_called_with(asset_id = machine.id)
 
@@ -169,7 +169,7 @@ class MachineTestCase(TestCase):
         machine.give_part(part)
         received_part_cb.assert_called_once_with(machine, part)
         self.env.add_datapoint.assert_called_once()
-        self.assert_last_scheduled_event(self.env.now + 3, machine.id,
+        self.assert_scheduled_event(-1, self.env.now + 3, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
 
     def test_receive_part_callback(self):
@@ -182,13 +182,13 @@ class MachineTestCase(TestCase):
         machine.initialize(self.env)
 
         machine.give_part(Part())
-        self.assert_last_scheduled_event(self.env.now + 3 + 1, machine.id,
+        self.assert_scheduled_event(-1, self.env.now + 3 + 1, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
         machine._finish_processing_part()
         machine._output = None
 
         machine.give_part(Part())
-        self.assert_last_scheduled_event(self.env.now + 3 + 1 + 1, machine.id,
+        self.assert_scheduled_event(-1, self.env.now + 3 + 1 + 1, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
 
     def test_process_part(self):
@@ -204,7 +204,7 @@ class MachineTestCase(TestCase):
         machine._finish_processing_part()
         finished_processing_cb.assert_called_once_with(machine, part)
         self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
-        self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
+        self.assert_scheduled_event(-1, self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)
 
     def test_process_part_when_not_operational(self):
@@ -220,7 +220,7 @@ class MachineTestCase(TestCase):
         machine = Machine(cycle_time = 5, upstream = self.upstream)
         machine.initialize(self.env)
         machine.give_part(Part())
-        self.assert_last_scheduled_event(self.env.now + 5, machine.id,
+        self.assert_scheduled_event(-1, self.env.now + 5, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
         machine.cycle_time = 12
         self.env.now += 5
@@ -228,7 +228,7 @@ class MachineTestCase(TestCase):
         machine._output = None  # Simulate passing part downstream.
 
         machine.give_part(Part())
-        self.assert_last_scheduled_event(self.env.now + 12, machine.id,
+        self.assert_scheduled_event(-1, self.env.now + 12, machine.id,
                 machine._finish_processing_part, EventType.FINISH_PROCESSING)
 
     def test_uptime_tracking(self):
@@ -304,9 +304,16 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine._part, part)
         self.assertEqual(machine._reserved_resources, rr)
         self.rm.reserve_resources.assert_called_once_with({'tool': 1})
+        self.assert_scheduled_event(-1, self.env.now + 1, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
         rr.release.assert_not_called()
 
         machine._finish_processing_part()
+        self.rm.reserve_resources.assert_called_once_with({'tool': 1})
+        self.assert_scheduled_event(-2, self.env.now, machine.id,
+                machine._release_resources_if_idle, EventType.RELEASE_RESERVED_RESOURCES)
+
+        machine._release_resources_if_idle()
         rr.release.assert_called_once()
 
     def test_resource_request_fail(self):
@@ -351,7 +358,7 @@ class MachineTestCase(TestCase):
         part = Part()
         machine.give_part(part)
         self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
-        self.assert_last_scheduled_event(self.env.now, machine.id, machine._pass_part_downstream,
+        self.assert_scheduled_event(-1, self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)
 
 

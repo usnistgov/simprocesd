@@ -26,6 +26,7 @@ class EventType(IntEnum):
     START_WORK = auto()
     SENSOR = auto()
     FAIL = auto()
+    RELEASE_RESERVED_RESOURCES = auto()
 
     # Order of the next 2 events is required for correct machine throughput.
     PASS_PART = auto()

@@ -182,7 +182,7 @@ class ReservedResources():
 
     @property
     def reserved_resources(self):
-        '''Dictionary of the resources reserved and the amounts of each.
+        '''Dictionary of the resources reserved and their amounts.
         '''
         return copy.deepcopy(self._reserved_resources)
 
@@ -195,12 +195,6 @@ class ReservedResources():
             A Dictionary where each entry specifies what resource to
             release and the amount to be released, resource_name:amount
             If None then it will release all the resources reserved here.
-
-        Warning
-        -------
-        If the ResourceManager has been re-initialized since the
-        resources were reserved then the released resources will not be
-        added back to the ResourceManager's pool.
 
         Raises
         ------

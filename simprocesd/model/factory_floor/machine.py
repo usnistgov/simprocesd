@@ -120,7 +120,7 @@ class Machine(Device, Maintainable):
         if not super()._can_accept_part(part):
             return False
         # Reserving resources if any are needed for Part processing.
-        if self._resources_for_processing != None:
+        if self._resources_for_processing != None and self._reserved_resources == None:
             self._reserved_resources = self.env.resource_manager.reserve_resources(
                     self._resources_for_processing)
             if self._reserved_resources == None:
@@ -157,8 +157,14 @@ class Machine(Device, Maintainable):
         self._part = None
         self._time_in_use += self.env.now - self._last_use_start
         self._last_use_start = None
+
+        if self._reserved_resources != None:
+            self._env.schedule_event(self._env.now,
+                                     self.id,
+                                     self._release_resources_if_idle,
+                                     EventType.RELEASE_RESERVED_RESOURCES,
+                                     f'By {self.name}')
         self._schedule_pass_part_downstream()
-        self._release_reserved_resources()
 
         for c in self._finish_processing_callbacks:
             c(self, self._output)
@@ -264,6 +270,10 @@ class Machine(Device, Maintainable):
         the Machine, it will try to reserve the resources.
         '''
         self.notify_upstream_of_available_space()
+
+    def _release_resources_if_idle(self):
+        if not self.is_operational() or self._part == None:
+            self._release_reserved_resources()
 
     def _release_reserved_resources(self):
         if self._reserved_resources != None:
