@@ -232,6 +232,20 @@ class DeviceTestCase(TestCase):
         self.assertEqual(len(downstreams[1].give_part.call_args_list), 1)
         self.assertEqual(len(downstreams[2].give_part.call_args_list), 1)
 
+    def test_downstream_priority_sorter(self):
+        downstreams = []
+        downstreams.append(MagicMock(spec = Device))
+        downstreams[-1].waiting_for_part_start_time = None
+        for i in range(3):
+            downstreams.append(MagicMock(spec = Device))
+            downstreams[-1].waiting_for_part_start_time = 10 - i
+
+        sorted_ds = Device.downstream_priority_sorter(downstreams)
+        self.assertEqual(sorted_ds[0].waiting_for_part_start_time, 8)
+        self.assertEqual(sorted_ds[1].waiting_for_part_start_time, 9)
+        self.assertEqual(sorted_ds[2].waiting_for_part_start_time, 10)
+        self.assertEqual(sorted_ds[3].waiting_for_part_start_time, None)
+
 
 if __name__ == '__main__':
     unittest.main()

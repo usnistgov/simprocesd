@@ -83,7 +83,7 @@ class Buffer(Device):
             if self._buffer[i][0] > self.env.now - self._minimum_delay:
                 # Not enough time passed for this Part.
                 break
-            for dwn in self._priority_sorted_downstream():
+            for dwn in self.get_sorted_downstream_list():
                 if dwn.give_part(self._buffer[i][1]):
                     self._buffer.pop(i)
                     i -= 1

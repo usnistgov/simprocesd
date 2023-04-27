@@ -138,7 +138,7 @@ class Device(Asset):
     def _pass_part_downstream(self):
         if not self.is_operational() or self._output == None: return
 
-        for dwn in self._priority_sorted_downstream():
+        for dwn in self.get_sorted_downstream_list():
             if dwn.give_part(self._output):
                 self._output = None
                 if self._part == None:
@@ -149,8 +149,40 @@ class Device(Asset):
         # Could not pass part downstream
         self._waiting_for_space_availability = True
 
-    def _priority_sorted_downstream(self):
-        return sorted(self._downstream, key = lambda d: d.waiting_for_part_start_time \
+    def get_sorted_downstream_list(self):
+        '''Get the sorted list of downstream Devices.
+
+        Returns
+        -------
+        list
+            A sorted list of downstream devices.
+        '''
+        return Device.downstream_priority_sorter(self.downstream)
+
+    @staticmethod
+    def downstream_priority_sorter(downstream):
+        '''Sort the downstream list in a descending priority of where
+        Parts should be moved to first.
+
+        Note
+        ----
+        Overwrite this static function to change how all Devices
+        prioritize where Parts are passed.
+        By default Devices will try to pass their Parts to the Devices
+        in the returned list. First, they will try Device at index 0,
+        then index 1, etc.
+
+        Arguments
+        ---------
+        downstream: list
+            A list of downstream Devices.
+
+        Returns
+        -------
+        list
+            A sorted list (see description) of downstream devices.
+        '''
+        return sorted(downstream, key = lambda d: d.waiting_for_part_start_time \
                       if d.waiting_for_part_start_time != None else float('inf'))
 
     def _set_waiting_for_part(self, is_waiting = True, reset = False):
