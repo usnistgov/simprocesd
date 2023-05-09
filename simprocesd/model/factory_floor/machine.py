@@ -15,6 +15,8 @@ class Machine(Device, Maintainable):
 
     Callback functions can be added to this machine by using functions:
     add_<trigger>_callback such as add_shutdown_callback.
+    Multiple callbacks on the same trigger are called in the order they
+    were added.
 
     Machine extends Maintainable class with basic functionality and the
     class should be extended to simulate a more complex maintenance
@@ -59,6 +61,7 @@ class Machine(Device, Maintainable):
         self._is_shut_down = False
         self._resources_for_processing = resources_for_processing
         self._reserved_resources = None
+        self._waiting_for_resources = False
 
         self._finish_processing_callbacks = []
         self._shutdown_callbacks = []
@@ -124,8 +127,10 @@ class Machine(Device, Maintainable):
             self._reserved_resources = self.env.resource_manager.reserve_resources(
                     self._resources_for_processing)
             if self._reserved_resources == None:
-                self.env.resource_manager.reserve_resources_with_callback(self._resources_for_processing,
-                                                                          self._reserve_resource_callback)
+                if not self._waiting_for_resources:
+                    self.env.resource_manager.reserve_resources_with_callback(self._resources_for_processing,
+                                                                              self._reserve_resource_callback)
+                    self._waiting_for_resources = True
                 return False
         return True
 
@@ -164,10 +169,12 @@ class Machine(Device, Maintainable):
                                      self._release_resources_if_idle,
                                      EventType.RELEASE_RESERVED_RESOURCES,
                                      f'By {self.name}')
-        self._schedule_pass_part_downstream()
 
         for c in self._finish_processing_callbacks:
             c(self, self._output)
+        if self._output != None:
+            self._schedule_pass_part_downstream()
+
         if record_produced_part_data:
             self._env.add_datapoint('produced_parts', self.name, (self._env.now,
                                                                   self._output.id,
@@ -269,6 +276,7 @@ class Machine(Device, Maintainable):
         signal that it can receive a Part. When a new Part is offered to
         the Machine, it will try to reserve the resources.
         '''
+        self._waiting_for_resources = False
         self.notify_upstream_of_available_space()
 
     def _release_resources_if_idle(self):

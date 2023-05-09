@@ -329,6 +329,9 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine._part, None)
         self.rm.reserve_resources_with_callback.assert_called_once_with(
                 {'tool': 1}, machine._reserve_resource_callback)
+        # Test that multiple callbacks aren't added.
+        self.assertFalse(machine.give_part(part))
+        self.rm.reserve_resources_with_callback.assert_called_once()
 
         self.upstream[0].space_available_downstream.assert_not_called()
         machine._reserve_resource_callback({'tool': 1})
