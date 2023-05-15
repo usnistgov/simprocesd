@@ -29,8 +29,9 @@ pip install simprocesd[examples]
 ### Installation Requirements
 Using SimPROCESD requires:
 - Python ≥ 3.7:
-- matplotlib ≥ 3.5 for using plot functions and running certain examples.
-- [optional] scipy ≥ 1.5.2 and numpy ≥ 1.21 for running certain examples.
+- NumPy ≥ 1.21
+- Matplotlib ≥ 3.5 for using plot functions and running certain examples.
+- [optional] scipy ≥ 1.5.2 for running certain examples.
 
 
 ## Quickstart

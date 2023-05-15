@@ -120,7 +120,6 @@ class BufferTestCase(TestCase):
         buffer.initialize(self.env)
         buffer._add_downstream(self.downstream)
         parts = []
-        # Attempt to pass more parts buffer than capacity will allow.
         for i in range(4):
             # Give parts at times: 0, 10, 20, and 30
             parts.append(Part())
@@ -150,6 +149,22 @@ class BufferTestCase(TestCase):
         buffer._pass_part_downstream()
         self.assertEqual(buffer.level(), 0)
         self.assertEqual(len(self.downstream.give_part.call_args_list), 4)
+
+    def test_minimum_delay_rounding_error(self):
+        # Minimum delay is smaller than the least significant bit of
+        # self.env.now so the Part should pass even if the time has not
+        # progressed. This avoids an infinite loop of trying to pass a
+        # part, being unable to, and scheduling next pass_part for
+        # effectively the same time.
+        buffer = Buffer(minimum_delay = 1e-30)
+        buffer.initialize(self.env)
+        buffer._add_downstream(self.downstream)
+
+        self.env.now = 1000
+        part = Part()
+        self.assertTrue(buffer.give_part(part))
+        buffer._pass_part_downstream()
+        self.assertEqual(len(self.downstream.give_part.call_args_list), 1)
 
 
 if __name__ == '__main__':

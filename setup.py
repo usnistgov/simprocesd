@@ -37,12 +37,12 @@ setup(
     ]),
     python_requires = ">=3.7",
     install_requires = [
+        'dill',
         'matplotlib >= 3.5',
-        'dill'
+        'numpy >= 1.21'
         ],
     extras_require = {
         "examples": [
-            'numpy >= 1.21',
             'scipy >= 1.7'
         ],
     },

@@ -172,14 +172,14 @@ class Machine(Device, Maintainable):
 
         for c in self._finish_processing_callbacks:
             c(self, self._output)
+
         if self._output != None:
             self._schedule_pass_part_downstream()
-
-        if record_produced_part_data:
-            self._env.add_datapoint('produced_parts', self.name, (self._env.now,
-                                                                  self._output.id,
-                                                                  self._output.quality,
-                                                                  self._output.value))
+            if record_produced_part_data:
+                self._env.add_datapoint('produced_parts', self.name, (self._env.now,
+                                                                      self._output.id,
+                                                                      self._output.quality,
+                                                                      self._output.value))
 
     def schedule_failure(self, time, message = ''):
         '''Schedule a failure for this Machine.

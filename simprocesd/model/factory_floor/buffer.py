@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 from .machine import Device
 
@@ -9,6 +10,9 @@ class Buffer(Device):
     Buffer stores received Parts and can pass the stored Parts
     downstream. At any given time Buffer can store a number of Parts
     up to its storage capacity.
+
+    Parts in the Buffer can only pass downstream in the order they were
+    received.
 
     Arguments
     ----------
@@ -63,6 +67,10 @@ class Buffer(Device):
         else:
             return super()._can_accept_part(part)
 
+    def _accept_part(self, part):
+        super()._accept_part(part)
+        self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
+
     def _try_move_part_to_output(self):
         if not self.is_operational(): return
 
@@ -77,25 +85,33 @@ class Buffer(Device):
         if self.level() < self._capacity:
             super().notify_upstream_of_available_space()
 
+    def _remaining_wait_time(self, stored_time):
+        return self._minimum_delay - (self.env.now - stored_time)
+
     def _pass_part_downstream(self):
-        i = 0
-        while i < len(self._buffer):
-            if self._buffer[i][0] > self.env.now - self._minimum_delay:
-                # Not enough time passed for this Part.
+        # Use least significant bit of time instead of 0 to account for
+        # rounding errors.
+        min_time_change = np.nextafter(self.env.now, np.inf) - self.env.now
+
+        can_continue = True
+        while len(self._buffer) > 0 and can_continue:
+            if self._remaining_wait_time(self._buffer[0][0]) > min_time_change:
                 break
+            can_continue = False
             for dwn in self.get_sorted_downstream_list():
-                if dwn.give_part(self._buffer[i][1]):
-                    self._buffer.pop(i)
-                    i -= 1
+                if dwn.give_part(self._buffer[0][1]):
+                    self._buffer.pop(0)
+                    self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
+                    can_continue = True
                     break
-            i += 1
 
         if len(self._buffer) > 0:
             # Only check first Part because later items guaranteed to
             # have arrived at the same time or later.
-            time_passed = self.env.now - self._buffer[0][0]
-            if time_passed < self._minimum_delay:
-                self._schedule_pass_part_downstream(delay = self._minimum_delay - time_passed)
+            remaining_wait = self._remaining_wait_time(self._buffer[0][0])
+            if remaining_wait > min_time_change:
+                self._schedule_pass_part_downstream(delay = remaining_wait)
             else:
                 self._waiting_for_space_availability = True
         self.notify_upstream_of_available_space()
+
