@@ -164,13 +164,13 @@ class Device(Asset):
         '''Sort the downstream list in a descending priority of where
         Parts should be moved to first.
 
+        Default implementation gives higher priority to Devices that
+        have been waiting for a Part the longest.
+
         Note
         ----
         Overwrite this static function to change how all Devices
         prioritize where Parts are passed.
-        By default Devices will try to pass their Parts to the Devices
-        in the returned list. First, they will try Device at index 0,
-        then index 1, etc.
 
         Arguments
         ---------
@@ -180,7 +180,8 @@ class Device(Asset):
         Returns
         -------
         list
-            A sorted list (see description) of downstream devices.
+            A list of downstream devices sorted from highest to lowest
+            priority.
         '''
         return sorted(downstream, key = lambda d: d.waiting_for_part_start_time \
                       if d.waiting_for_part_start_time != None else float('inf'))
