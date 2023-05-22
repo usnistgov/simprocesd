@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, EventType, System, ResourceManager
-from ....model.factory_floor import Part, Machine
+from ....model.factory_floor import Part, Machine, DeviceSchedule
 from ....model.resource_manager import ReservedResources
 
 
@@ -363,6 +363,26 @@ class MachineTestCase(TestCase):
         self.assertEqual(len(self.env.add_datapoint.call_args_list), 2)
         self.assert_scheduled_event(-1, self.env.now, machine.id, machine._pass_part_downstream,
                                     EventType.PASS_PART)
+
+    def test_schedule(self):
+        machine = Machine()
+        schedule = MagicMock(spec = DeviceSchedule)
+        machine.initialize(self.env)
+        schedule.add_device.assert_not_called()
+        schedule.remove_device.assert_not_called()
+
+        machine.schedule = schedule
+        schedule.add_device.assert_called_once_with(machine)
+
+        schedule.is_active = True
+        self.assertTrue(machine.give_part(Part()))
+        machine._output = None
+        schedule.is_active = False
+        self.assertFalse(machine.give_part(Part()))
+
+        machine.schedule = None
+        schedule.remove_device.assert_called_once_with(machine)
+        self.assertTrue(machine.give_part(Part()))
 
 
 if __name__ == '__main__':

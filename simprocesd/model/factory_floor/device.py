@@ -18,9 +18,14 @@ class Device(Asset):
         A list of upstream Device objects.
     value: float, default=0
         Starting value of the Device.
+    schedule: DeviceSchedule, default = None
+        A schedule for when this Device can accept new Parts. Can be
+        reassigned during the simulation with Device.schedule
+        If None then the Device behaves as if it has a schedule that is
+        always active.
     '''
 
-    def __init__(self, name = None, upstream = None, value = 0):
+    def __init__(self, name = None, upstream = None, value = 0, schedule = None):
         super().__init__(name, value)
 
         self._downstream = []
@@ -30,6 +35,8 @@ class Device(Asset):
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
         self._received_part_callbacks = []
+        self._schedule = None
+        self.schedule = schedule
 
         if upstream == None:
             upstream = []
@@ -122,6 +129,21 @@ class Device(Asset):
         for a Part.
         '''
         return self._waiting_for_part_since
+
+    @property
+    def schedule(self):
+        '''A DeviceSchedule that when not active will prevent this
+        Device from accepting new Parts.
+        '''
+        return self._schedule
+
+    @schedule.setter
+    def schedule(self, new_schedule):
+        if self._schedule != None:
+            self._schedule.remove_device(self)
+        self._schedule = new_schedule
+        if self._schedule != None:
+            self._schedule.add_device(self)
 
     def _add_downstream(self, downstream):
         if downstream not in self._downstream:
@@ -239,7 +261,8 @@ class Device(Asset):
     def _can_accept_part(self, part):
         return (self.is_operational() and part != None
                                       and self._part == None
-                                      and self._output == None)
+                                      and self._output == None
+                                      and (self.schedule == None or self.schedule.is_active))
 
     def _accept_part(self, part):
         assert part != None, 'part cannot be None.'

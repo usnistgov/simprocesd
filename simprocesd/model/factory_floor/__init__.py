@@ -3,6 +3,7 @@ from .batch import Batch
 from .buffer import Buffer
 from .decision_gate import DecisionGate
 from .device import Device
+from .device_schedule import DeviceSchedule
 from .machine import Machine
 from .maintainer import Maintainer, Maintainable
 from .part import Part

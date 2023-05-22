@@ -41,6 +41,11 @@ class Machine(Device, Maintainable):
         These resources will be reserved at the beginning of Part
         processing and they will be released when the processing is
         done.
+    schedule: DeviceSchedule, default = None
+        A schedule for when this Machine can accept new Parts. Can be
+        reassigned during the simulation with Device.schedule
+        If None then the Machine behaves as if it has a schedule that is
+        always active.
 
     Warning
     -------
@@ -54,8 +59,9 @@ class Machine(Device, Maintainable):
                  upstream = None,
                  cycle_time = 0,
                  value = 0,
-                 resources_for_processing = None):
-        super().__init__(name, upstream, value)
+                 resources_for_processing = None,
+                 schedule = None):
+        super().__init__(name, upstream, value, schedule)
 
         self.cycle_time = self._initial_cycle_time = cycle_time
         self._is_shut_down = False
@@ -137,19 +143,19 @@ class Machine(Device, Maintainable):
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
             self._last_use_start = self.env.now
-            self._schedule_finish_processing_part()
+            if self.cycle_time <= 0:
+                self._finish_processing_part()
+            else:
+                self._schedule_finish_processing_part()
 
     def _schedule_finish_processing_part(self):
-        if self.cycle_time <= 0:
-            self._finish_processing_part()
-        else:
-            self._env.schedule_event(
-                self._env.now + self.cycle_time,
-                self.id,
-                self._finish_processing_part,
-                EventType.FINISH_PROCESSING,
-                f'By {self.name}'
-            )
+        self._env.schedule_event(
+            self._env.now + self.cycle_time,
+            self.id,
+            self._finish_processing_part,
+            EventType.FINISH_PROCESSING,
+            f'By {self.name}'
+        )
 
     def _finish_processing_part(self, record_produced_part_data = True):
         # If Machine is not operational then the finish processing event
@@ -173,7 +179,9 @@ class Machine(Device, Maintainable):
         for c in self._finish_processing_callbacks:
             c(self, self._output)
 
-        if self._output != None:
+        if self._output == None:
+            self.notify_upstream_of_available_space()
+        else:
             self._schedule_pass_part_downstream()
             if record_produced_part_data:
                 self._env.add_datapoint('produced_parts', self.name, (self._env.now,

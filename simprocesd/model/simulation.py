@@ -23,7 +23,7 @@ class EventType(IntEnum):
     TERMINATE = auto()
 
     OTHER_LOW_PRIORITY = auto()
-    START_WORK = auto()
+    START_WORK = auto()  # Maintainer work order.
     SENSOR = auto()
     FAIL = auto()
     RELEASE_RESERVED_RESOURCES = auto()
@@ -33,7 +33,7 @@ class EventType(IntEnum):
     FINISH_PROCESSING = auto()
 
     RESTORE = auto()
-    FINISH_WORK = auto()
+    FINISH_WORK = auto()  # Maintainer work order.
     OTHER_HIGH_PRIORITY = auto()
 
 
