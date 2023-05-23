@@ -34,6 +34,8 @@ class Asset:
         self._value_history = []
 
         if is_transitory == False:
+            # Will trigger initialize(env) to be called if simulation is
+            # already in progress.
             System.add_asset(self)
 
     def initialize(self, env):

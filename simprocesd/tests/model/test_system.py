@@ -47,7 +47,7 @@ class SystemTestCase(TestCase):
     def test_simulate(self, stdout_mock):
         sink = MagicMock(spec = Sink)
         sink.received_parts_count = 56
-        self.sys._assets.append(sink)
+        self.sys.add_asset(sink)
         self.sys.simulate(1, False, False, True)
 
         self.env_mock.run.assert_called_once_with(1, trace = False)
@@ -69,7 +69,7 @@ class SystemTestCase(TestCase):
 
     def test_simulate_initialize(self):
         sink = MagicMock(spec = Sink)
-        self.sys._assets.append(sink)
+        self.sys.add_asset(sink)
 
         self.sys.simulate(5, print_summary = False)
         self.env_mock.resource_manager.initialize.assert_called_once_with(self.env_mock)
@@ -82,6 +82,13 @@ class SystemTestCase(TestCase):
         self.sys.simulate(5, print_summary = False)
         self.assertEqual(len(self.env_mock.resource_manager.initialize.call_args_list), 2)
         self.assertEqual(len(sink.initialize.call_args_list), 2)
+
+    def test_simulate_initialize_after_start(self):
+        self.sys.simulate(5, print_summary = False)
+
+        sink = MagicMock(spec = Sink)
+        self.sys.add_asset(sink)
+        sink.initialize.assert_called_once_with(self.env_mock)
 
     def test_get_net_value(self):
         sink = Sink()

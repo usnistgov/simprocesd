@@ -34,7 +34,9 @@ class System:
     def add_asset(new_asset):
         '''Register an Asset with the active System.
 
-        Automatically called by newly created Assets.
+        Automatically called by newly created Assets. If the simulation
+        is already in progress then the new_asset will be initialized
+        immediately.
 
         Note: System will keep a reference to this Asset so transitory
         assets should not be added here or they will remain loaded into
@@ -55,6 +57,8 @@ class System:
             raise RuntimeError('A System object must be initialized before creating any asset.')
         if new_asset not in System._instance._assets:
             System._instance._assets.append(new_asset)
+            if System._instance._simulation_is_initialized:
+                new_asset.initialize(System._instance._env)
 
     def __init__(self, simulation_data_storage_type = DataStorageType.MEMORY, resource_manager = None):
         self._assets = []
