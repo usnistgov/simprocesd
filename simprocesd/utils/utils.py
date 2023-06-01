@@ -8,6 +8,8 @@ import dill as dill
 def assert_is_instance(obj, class_type, message = None):
     '''Check if an object is an instance of a specific class type.
 
+    Returns immediately if not in debug mode.
+
     Arguments
     ---------
     obj: object
@@ -22,6 +24,8 @@ def assert_is_instance(obj, class_type, message = None):
     TypeError
         If <obj> is not an instance of <class_type>
     '''
+    if not __debug__: return
+
     if not isinstance(obj, class_type):
         if message == None:
             message = f'Object, {type(obj)}, does not implement {class_type}'
@@ -34,6 +38,8 @@ def assert_callable(obj, none_allowed = False, message = None):
     The check is done using the built-in 'callable()' function. In some
     cases it is possible the function not to raise an error even if
     <obj> cannot be called like a function.
+
+    Returns immediately if not in debug mode.
 
     Arguments
     ---------
@@ -49,6 +55,8 @@ def assert_callable(obj, none_allowed = False, message = None):
     TypeError
         If object is not callable.
     '''
+    if not __debug__: return
+
     if obj == None:
         if not none_allowed:
             message = f'obj can not be None.'

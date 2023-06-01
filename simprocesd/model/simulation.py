@@ -62,9 +62,10 @@ class Event:
     '''
 
     def __init__(self, time, asset_id, action, event_type, message = ''):
-        assert_is_instance(asset_id, int)
-        assert_is_instance(time, (float, int))
-        assert_callable(action, False)
+        if __debug__:
+            assert_is_instance(asset_id, int)
+            assert_is_instance(time, (float, int))
+            assert_callable(action, False)
 
         self.time = time
         self.asset_id = asset_id
@@ -90,18 +91,16 @@ class Event:
             self.executed = True
 
     def __lt__(self, other):
-        return (
-            self.time,
-            -self.event_type,
-            self.random_weight,
-            # A reliable tie-breaker because asset IDs are unique
-            self.asset_id
-        ) < (
-            other.time,
-            -other.event_type,
-            other.random_weight,
-            other.asset_id
-        )
+        if self.time != other.time:
+            return self.time < other.time
+        elif self.event_type != other.event_type:
+            # Event type value order is reverse.
+            return self.event_type > other.event_type
+        elif self.random_weight != other.random_weight:
+            return self.random_weight < other.random_weight
+        else:
+            # IDs are reliable tie-breakers because they are unique.
+            return self.asset_id < other.asset_id
 
     def __str__(self):
         return f'Event: time={self.time} asset_id={self.asset_id} action={self.action} ' \
