@@ -52,7 +52,7 @@ class Source(Machine):
         self._cost_of_produced_parts = 0
         self._produced_parts = 0
 
-        self._schedule_prepare_next_part()
+        self._schedule_finish_processing_part()
 
     def set_upstream(self, new_upstream_list):
         ''' Source cannot have upstream Devices.
@@ -79,16 +79,7 @@ class Source(Machine):
         '''
         return self._produced_parts
 
-    def _schedule_prepare_next_part(self):
-        self._env.schedule_event(
-            self._env.now + self._cycle_time,
-            self.id,
-            self._prepare_next_part,
-            EventType.FINISH_PROCESSING,
-            f'By {self.name}'
-        )
-
-    def _prepare_next_part(self):
+    def _finish_processing_part(self):
         self._output = self._sample_part.make_copy()
         self._output.initialize(self._env)
         self._output.add_routing_history(self)
@@ -96,14 +87,14 @@ class Source(Machine):
         self._schedule_pass_part_downstream()
 
     def _pass_part_downstream(self):
-        if self._produced_parts + 1 > self._max_produced_parts: return
-
-        output_before = self._output
+        if self._produced_parts >= self._max_produced_parts or self._output == None:
+            return
+        supplied_part_value = self._output.value
         super()._pass_part_downstream()
-        if output_before != None and self._output == None:
+        if self._output == None:  # Part was passed downstream.
             self._produced_parts += 1
-            self.add_cost('supplied_part', output_before.value)
-            self._cost_of_produced_parts += output_before.value
+            self.add_cost('supplied_part', supplied_part_value)
+            self._cost_of_produced_parts += supplied_part_value
             self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
-            self._schedule_prepare_next_part()
+            self._schedule_finish_processing_part()
 

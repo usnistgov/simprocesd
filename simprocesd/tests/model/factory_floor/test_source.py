@@ -31,16 +31,17 @@ class SourceTestCase(TestCase):
         self.assertEqual(source.upstream, [])
         self.assertEqual(source.produced_parts, 0)
         self.assertEqual(source.cost_of_produced_parts, 0)
+        self.assertEqual(source.cycle_time, 2)
         self.assertIn(source, self.sys._assets)
 
     def test_initialize(self):
         source = Source(cycle_time = 6, sample_part = Part(value = 5))
         source.initialize(self.env)
-        self.assert_last_scheduled_event(6, source.id, source._prepare_next_part,
+        self.assert_last_scheduled_event(6, source.id, source._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
         self.env.now = 6
-        source._prepare_next_part()
+        source._finish_processing_part()
         self.assertEqual(source.value, 0)
         self.assertEqual(source.produced_parts, 0)
         self.assertEqual(source.cost_of_produced_parts, 0)
@@ -48,13 +49,13 @@ class SourceTestCase(TestCase):
                                          EventType.PASS_PART)
 
     def test_re_initialize(self):
-        source = Source('name', Part(value = 5), 0, 15)
+        source = Source('name', Part(value = 5), 1, 15)
         downstream = MagicMock(spec = Machine)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
         source.initialize(self.env)
 
-        source._prepare_next_part()
+        source._finish_processing_part()
         source._pass_part_downstream()
         self.assertEqual(source.value, -5)
         self.assertEqual(source.produced_parts, 1)
@@ -67,7 +68,7 @@ class SourceTestCase(TestCase):
         self.assertEqual(source.cost_of_produced_parts, 0)
         # One new scheduled event due to initialize.
         self.assertEqual(len(self.env.schedule_event.call_args_list), 3 + 1)
-        self.assert_last_scheduled_event(0, source.id, source._prepare_next_part,
+        self.assert_last_scheduled_event(1, source.id, source._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
     def test_upstream(self):
@@ -81,14 +82,15 @@ class SourceTestCase(TestCase):
     def test_pass_part_downstream(self):
         part = Part('n', 10, 3)
         wrapped_part = mock_wrap(part)
-        source = Source(sample_part = wrapped_part)
+        source = Source(sample_part = wrapped_part, cycle_time = 1)
         downstream = MagicMock(spec = Machine)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
 
         source.initialize(self.env)
         wrapped_part.make_copy.assert_not_called()
-        source._prepare_next_part()
+        self.env.now = 1
+        source._finish_processing_part()
         wrapped_part.make_copy.assert_called_once()
 
         source._pass_part_downstream()
@@ -102,32 +104,45 @@ class SourceTestCase(TestCase):
         self.assertEqual(args[0].quality, part.quality)
         self.assertNotEqual(args[0].id, part.id)
 
-        self.assert_last_scheduled_event(0, source.id, source._prepare_next_part,
+        self.assert_last_scheduled_event(2, source.id, source._finish_processing_part,
                                          EventType.FINISH_PROCESSING)
 
     def test_max_produced_parts(self):
         part = Part('n', 10, 3)
-        source = Source(sample_part = part, max_produced_parts = 5)
+        source = Source(sample_part = part, max_produced_parts = 5, cycle_time = 1)
         downstream = MagicMock(spec = Machine)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
         source.initialize(self.env)
 
         for i in range (1, 5):
-            source._prepare_next_part()
+            source._finish_processing_part()
             source._pass_part_downstream()
             self.assertEqual(len(downstream.give_part.call_args_list), i)
             self.assertEqual(source.value, -10 * i)
             self.assertEqual(source.produced_parts, i)
             self.assertEqual(source.cost_of_produced_parts, 10 * i)
 
-        source._prepare_next_part()
+        source._finish_processing_part()
         source._pass_part_downstream()
         # 6th part should not have been produced or passed downstream.
         self.assertEqual(source.value, -10 * 5)
         self.assertEqual(source.produced_parts, 5)
         self.assertEqual(source.cost_of_produced_parts, 10 * 5)
         self.assertEqual(len(downstream.give_part.call_args_list), 5)
+
+    def test_zero_cycle_time(self):
+        source = Source(cycle_time = 0, sample_part = Part())
+        downstream = MagicMock(spec = Machine)
+        downstream.give_part.return_value = True
+        source._add_downstream(downstream)
+
+        self.env.now = 5
+        source.initialize(self.env)
+        self.assert_last_scheduled_event(5, source.id, source._pass_part_downstream,
+                                         EventType.PASS_PART)
+        source._pass_part_downstream()
+        downstream.give_part.assert_called_once()
 
 
 if __name__ == '__main__':

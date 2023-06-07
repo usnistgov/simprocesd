@@ -63,7 +63,7 @@ class Machine(Device, Maintainable):
                  schedule = None):
         super().__init__(name, upstream, value, schedule)
 
-        self.cycle_time = self._initial_cycle_time = cycle_time
+        self.cycle_time = cycle_time
         self._is_shut_down = False
         self._resources_for_processing = resources_for_processing
         self._reserved_resources = None
@@ -77,6 +77,7 @@ class Machine(Device, Maintainable):
         self._last_restore = 0
         self._time_in_use = 0
         self._last_use_start = None
+        self._next_cycle_time_offset = 0
 
     @property
     def cycle_time(self):
@@ -112,8 +113,16 @@ class Machine(Device, Maintainable):
             return self._time_in_use + (self.env.now - self._last_use_start)
 
     def initialize(self, env):
+        if self._env == None:
+            # First time initialize.
+            self._initial_cycle_time = self.cycle_time
+            self._initial_next_cycle_time_offset = self._next_cycle_time_offset
+        else:
+            # Simulation is resetting, restore starting values.
+            self.cycle_time = self._initial_cycle_time
+            self._next_cycle_time_offset = self._initial_next_cycle_time_offset
+
         super().initialize(env)
-        self.cycle_time = self._initial_cycle_time
         self._is_shut_down = False
         self._uptime = 0
         self._last_restore = self.env.now
@@ -143,19 +152,24 @@ class Machine(Device, Maintainable):
     def _try_move_part_to_output(self):
         if self._part != None and self._output == None:
             self._last_use_start = self.env.now
-            if self.cycle_time <= 0:
-                self._finish_processing_part()
-            else:
-                self._schedule_finish_processing_part()
+            self._schedule_finish_processing_part()
 
-    def _schedule_finish_processing_part(self):
-        self._env.schedule_event(
-            self._env.now + self.cycle_time,
-            self.id,
-            self._finish_processing_part,
-            EventType.FINISH_PROCESSING,
-            f'By {self.name}'
-        )
+    def _schedule_finish_processing_part(self, time_offset = 0):
+        '''If the final cycle time <= 0 then _finish_processing_part
+        will be called immediately.
+        '''
+        next_cycle_time = max(0, self.cycle_time + self._next_cycle_time_offset + time_offset)
+        self._next_cycle_time_offset = 0
+        if next_cycle_time <= 0:
+            self._finish_processing_part()
+        else:
+            self._env.schedule_event(
+                self._env.now + next_cycle_time,
+                self.id,
+                self._finish_processing_part,
+                EventType.FINISH_PROCESSING,
+                f'By {self.name}'
+            )
 
     def _finish_processing_part(self, record_produced_part_data = True):
         # If Machine is not operational then the finish processing event
@@ -295,6 +309,23 @@ class Machine(Device, Maintainable):
         if self._reserved_resources != None:
             self._reserved_resources.release()
             self._reserved_resources = None
+
+    def offset_next_cycle_time(self, offset):
+        '''Offset the cycle time of the next processing cycle.
+
+        The effects are cumulative across multiple calls of
+        offset_next_cycle_time. If the cycle time plus the final offset
+        are less than 0 then a cycle time of 0 will be used.
+
+        Once the next cycle starts the offset will reset to 0.
+
+        Arguments
+        ---------
+        offset: float
+            By how much to offset the cycle time of the next processing
+            cycle.
+        '''
+        self._next_cycle_time_offset += offset
 
     def add_finish_processing_callback(self, callback):
         '''Setup a function to be called when the Machine finishes

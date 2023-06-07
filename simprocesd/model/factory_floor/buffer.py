@@ -72,14 +72,15 @@ class Buffer(Device):
         self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
 
     def _try_move_part_to_output(self):
-        if not self.is_operational(): return
+        if not self.is_operational() and self._part != None:
+            return
 
-        if self._part:
-            self._buffer.append((self.env.now, self._part))
-            self._part = None
-            self.notify_upstream_of_available_space()
-            if len(self._buffer) == 1:
-                self._schedule_pass_part_downstream(delay = self._minimum_delay)
+        self._buffer.append((self.env.now, self._part))
+        self._part = None
+        self.notify_upstream_of_available_space()
+        if len(self._buffer) == 1:
+            # Only if buffer was empty before this new part arrived.
+            self._schedule_pass_part_downstream(delay = self._minimum_delay)
 
     def notify_upstream_of_available_space(self):
         if self.level() < self._capacity:

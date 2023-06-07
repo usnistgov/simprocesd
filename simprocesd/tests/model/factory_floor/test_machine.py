@@ -384,6 +384,53 @@ class MachineTestCase(TestCase):
         schedule.remove_device.assert_called_once_with(machine)
         self.assertTrue(machine.give_part(Part()))
 
+    def test_offset_next_cycle_time(self):
+        machine = Machine(cycle_time = 10)
+        machine.initialize(self.env)
+
+        machine.offset_next_cycle_time(5)
+        machine.give_part(Part())
+        self.assert_scheduled_event(-1, self.env.now + 15, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
+        self.env.now += 15
+        machine._finish_processing_part()
+        machine._output = None
+        machine.offset_next_cycle_time(1)
+        machine.offset_next_cycle_time(2)
+        machine.offset_next_cycle_time(3)
+        machine.give_part(Part())
+        self.assert_scheduled_event(-1, self.env.now + 16, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
+    def test_negative_offset_next_cycle_time_(self):
+        machine = Machine(cycle_time = 10)
+        machine.initialize(self.env)
+
+        machine.offset_next_cycle_time(-7)
+        machine.give_part(Part())
+        self.assertEqual(machine._output, None)
+        self.assert_scheduled_event(-1, self.env.now + 3, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
+        self.env.now += 3
+        machine._finish_processing_part()
+        machine._output = None
+        machine.offset_next_cycle_time(-100)
+        machine.offset_next_cycle_time(99)
+        machine.offset_next_cycle_time(-5)
+        machine.give_part(Part())
+        self.assertEqual(machine._output, None)
+        self.assert_scheduled_event(-1, self.env.now + 4, machine.id,
+                machine._finish_processing_part, EventType.FINISH_PROCESSING)
+
+        self.env.now += 4
+        machine._finish_processing_part()
+        machine._output = None
+        machine.offset_next_cycle_time(-20)
+        machine.give_part(Part())
+        self.assertTrue(machine._output != None)
+
 
 if __name__ == '__main__':
     unittest.main()
