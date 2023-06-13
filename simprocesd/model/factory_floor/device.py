@@ -18,14 +18,9 @@ class Device(Asset):
         A list of upstream Device objects.
     value: float, default=0
         Starting value of the Device.
-    schedule: DeviceSchedule, default = None
-        A schedule for when this Device can accept new Parts. Can be
-        reassigned during the simulation with Device.schedule
-        If None then the Device behaves as if it has a schedule that is
-        always active.
     '''
 
-    def __init__(self, name = None, upstream = None, value = 0, schedule = None):
+    def __init__(self, name = None, upstream = None, value = 0):
         super().__init__(name, value)
 
         self._downstream = []
@@ -35,8 +30,7 @@ class Device(Asset):
         self._waiting_for_space_availability = False
         self._waiting_for_part_since = 0
         self._received_part_callbacks = []
-        self._schedule = None
-        self.schedule = schedule
+        self._block_input = False
 
         if upstream == None:
             upstream = []
@@ -131,19 +125,20 @@ class Device(Asset):
         return self._waiting_for_part_since
 
     @property
-    def schedule(self):
-        '''A DeviceSchedule that when not active will prevent this
-        Device from accepting new Parts.
+    def block_input(self):
+        '''When set to True this Device will not accept new Parts from
+        upstream.
         '''
-        return self._schedule
+        return self._block_input
 
-    @schedule.setter
-    def schedule(self, new_schedule):
-        if self._schedule != None:
-            self._schedule.remove_device(self)
-        self._schedule = new_schedule
-        if self._schedule != None:
-            self._schedule.add_device(self)
+    @block_input.setter
+    def block_input(self, is_blocked):
+        assert isinstance(is_blocked, bool)
+        if self._block_input == is_blocked:
+            return
+        self._block_input = is_blocked
+        if not is_blocked and self._output == None and self._part == None:
+            self.notify_upstream_of_available_space()
 
     def _add_downstream(self, downstream):
         if downstream not in self._downstream:
@@ -262,7 +257,7 @@ class Device(Asset):
         return (self.is_operational() and part != None
                                       and self._part == None
                                       and self._output == None
-                                      and (self.schedule == None or self.schedule.is_active))
+                                      and not self._block_input)
 
     def _accept_part(self, part):
         assert part != None, 'part cannot be None.'

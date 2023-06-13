@@ -246,6 +246,15 @@ class DeviceTestCase(TestCase):
         self.assertEqual(sorted_ds[2].waiting_for_part_start_time, 10)
         self.assertEqual(sorted_ds[3].waiting_for_part_start_time, None)
 
+    def test_block_input(self):
+        device = Device(upstream = self.upstream)
+        device.initialize(self.env)
+
+        device.block_input = True
+        self.assertFalse(device.give_part(Part()))
+        device.block_input = False
+        self.assertTrue(device.give_part(Part()))
+
 
 if __name__ == '__main__':
     unittest.main()

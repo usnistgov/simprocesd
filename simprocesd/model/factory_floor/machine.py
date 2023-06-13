@@ -41,11 +41,6 @@ class Machine(Device, Maintainable):
         These resources will be reserved at the beginning of Part
         processing and they will be released when the processing is
         done.
-    schedule: DeviceSchedule, default = None
-        A schedule for when this Machine can accept new Parts. Can be
-        reassigned during the simulation with Device.schedule
-        If None then the Machine behaves as if it has a schedule that is
-        always active.
 
     Warning
     -------
@@ -59,9 +54,8 @@ class Machine(Device, Maintainable):
                  upstream = None,
                  cycle_time = 0,
                  value = 0,
-                 resources_for_processing = None,
-                 schedule = None):
-        super().__init__(name, upstream, value, schedule)
+                 resources_for_processing = None):
+        super().__init__(name, upstream, value)
 
         self.cycle_time = cycle_time
         self._is_shut_down = False
