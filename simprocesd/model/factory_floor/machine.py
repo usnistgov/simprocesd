@@ -192,7 +192,7 @@ class Machine(Device, Maintainable):
         else:
             self._schedule_pass_part_downstream()
             if record_produced_part_data:
-                self._env.add_datapoint('produced_parts', self.name, (self._env.now,
+                self._env.add_datapoint('produced_part', self.name, (self._env.now,
                                                                       self._output.id,
                                                                       self._output.quality,
                                                                       self._output.value))

@@ -144,6 +144,10 @@ class Environment:
         self.resource_manager = resource_manager
         self.reset()
 
+    @property
+    def now(self):
+        return self._now
+
     def reset(self):
         '''Reset the Environment to its initial state.
 
@@ -152,7 +156,7 @@ class Environment:
         reference to simulation_data before calling reset, the reference
         can then be used to access old data.
         '''
-        self.now = 0
+        self._now = 0
         self.simulation_data = {}
         self._events = []
         self._paused_events = []
@@ -193,7 +197,7 @@ class Environment:
         '''
         next_event = self._events.pop(0)
 
-        self.now = next_event.time
+        self._now = next_event.time
 
         try:
             if self._trace:

@@ -61,7 +61,7 @@ class EnvironmentTestCase(TestCase):
         self.assertEqual(event.executed, False)
 
     def test_schedule_event_times(self):
-        self.env.now = 10
+        self.env._now = 10
         self.assertRaises(ValueError,
                 lambda: self.env.schedule_event(self.env.now - 1, 1, self.action))
 

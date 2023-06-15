@@ -267,7 +267,7 @@ class Device(Asset):
         self._on_received_new_part()
 
     def _on_received_new_part(self):
-        self._env.add_datapoint('received_parts', self.name, (self._env.now,
+        self._env.add_datapoint('received_part', self.name, (self._env.now,
                                                               self._part.id,
                                                               self._part.quality,
                                                               self._part.value))
