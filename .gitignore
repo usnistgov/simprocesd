@@ -1,4 +1,5 @@
 # Folders, files, and extensions to ignore.
+.project
 
 *.bak
 *.lock

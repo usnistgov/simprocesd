@@ -12,7 +12,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />    
-	<!-- Google Analytics. -->
+	<!-- Default Google Analytics script. -->
 	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
 </script>
 
@@ -116,7 +116,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
              
   <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
-<p>All of the examples are part of the open source repo on GitHub: <a class="reference external" href="https://github.com/usnistgov/simprocesd/tree/master/examples">examples/</a></p>
+<p>All of the examples are part of the open source repository on GitHub: <a class="reference external" href="https://github.com/usnistgov/simprocesd/tree/master/examples">examples/</a></p>
 <p>Once you have simprocesd package installed and the source code downloaded you can run examples like so:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># To run SingleMachine.py example navigate to the root folder of SimPROCESD</span>
 <span class="c1"># and run the following command:</span>
@@ -125,45 +125,62 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 </div>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachine.py">SingleMachine.py</a></strong></p>
 <ul class="simple">
-<li><p>Examples of a basic setup where:</p>
+<li><p>Basic setup: Source -&gt; Machine -&gt; Sink</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/BufferExample.py">BufferExample.py</a></strong></p>
+<ul class="simple">
+<li><p>Using a <code class="docutils literal notranslate"><span class="pre">Buffer</span></code>.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ParallelStations.py">ParallelStations.py</a></strong></p>
+<ul class="simple">
+<li><p>Multi-stage production line with multiple machines in each stage running in parallel.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/VariousFlows.py">VariousFlows.py</a></strong></p>
+<ul class="simple">
+<li><p>Model with 2 parallel production paths that both share one of the machines.</p></li>
+<li><p><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/various_flows_diagram.jpg">Visual representation of the setup.</a></p>
 <ul>
-<li><p>a Source creates Parts</p></li>
-<li><p>then a machine processes the parts</p></li>
-<li><p>and then the parts are collected by the sink</p></li>
+<li><p>Top diagram: the design being modeled with M3 machine as part of 2 production paths.</p></li>
+<li><p>Bottom diagram: the actual model layout with a single M3 machine followed by 2 filters (<code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code>) that control part flow.</p></li>
 </ul>
 </li>
-<li><p>Source and Sink are required and are used in the rest of examples as well.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ConditionBasedMaintenance.py">ConditionBasedMaintenance.py</a></strong></p>
-<ul class="simple">
-<li><p>Setup machines that accumulate damage over time.</p></li>
-<li><p>Setup sensors to periodically measure machine damage and request maintenance if sufficient damage is present.</p></li>
-<li><p>Configure a dynamic maintenance time that depends on the current machine damage.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/PartQuality.py">PartQuality.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup machines that change part quality as they get processed.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/DataExploration.py">DataExploration.py</a></strong></p>
-<ul class="simple">
-<li><p>Setup a Buffer with a sensor measuring buffer level (how many parts it is holding).</p></li>
-<li><p>Setup parallel machines that accumulate damage over time at different rates.</p></li>
-<li><p>Quality of parts is reduced based on machine’s accrued damage since last maintenance.</p></li>
-<li><p>Machines are maintained only when they experience a hard failure.</p></li>
-<li><p>Demonstrate using built-in graph functions and plotting sensor data.</p></li>
-<li><p>Cumulative average throughput over time.</p></li>
-<li><p>Machine damage over time.</p></li>
-<li><p>Cumulative costs/values associated with sourcing parts and final part products.</p></li>
-<li><p>Buffer level over time.</p></li>
+<li><p>Changing/updating part quality when parts are processed by machines.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ExtendingPartObject.py">ExtendingPartObject.py</a></strong></p>
 <ul class="simple">
-<li><p>Extend part object to have a new property.</p></li>
-<li><p>Setup machines that modify new property.</p></li>
+<li><p>New class that extends Part in order to add a new property.</p></li>
+<li><p>Example model using the new class.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/FilterParts.py">FilterParts.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup <code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code> objects to manage where parts should go based on their state.</p></li>
+<li><p>Setup <code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code> devices to manage where parts go based on part quality.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/OperatingSchedule.py">OperatingSchedule.py</a></strong></p>
+<ul class="simple">
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">ActionScheduler</span></code> to control when a machine can produce parts.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/BatchProcessing.py">BatchProcessing.py</a></strong></p>
+<ul class="simple">
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">Batch</span></code> part type vs using individual parts.</p></li>
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">PartBatcher</span></code> to batch and unbatch parts.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachineWithFaults.py">SingleMachineWithFaults.py</a></strong></p>
+<ul class="simple">
+<li><p>Using an extended machine class to model periodic faults.</p></li>
+<li><p>Configuring maintenance times determined by a geometric distribution.</p></li>
+<li><p>Request maintenance when machine has a fault.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SharedResources.py">SharedResources.py</a></strong></p>
+<ul class="simple">
+<li><p>Setting up machines that have to reserve limited resources in order to process parts.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ConditionBasedMaintenance.py">ConditionBasedMaintenance.py</a></strong></p>
+<ul class="simple">
+<li><p>Using an extended machine class to model accumulating damage on the machine.</p></li>
+<li><p>Use sensors to periodically measure machine damage and request maintenance if damage is over threshold.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/MaintenanceOptimization.py">MaintenanceOptimization.py</a></strong></p>
 <ul class="simple">
@@ -171,28 +188,21 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li><p>Run a series of simulations where a different damage threshold is used to trigger machine maintenance.</p></li>
 <li><p>Show final results in graphs to assist with deciding the best maintenance policy.</p></li>
 </ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ParallelStations.py">ParallelStations.py</a></strong></p>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/DataExploration.py">DataExploration.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup a multi-stage configuration with multiple machines in each stage running in parallel.</p></li>
+<li><p>Setup a Buffer with a sensor measuring buffer level (how many parts it is holding).</p></li>
+<li><p>Setup parallel machines that accumulate damage over time at different rates.</p></li>
+<li><p>Quality of parts is reduced based on machine’s accrued damage since last maintenance.</p></li>
+<li><p>Machines are maintained only when they experience a hard failure.</p></li>
+<li><p>Demonstrate using built-in graph functions and plotting data.</p></li>
+<li><p>Cumulative average throughput over time.</p></li>
+<li><p>Machine damage over time.</p></li>
+<li><p>Cumulative costs/values associated with sourcing parts and final part products.</p></li>
+<li><p>Buffer level over time.</p></li>
 </ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachineWithFaults.py">SingleMachineWithFaults.py</a></strong></p>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SaveSimulationToFile.py">SaveSimulationToFile.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup a machine with periodic faults and maintenance times determined by geometric distributions.</p></li>
-<li><p>Request maintenance when machine fails.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/BufferExample.py">BufferExample.py</a></strong></p>
-<ul class="simple">
-<li><p>Setup two machines with a buffer in between.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/TwoMachinesWithFaults.py">TwoMachinesWithFaults.py</a></strong></p>
-<ul class="simple">
-<li><p>Setup two machiens with periodic faults.</p></li>
-<li><p>Configure maintainer to repair the faults when they occur.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/VariousFlows.py">VariousFlows.py</a></strong></p>
-<ul class="simple">
-<li><p>Setup a configuration where the same machine is used in multiple steps of the processing.</p></li>
-<li><p><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/various_flows_diagram.jpg">Visual representation of the setup.</a></p></li>
+<li><p>Example of saving the <code class="docutils literal notranslate"><span class="pre">System</span></code> object to a file and loading it back from the file.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/PaperMillCmsEvaluation.py">PaperMillCmsEvaluation.py</a>[Experiemental]</strong></p>
 <ul class="simple">

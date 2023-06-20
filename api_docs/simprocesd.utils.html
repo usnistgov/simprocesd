@@ -12,7 +12,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />    
-	<!-- Google Analytics. -->
+	<!-- Default Google Analytics script. -->
 	<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
 </script>
 
@@ -306,6 +306,7 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 <p>The check is done using the built-in ‘callable()’ function. In some
 cases it is possible the function not to raise an error even if
 &lt;obj&gt; cannot be called like a function.</p>
+<p>Returns immediately if not in debug mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -324,6 +325,7 @@ cases it is possible the function not to raise an error even if
 <dt class="sig sig-object py" id="simprocesd.utils.utils.assert_is_instance">
 <span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">assert_is_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.assert_is_instance" title="Permalink to this definition"></a></dt>
 <dd><p>Check if an object is an instance of a specific class type.</p>
+<p>Returns immediately if not in debug mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

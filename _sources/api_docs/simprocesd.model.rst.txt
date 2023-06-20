@@ -14,6 +14,14 @@ Subpackages
 Submodules
 ----------
 
+simprocesd.model.resource\_manager module
+-----------------------------------------
+
+.. automodule:: simprocesd.model.resource_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 simprocesd.model.simulation module
 ----------------------------------
 

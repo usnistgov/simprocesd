@@ -5,35 +5,43 @@ Some of the basic that will help understand how SimPROCESD works and how to use 
 ## Objects
 
 The package provides the following objects for modeling a manufacturing process:
-- **Source**: Introduces new parts to the system.
-- **Machine**: Retrieves, processes, and relinquishes parts. Has a status tracker.
- - **MachineStatusTracker**: Tracks machine's condition, triggers hard failures, and contains maintenance information.
-- **Buffer**: Retrieves, stores, and relinquishes parts.
+- **Source**: Generates new parts for the model; beginning of production path/s.
+- **Machine**: Part processing device. 
+- **Buffer**: Stores parts up to capacity with an optional minimum storage time.
 - **DecisionGate**: Conditionally allow parts to pass between its upstream and downstream.
-- **Sink**: Collects finished parts that exit the system.
-- **Maintainer**: Performs requested maintenance as soon as possible. Has a configurable capacity.
+- **Sink**: Collect parts at the end of production path/s.
+- **PartBatcher**: Enforces output to be individual parts or batches of set size.
+- **Maintainer**: Performs work order requests such as maintenance.
+- **ActionScheduler**: Periodically performs actions on registered objects.
+- **ResourceManager**: Manages limited resources needed by **Machine**s to process parts.
 - **Probes & Sensors**: Take periodic or on-demand readings and record them. The recorded data is accessible during the simulation and after.
 
-## Upstream/s
+## Simulation time
 
-When deviceA can receive parts from deviceB then deviceA is known as the upstream of deviceB.  
-SImilarly, deviceB is a downstream of deviceA.
+Simulation time is the time tracked within the simulation and is independent of how long it actually takes to simulate the model. Simulation time can be accessed through `<Environment_instance>.now`.  
+
+Simulation time is measured in time units. It is up to the developer of the model to determine what those time units represent (seconds, hours, years, etc.) and to be consistent with that definition throughout the model.
+
+## Upstream/Downstream
+
+When deviceA can receive parts from deviceB then deviceA is an upstream device of deviceB.  
+Similarly, deviceB is a downstream device of deviceA.  
 The links between different devices are configured by setting the `upstream` parameter.  
 ```
     S1 = Source()
     S2 = Source()
     M1 = Machine(upstream = [S1, S2])
 ```
-- In this setup, `M1` can receive parts from both `S1` and `S2`.  
-- Default `Machine` can accept only 1 part at a time from an upstream.
+- In this setup, `M1` can receive parts from both `S1` and `S2`.
+- Parts are always passed one at a time between devices, however multiple parts may pass between devices before simulation time advances.
 
-The upstream property can also be replaced with a new list after an object is created.
+Upstream list of devices (e.g. `Machine`) can also be updated after instantiation.
 ```
 M1 = Machine(upstream = [S1, S2])
 M1.set_upstream([S1])  # S2 is no longer upstream of M1.
 ```
 
-A device's upstream list can not contain the device itself. A circular flow is possible if deviceA 
+A device's upstream list can not contain the device itself. A circular flow is still possible if deviceA 
 is set as upstream of deviceB and deviceB is set as upstream of deviceA.
 
 ### Multiple Downstreams
@@ -45,10 +53,11 @@ Configuring a device to pass parts to multiple devices:
     B1 = Buffer(upstream = [S1], capacity = 5)
 ```
 - In this setup, parts from `S1` can go to either `M1` or `B1`.  
-- As parts become available in any device they will be passed to one of their downstreams prioritizing
-downstreams that has been waiting for a part the longest.
+- As devices output parts, those parts will be passed to one of the downstream devices prioritizing
+devices that have been waiting for input parts the longest.
+	- To change the priority of a device override the function `<Device_instance>.get_sorted_downstream_list` and to change the default behavior for the whole system override the static funcion `Device.downstream_priority_sorter`.
 
-## Simple Example
+## Basic Example
 
 ```
     system = System()
@@ -65,25 +74,23 @@ Same example with additional comments:
     # System needs to be created first so that other simulation objects
     # can register themselves with it automatically.
     system = System()
-
-    # Create a part object to be used as a sample in the Source.
-    part = Part()
-
-    # Source will create copies of the sample part every 1 time unit
-    source = Source(sample_part = part, cycle_time = 1)
-
-    # Create Machine that gets parts from Source and takes 1 time unit
-    # to process the part before passing it downstream.
-    M1 = Machine(upstream = [source], cycle_time = 1)
-
-    # Sink is the end of the line and can only receive parts.
-    sink = Sink(upstream = [M1])
-
-    # Run the simulation for 100 time units.
-    system.simulate(simulation_duration = 100)
+	
+	# Create a part object to be used as a sample in the Source.
+	part = Part()
+	
+	# Source will create copies of the sample part every 1 time unit
+	source = Source(sample_part = part, cycle_time = 1)
+	
+	# Create Machine that gets parts from Source and takes 1 time unit
+	# to process the part before passing it downstream.
+	M1 = Machine(upstream = [source], cycle_time = 1)
+	
+	# Sink is the end of the line and can only receive parts.
+	sink = Sink(upstream = [M1])
+	
+	# Run the simulation until 100 time units passed.
+	system.simulate(simulation_duration = 100)
 ```
-* Time units are not specified but will work as long as they are used consistently. For example,
-time units can represent seconds as long as that is consistently used throughout the simulation.
 
 ## Post-Simulation Analysis
 
@@ -98,20 +105,24 @@ Sensor example: [ConditionBasedMaintenance.py](https://github.com/usnistgov/simp
 SimPROCESD by default records some data about the simulation.
 |Description |list_label |sub_label |data_point |
 |---|---|---|---|
-|Device receives a part |'received_parts' |device_name |(time, part_quality) |
-|Device processes a part |'produced_parts' |device_name |(time, part_quality) |
-|Work order enteres queue |'enter_queue' |maintainer_name |(time, device_to_maintain, maintenance_tag) |
-|Work order begins |'begin_maintenance' |maintainer_name |(time, device_to_maintain, maintenance_tag) |
-|Work order completes |'finish_maintenance' |maintainer_name |(time, device_to_maintain, maintenance_tag) |
-|Sink receives a part |'collected_part' |sink_name |(time, part_quality, part_value) |
-|Source passes a part |'supplied_new_part' |source_name |(time,) |
+|Source outputs a part |'supplied_new_part' |source name |(time,) |
+|Device receives a part |'received_part' |device name |(time, part_id, part_quality, part_value) |
+|Machine processes a part |'produced_part' |device name |(time, part_id, part_quality, part_value) |
+|Device failure |'device_failure' |device name |(time, lost_part_ID) |
+|Work order enters queue |'enter_queue' |maintainer name |(time, target_name, maintenance_tag, info_string) |
+|Work order begins |'start_work_order' |maintainer name |(time, target_name, maintenance_tag, info_string) |
+|Work order completes |'finish_work_order' |maintainer name |(time, target_name, maintenance_tag, info_string) |
+|Buffer level change |'level' |buffer name |(time, buffer_level) |
+|Sink receives a part |'collected_part' |sink name |(time, part_quality, part_value) |
+|Schedule's state change |'schedule_update' |schedule name |(time, state) |
+|Available resource change |'resource_update' |resource name |(time, resource_amount) |
 
 Example of retrieving a table of raw data for a specific device.
 ```
     system.simulation_data['produced_parts']['M1']
-    # <System>.simulation_data[list_label][sub_label]
+    # <System_instance>.simulation_data[list_label][sub_label]
     # or
-    # <Environment>.simulation_data[list_label][sub_label]
+    # <Environment_instance>.simulation_data[list_label][sub_label]
 ```
 
 That data gets stored in simulation data which is a dictionary with the following structure:
@@ -123,21 +134,25 @@ That data gets stored in simulation data which is a dictionary with the followin
         - The list contains data in the order that it was recorded.
         - tuples are `tuple_of_data` from the example below.
 
-Adding new datapoints to be recorded with simulated data is easy:
+Adding new datapoints to be recorded during the simulation is easy:
 ```
-    # During the simulation you can all the following code on any Asset (Device, Machine, Source, etc).
+    # Call the following code on any Asset (Device, Machine, Source, etc).
     M1.env.add_datapoint('new label', M1.name, (M1.env.now, self._output.quality))
     # <Asset>.env.add_datapoint(list_label, sub_label, tuple_of_data)
 ```
+If objects provided to `add_datapoint` are later changed then the recorded datapoint will change as well. For example, if the caller retains a reference to `tuple_of_data` and changes its contents then the recorded datapoint will be changed as well which can be confusing.
 
+&nbsp;  
 These calls can be integrated into other parts like Machine's callbacks:
 ```
     M1 = Machine(upstream = [source], cycle_time = 1)
 
-    def on_received_part(part):
-        M1.env.add_datapoint('received_part_value', M1.name, (M1.env.now, part.value))
+    def on_received_part(device, part):
+        device.env.add_datapoint('received_part_value',
+                                 device.name,
+                                 (device.env.now, part.value))
 
-    # Configure on_received_part to be called everytime M1 receives a part.
+    # Configure on_received_part to be called every time M1 receives a part.
     M1.add_receive_part_callback(on_received_part)
 	
     ...run simulation...
@@ -156,14 +171,12 @@ that show graphs based on simulation_data.
 
 SimPROCESD is a discrete event simulator which means that the simulation is driven forward by
 events. Initial events are created during initialization of the simulated objects and additional
-events are generated in process of executing the previous events.
+events are generated in the process of executing events.  
 
-&nbsp;  
-Multiple events can be schedules to happen at the exact same time in which case they are
+Multiple events can be scheduled to happen at the exact same time in which case they are
 executed in order of [`EventType` priority](https://github.com/usnistgov/simprocesd/blob/master/simprocesd/model/simulation.py#L11) 
 (represented by a number).  
 
-&nbsp;  
 Example of how `Source` can schedule an event for generating a new part after `cycle_time` has passed:
 ```
     self.env.schedule_event(                # Environment.schedule_event(...
