@@ -1,4 +1,4 @@
-from .machine import Machine
+from . import Batch, Machine
 
 
 class Sink(Machine):
@@ -53,6 +53,9 @@ class Sink(Machine):
     @property
     def received_parts_count(self):
         '''Count of all received Parts.
+
+        When receiving a Batch this will increase by the number of Parts
+        contained within the Batch.
         '''
         return self._received_parts_count
 
@@ -63,7 +66,10 @@ class Sink(Machine):
         return self._value_of_received_parts
 
     def _on_received_new_part(self):
-        self._received_parts_count += 1
+        if isinstance(self._part, Batch):
+            self._received_parts_count += len(self._part.parts)
+        else:
+            self._received_parts_count += 1
         self._value_of_received_parts += self._part.value
         self.add_value(f'collected_part', self._part.value)
         if self._collect_parts:

@@ -17,7 +17,7 @@ def print_produced_parts_and_average_quality(system, machines):
     machines: list
         List of Machines to consider.
     '''
-    all_production_data = system.simulation_data.get('produced_parts', {})
+    all_production_data = system.simulation_data.get('produced_part', {})
     for machine in machines:
         machine_production_data = all_production_data.get(machine.name, [])
         quality_sum = 0
@@ -77,7 +77,7 @@ def plot_throughput(system, machines):
         List of Machines to plot.
     '''
     figure, graph = pyplot.subplots()
-    all_production_data = system.simulation_data.get('produced_parts', {})
+    all_production_data = system.simulation_data.get('produced_part', {})
     for machine in machines:
         machine_production_data = all_production_data.get(machine.name, [])
         # Make a list of tuples: (time, parts_produced_so_far)

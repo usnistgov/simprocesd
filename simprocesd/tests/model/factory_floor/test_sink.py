@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Part, Machine, Sink
+from ....model.factory_floor import Batch, Machine, Part, Sink
 
 
 class SinkTestCase(TestCase):
@@ -108,6 +108,18 @@ class SinkTestCase(TestCase):
             self.assertEqual(sink.received_parts_count, i + 1)
             self.assertEqual(sink.value_of_received_parts, 2.5 * (i + 1))
             sink._finish_processing_part()
+
+    def test_receive_batch_parts(self):
+        sink = Sink()
+        sink.initialize(self.env)
+
+        for i in range(3):
+            part = Batch(parts = [Part(value = 1.5), Part(value = 2)])
+            self.assertTrue(sink.give_part(part))
+            self.assertEqual(sink.received_parts_count, (i + 1) * 2)
+            expected_value_of_parts = (i + 1) * (1.5 + 2)
+            self.assertEqual(sink.value, expected_value_of_parts)
+            self.assertEqual(sink.value_of_received_parts, expected_value_of_parts)
 
 
 if __name__ == '__main__':

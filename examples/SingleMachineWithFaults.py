@@ -17,6 +17,7 @@ from .machine_with_faults import MachineWithFaults
 
 
 def main():
+    schedule_repair = lambda machine, fault: maintainer.create_work_order(machine, fault)
     system = System()
     maintainer = Maintainer()
 
@@ -24,10 +25,9 @@ def main():
     M1 = MachineWithFaults('M1', cycle_time = 1, upstream = [source])
     M1.add_recurring_fault('Fault',
         get_time_to_fault = lambda: geometric_distribution_sample(0.1, 4),
-        get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1))
+        get_time_to_maintain = lambda: geometric_distribution_sample(0.1, 1),
+        failed_callback = schedule_repair)
 
-    on_shutdown_cb = lambda m, is_failure, p: maintainer.create_work_order(m, 'Fault')
-    M1.add_shutdown_callback(on_shutdown_cb)
     sink = Sink(upstream = [M1])
 
     # If time units are minutes then simulation period is a week.

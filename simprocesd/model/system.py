@@ -131,7 +131,7 @@ class System:
 
     def _get_part_count_in_sinks(self):
         from .factory_floor.sink import Sink  # Late import to avoid circular dependency.
-        return sum(x.received_parts_count for x in self._assets if isinstance(x, Sink))
+        return sum(sink.received_parts_count for sink in self.find_assets(type_ = Sink))
 
     def get_net_value_of_assets(self):
         '''Calculate the net value of all Assets which are registered

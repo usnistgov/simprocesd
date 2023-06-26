@@ -1,4 +1,6 @@
-''' Expected parts produced: 20154
+''' Expected parts produced: 20150
+Sink is receiving Batch parts but tracks how many individual parts it
+received.
 '''
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, Batch, PartBatcher, Part
@@ -14,16 +16,14 @@ def main():
     # Source will produce a batch of 2 parts every cycle.
     source = Source(cycle_time = 1, sample_part = source_output)
 
-    # Un-batch and process individually.
+    # Path 1: Unbatch, process individually, and batch parts together again.
     M1 = PartBatcher('M1', upstream = [source], output_batch_size = None)
     M2 = Machine('M2', upstream = [M1], cycle_time = 1)
-    # Process in batches. Cycle time changed to account for batch size.
-    M3 = Machine('M3', upstream = [source], cycle_time = parts_per_batch)
+    M3 = PartBatcher('M3', upstream = [M2], output_batch_size = parts_per_batch)
+    # Path 2: Process in batches. Cycle time changed to account for batch size.
+    M4 = Machine('M4', upstream = [source], cycle_time = parts_per_batch)
 
-    # M4 ensures individual parts are passed to the sink instead of
-    # batches.
-    M4 = PartBatcher('M4', upstream = [M2, M3], output_batch_size = None)
-    sink = Sink(upstream = [M4])
+    sink = Sink(upstream = [M3, M4])
 
     # If time units are minutes then simulation period is a week.
     system.simulate(simulation_duration = 60 * 24 * 7)
