@@ -1,5 +1,6 @@
 # Folders, files, and extensions to ignore.
 .project
+.pydevproject
 
 *.bak
 *.lock
