@@ -1,16 +1,19 @@
 # Code Introduction
 
-Some of the basic that will help understand how SimPROCESD works and how to use it.
+This page contains information and guidelines to help you understand how SimPROCESD works and how to use it effectively.
 
 ## Objects
 
 The package provides the following objects for modeling a manufacturing process:
-- **Source**: Generates new parts for the model; beginning of production path/s.
+- **Source**: Generates new parts for the model; beginning of production path(s).
 - **Machine**: Part processing device. 
 - **Buffer**: Stores parts up to capacity with an optional minimum storage time.
 - **DecisionGate**: Conditionally allow parts to pass between its upstream and downstream.
-- **Sink**: Collect parts at the end of production path/s.
+- **Sink**: Collect parts at the end of production path(s).
 - **PartBatcher**: Enforces output to be individual parts or batches of set size.
+
+Objects above are **devices** which means they can receive and/or pass parts.  
+
 - **Maintainer**: Performs work order requests such as maintenance.
 - **ActionScheduler**: Periodically performs actions on registered objects.
 - **ResourceManager**: Manages limited resources needed by **Machine**s to process parts.
@@ -24,18 +27,25 @@ Simulation time is measured in time units. It is up to the developer of the mode
 
 ## Upstream/Downstream
 
-When deviceA can receive parts from deviceB then deviceA is an upstream device of deviceB.  
-Similarly, deviceB is a downstream device of deviceA.  
+Arrows indicate part flow across devices.  
+![upstrea_downstream_img](./assets/Upstream_downstream.png)
+
+The example above shows (direct) upstream and downstream devices with respect to `M3`. Upstream devices can pass parts to `M3` and downstream devices are the ones which `M3` can pass parts to.
+
 The links between different devices are configured by setting the `upstream` parameter.  
 ```
-    S1 = Source()
-    S2 = Source()
-    M1 = Machine(upstream = [S1, S2])
+    source = Source()
+    M1 = Machine(upstream = [source])
+    M2 = Machine(upstream = [M1])
+    M3 = Machine(upstream = [source, M2])
+    M4 = Machine(upstream = [M3])
+    M5 = Machine(upstream = [M3])
+    sink = Sink(upstream = [M4, M5])
 ```
-- In this setup, `M1` can receive parts from both `S1` and `S2`.
-- Parts are always passed one at a time between devices, however multiple parts may pass between devices before simulation time advances.
+- `M3` can receive parts from both `source` and `M2`.
+- Parts are always passed one at a time between devices, however multiple parts may pass between devices before simulation time advances depending on devices' cycle time.
 
-Upstream list of devices (e.g. `Machine`) can also be updated after instantiation.
+Upstream list of devices (e.g. `Machine`) can be changed after the device has been created.
 ```
 M1 = Machine(upstream = [S1, S2])
 M1.set_upstream([S1])  # S2 is no longer upstream of M1.
@@ -55,11 +65,16 @@ Configuring a device to pass parts to multiple devices:
 - In this setup, parts from `S1` can go to either `M1` or `B1`.  
 - As devices output parts, those parts will be passed to one of the downstream devices prioritizing
 devices that have been waiting for input parts the longest.
-	- To change the priority of a device override the function `<Device_instance>.get_sorted_downstream_list` and to change the default behavior for the whole system override the static funcion `Device.downstream_priority_sorter`.
+    - To change the priority of a device override the function `<Device_instance>.get_sorted_downstream_list` and to change the default behavior for the whole system override the static funcion `Device.downstream_priority_sorter`.
 
-## Basic Example
+## Simple Example
+
+A complete example where parts are created by the `source`, passed to `M1`, and then passed to the `sink`. The simulation is set to run for 100 time units.
 
 ```
+    from simprocesd.model import System
+    from simprocesd.model.factory_floor import Source, Machine, Sink, Part
+    
     system = System()
     part = Part()
     source = Source(sample_part = part, cycle_time = 1)
@@ -67,29 +82,29 @@ devices that have been waiting for input parts the longest.
     sink = Sink(upstream = [M1])
     system.simulate(simulation_duration = 100)
 ```
-Part's flow through the devices: `source` -> `M1` -> `sink`
 
 Same example with additional comments:
+
 ```
     # System needs to be created first so that other simulation objects
     # can register themselves with it automatically.
     system = System()
-	
-	# Create a part object to be used as a sample in the Source.
-	part = Part()
-	
-	# Source will create copies of the sample part every 1 time unit
-	source = Source(sample_part = part, cycle_time = 1)
-	
-	# Create Machine that gets parts from Source and takes 1 time unit
-	# to process the part before passing it downstream.
-	M1 = Machine(upstream = [source], cycle_time = 1)
-	
-	# Sink is the end of the line and can only receive parts.
-	sink = Sink(upstream = [M1])
-	
-	# Run the simulation until 100 time units passed.
-	system.simulate(simulation_duration = 100)
+    
+    # Create a part object to be used as a sample in the Source.
+    part = Part()
+    
+    # Source will create copies of the sample part every 1 time unit
+    source = Source(sample_part = part, cycle_time = 1)
+    
+    # Create Machine that gets parts from Source and takes 1 time unit
+    # to process the part before passing it downstream.
+    M1 = Machine(upstream = [source], cycle_time = 1)
+    
+    # Sink is the end of the line and can only receive parts.
+    sink = Sink(upstream = [M1])
+    
+    # Run the simulation until 100 time units passed.
+    system.simulate(simulation_duration = 100)
 ```
 
 ## Post-Simulation Analysis
@@ -144,6 +159,7 @@ If objects provided to `add_datapoint` are later changed then the recorded datap
 
 &nbsp;  
 These calls can be integrated into other parts like Machine's callbacks:
+
 ```
     M1 = Machine(upstream = [source], cycle_time = 1)
 
@@ -154,7 +170,7 @@ These calls can be integrated into other parts like Machine's callbacks:
 
     # Configure on_received_part to be called every time M1 receives a part.
     M1.add_receive_part_callback(on_received_part)
-	
+    
     ...run simulation...
 
     # Print list of recorded tuples
@@ -163,7 +179,7 @@ These calls can be integrated into other parts like Machine's callbacks:
 
 ### simulation_data Reference
 
-There are build in functions under 
+There are built-in functions under 
 GitHub: [simulation_info_utils.py](https://github.com/usnistgov/simprocesd/blob/master/simprocesd/utils/simulation_info_utils.py) 
 that show graphs based on simulation_data.
 

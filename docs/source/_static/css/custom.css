@@ -1,10 +1,17 @@
-/* Hide the copyright element from rtd theme*/
+/* Hide unused components.*/
 div[role=contentinfo] {
 	visibility: hidden;
 	position: relative;
 	height: 0px;
 }
 
+.wy-breadcrumbs li.wy-breadcrumbs-aside {
+	visibility: hidden;
+	position: relative;
+	height: 0px;
+}
+
+/*Adjust spacing.*/
 p {
     line-height: 24px;
     font-size: 16px;
@@ -16,8 +23,6 @@ p {
     margin-top: 24px;
 }
 
-.wy-breadcrumbs li.wy-breadcrumbs-aside {
-	visibility: hidden;
-	position: relative;
-	height: 0px;
+.rst-content section ul {
+    margin-bottom: 8px;
 }

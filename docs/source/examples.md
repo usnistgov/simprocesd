@@ -2,7 +2,7 @@
 
 All of the examples are part of the open source repository on GitHub: [examples/](https://github.com/usnistgov/simprocesd/tree/master/examples)  
 
-Once you have simprocesd package installed and the source code downloaded you can run examples like so:
+Once you have the SimPROCESD package installed and the source code downloaded you can run examples like so:
 ```
 # To run SingleMachine.py example navigate to the root folder of SimPROCESD
 # and run the following command:
@@ -20,9 +20,11 @@ python -m examples.SingleMachine
 
 **[VariousFlows.py](https://github.com/usnistgov/simprocesd/blob/master/examples/VariousFlows.py)**  
 - Model with 2 parallel production paths that both share one of the machines.
-- [Visual representation of the setup.](https://github.com/usnistgov/simprocesd/blob/master/examples/various_flows_diagram.jpg)
+- Visual representation of the setup (see below):
 	- Top diagram: the design being modeled with M3 machine as part of 2 production paths.
-	- Bottom diagram: the actual model layout with a single M3 machine followed by 2 filters (`DecisionGate`) that control part flow.
+	- Bottom diagram: the actual model layout with a single M3 machine followed by 2 filters (`DecisionGate`) that control part flow.  
+	
+![various_flows_example_diagram](./assets/various_flows_diagram.jpg)
  
 **[PartQuality.py](https://github.com/usnistgov/simprocesd/blob/master/examples/PartQuality.py)**  
 - Changing/updating part quality when parts are processed by machines.

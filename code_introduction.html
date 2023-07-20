@@ -91,7 +91,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li class="toctree-l3"><a class="reference internal" href="#multiple-downstreams">Multiple Downstreams</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-example">Basic Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-example">Simple Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#post-simulation-analysis">Post-Simulation Analysis</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#simulated-sensors">Simulated Sensors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#integrated-data-collection">Integrated Data Collection</a></li>
@@ -132,17 +132,20 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
              
   <section id="code-introduction">
 <h1>Code Introduction<a class="headerlink" href="#code-introduction" title="Permalink to this heading"></a></h1>
-<p>Some of the basic that will help understand how SimPROCESD works and how to use it.</p>
+<p>This page contains information and guidelines to help you understand how SimPROCESD works and how to use it effectively.</p>
 <section id="objects">
 <h2>Objects<a class="headerlink" href="#objects" title="Permalink to this heading"></a></h2>
 <p>The package provides the following objects for modeling a manufacturing process:</p>
 <ul class="simple">
-<li><p><strong>Source</strong>: Generates new parts for the model; beginning of production path/s.</p></li>
+<li><p><strong>Source</strong>: Generates new parts for the model; beginning of production path(s).</p></li>
 <li><p><strong>Machine</strong>: Part processing device.</p></li>
 <li><p><strong>Buffer</strong>: Stores parts up to capacity with an optional minimum storage time.</p></li>
 <li><p><strong>DecisionGate</strong>: Conditionally allow parts to pass between its upstream and downstream.</p></li>
-<li><p><strong>Sink</strong>: Collect parts at the end of production path/s.</p></li>
+<li><p><strong>Sink</strong>: Collect parts at the end of production path(s).</p></li>
 <li><p><strong>PartBatcher</strong>: Enforces output to be individual parts or batches of set size.</p></li>
+</ul>
+<p>Objects above are <strong>devices</strong> which means they can receive and/or pass parts.</p>
+<ul class="simple">
 <li><p><strong>Maintainer</strong>: Performs work order requests such as maintenance.</p></li>
 <li><p><strong>ActionScheduler</strong>: Periodically performs actions on registered objects.</p></li>
 <li><p><strong>ResourceManager</strong>: Manages limited resources needed by <strong>Machine</strong>s to process parts.</p></li>
@@ -156,19 +159,24 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 </section>
 <section id="upstream-downstream">
 <h2>Upstream/Downstream<a class="headerlink" href="#upstream-downstream" title="Permalink to this heading"></a></h2>
-<p>When deviceA can receive parts from deviceB then deviceA is an upstream device of deviceB.<br />
-Similarly, deviceB is a downstream device of deviceA.<br />
-The links between different devices are configured by setting the <code class="docutils literal notranslate"><span class="pre">upstream</span></code> parameter.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">S1</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
-    <span class="n">S2</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
-    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">])</span>
+<p>Arrows indicate part flow across devices.<br />
+<img alt="upstrea_downstream_img" src="_images/Upstream_downstream.png" /></p>
+<p>The example above shows (direct) upstream and downstream devices with respect to <code class="docutils literal notranslate"><span class="pre">M3</span></code>. Upstream devices can pass parts to <code class="docutils literal notranslate"><span class="pre">M3</span></code> and downstream devices are the ones which <code class="docutils literal notranslate"><span class="pre">M3</span></code> can pass parts to.</p>
+<p>The links between different devices are configured by setting the <code class="docutils literal notranslate"><span class="pre">upstream</span></code> parameter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">])</span>
+    <span class="n">M2</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M1</span><span class="p">])</span>
+    <span class="n">M3</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">,</span> <span class="n">M2</span><span class="p">])</span>
+    <span class="n">M4</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M3</span><span class="p">])</span>
+    <span class="n">M5</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M3</span><span class="p">])</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">Sink</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M4</span><span class="p">,</span> <span class="n">M5</span><span class="p">])</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>In this setup, <code class="docutils literal notranslate"><span class="pre">M1</span></code> can receive parts from both <code class="docutils literal notranslate"><span class="pre">S1</span></code> and <code class="docutils literal notranslate"><span class="pre">S2</span></code>.</p></li>
-<li><p>Parts are always passed one at a time between devices, however multiple parts may pass between devices before simulation time advances.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M3</span></code> can receive parts from both <code class="docutils literal notranslate"><span class="pre">source</span></code> and <code class="docutils literal notranslate"><span class="pre">M2</span></code>.</p></li>
+<li><p>Parts are always passed one at a time between devices, however multiple parts may pass between devices before simulation time advances depending on devices’ cycle time.</p></li>
 </ul>
-<p>Upstream list of devices (e.g. <code class="docutils literal notranslate"><span class="pre">Machine</span></code>) can also be updated after instantiation.</p>
+<p>Upstream list of devices (e.g. <code class="docutils literal notranslate"><span class="pre">Machine</span></code>) can be changed after the device has been created.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">])</span>
 <span class="n">M1</span><span class="o">.</span><span class="n">set_upstream</span><span class="p">([</span><span class="n">S1</span><span class="p">])</span>  <span class="c1"># S2 is no longer upstream of M1.</span>
 </pre></div>
@@ -194,9 +202,13 @@ devices that have been waiting for input parts the longest.</p>
 </ul>
 </section>
 </section>
-<section id="basic-example">
-<h2>Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">()</span>
+<section id="simple-example">
+<h2>Simple Example<a class="headerlink" href="#simple-example" title="Permalink to this heading"></a></h2>
+<p>A complete example where parts are created by the <code class="docutils literal notranslate"><span class="pre">source</span></code>, passed to <code class="docutils literal notranslate"><span class="pre">M1</span></code>, and then passed to the <code class="docutils literal notranslate"><span class="pre">sink</span></code>. The simulation is set to run for 100 time units.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">simprocesd.model</span> <span class="kn">import</span> <span class="n">System</span>
+    <span class="kn">from</span> <span class="nn">simprocesd.model.factory_floor</span> <span class="kn">import</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Machine</span><span class="p">,</span> <span class="n">Sink</span><span class="p">,</span> <span class="n">Part</span>
+    
+    <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">()</span>
     <span class="n">part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">()</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">sample_part</span> <span class="o">=</span> <span class="n">part</span><span class="p">,</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
@@ -204,27 +216,26 @@ devices that have been waiting for input parts the longest.</p>
     <span class="n">system</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">simulation_duration</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Part’s flow through the devices: <code class="docutils literal notranslate"><span class="pre">source</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">M1</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">sink</span></code></p>
 <p>Same example with additional comments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># System needs to be created first so that other simulation objects</span>
     <span class="c1"># can register themselves with it automatically.</span>
     <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">()</span>
-	
-	<span class="c1"># Create a part object to be used as a sample in the Source.</span>
-	<span class="n">part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">()</span>
-	
-	<span class="c1"># Source will create copies of the sample part every 1 time unit</span>
-	<span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">sample_part</span> <span class="o">=</span> <span class="n">part</span><span class="p">,</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-	
-	<span class="c1"># Create Machine that gets parts from Source and takes 1 time unit</span>
-	<span class="c1"># to process the part before passing it downstream.</span>
-	<span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-	
-	<span class="c1"># Sink is the end of the line and can only receive parts.</span>
-	<span class="n">sink</span> <span class="o">=</span> <span class="n">Sink</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M1</span><span class="p">])</span>
-	
-	<span class="c1"># Run the simulation until 100 time units passed.</span>
-	<span class="n">system</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">simulation_duration</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+    
+    <span class="c1"># Create a part object to be used as a sample in the Source.</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">()</span>
+    
+    <span class="c1"># Source will create copies of the sample part every 1 time unit</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">sample_part</span> <span class="o">=</span> <span class="n">part</span><span class="p">,</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Create Machine that gets parts from Source and takes 1 time unit</span>
+    <span class="c1"># to process the part before passing it downstream.</span>
+    <span class="n">M1</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">],</span> <span class="n">cycle_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Sink is the end of the line and can only receive parts.</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">Sink</span><span class="p">(</span><span class="n">upstream</span> <span class="o">=</span> <span class="p">[</span><span class="n">M1</span><span class="p">])</span>
+    
+    <span class="c1"># Run the simulation until 100 time units passed.</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">simulation_duration</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -344,7 +355,7 @@ These calls can be integrated into other parts like Machine’s callbacks:</p>
 
     <span class="c1"># Configure on_received_part to be called every time M1 receives a part.</span>
     <span class="n">M1</span><span class="o">.</span><span class="n">add_receive_part_callback</span><span class="p">(</span><span class="n">on_received_part</span><span class="p">)</span>
-	
+    
     <span class="o">...</span><span class="n">run</span> <span class="n">simulation</span><span class="o">...</span>
 
     <span class="c1"># Print list of recorded tuples</span>
@@ -354,7 +365,7 @@ These calls can be integrated into other parts like Machine’s callbacks:</p>
 </section>
 <section id="simulation-data-reference">
 <h3>simulation_data Reference<a class="headerlink" href="#simulation-data-reference" title="Permalink to this heading"></a></h3>
-<p>There are build in functions under
+<p>There are built-in functions under
 GitHub: <a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/simprocesd/utils/simulation_info_utils.py">simulation_info_utils.py</a>
 that show graphs based on simulation_data.</p>
 </section>
