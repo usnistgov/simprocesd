@@ -109,7 +109,7 @@ class SourceTestCase(TestCase):
 
     def test_max_produced_parts(self):
         part = Part('n', 10, 3)
-        source = Source(sample_part = part, max_produced_parts = 5, cycle_time = 1)
+        source = Source(sample_part = part, starting_parts = 5, cycle_time = 1)
         downstream = MagicMock(spec = Machine)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
@@ -122,6 +122,7 @@ class SourceTestCase(TestCase):
             self.assertEqual(source.value, -10 * i)
             self.assertEqual(source.produced_parts, i)
             self.assertEqual(source.cost_of_produced_parts, 10 * i)
+            self.assertEqual(source.remaining_parts, 5 - i)
 
         source._finish_processing_part()
         source._pass_part_downstream()
@@ -143,6 +144,34 @@ class SourceTestCase(TestCase):
                                          EventType.PASS_PART)
         source._pass_part_downstream()
         downstream.give_part.assert_called_once()
+
+    def test_adjust_part_count(self):
+        source = Source(sample_part = Part(), starting_parts = 5)
+        downstream = MagicMock(spec = Machine)
+        downstream.give_part.return_value = True
+        source._add_downstream(downstream)
+        source.initialize(self.env)
+        self.assertEqual(source.remaining_parts, 5)
+
+        source.adjust_part_count(3)
+        self.assertEqual(source.remaining_parts, 8)
+        source.adjust_part_count(-6)
+        self.assertEqual(source.remaining_parts, 2)
+
+        source._finish_processing_part()
+        source._pass_part_downstream()
+        self.assertEqual(source.produced_parts, 1)
+        self.assertEqual(source.remaining_parts, 1)
+
+        source.adjust_part_count(-6)
+        self.assertEqual(source.remaining_parts, 0)
+        source._finish_processing_part()
+        source._pass_part_downstream()
+        self.assertEqual(source.produced_parts, 1)
+        self.assertEqual(source.remaining_parts, 0)
+
+        source.adjust_part_count(42)
+        self.assertEqual(source.remaining_parts, 42)
 
 
 if __name__ == '__main__':

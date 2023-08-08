@@ -67,9 +67,9 @@ class Buffer(Device):
         else:
             return super()._can_accept_part(part)
 
-    def _accept_part(self, part):
-        super()._accept_part(part)
+    def _on_received_new_part(self):
         self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
+        super()._on_received_new_part()
 
     def _try_move_part_to_output(self):
         if not self.is_operational() and self._part != None:
