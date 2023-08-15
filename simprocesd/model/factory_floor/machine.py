@@ -287,7 +287,7 @@ class Machine(Device, Maintainable):
     def is_operational(self):
         return not self._is_shut_down
 
-    def _reserve_resource_callback(self, request):
+    def _reserve_resource_callback(self, resource_manager, request):
         '''When requested resources are available the Machine will
         signal that it can receive a Part. When a new Part is offered to
         the Machine, it will try to reserve the resources.

@@ -334,7 +334,7 @@ class MachineTestCase(TestCase):
         self.rm.reserve_resources_with_callback.assert_called_once()
 
         self.upstream[0].space_available_downstream.assert_not_called()
-        machine._reserve_resource_callback({'tool': 1})
+        machine._reserve_resource_callback(self.rm, {'tool': 1})
         self.upstream[0].space_available_downstream.assert_called_once()
 
     def test_resource_request_with_failure(self):

@@ -1,29 +1,25 @@
 import copy
 
 from . import EventType
+from ..utils import assert_is_instance
 
 
 class ResourceManager:
-    '''Provides a pool of limited resources which can be reserved by
-    callers and released back to the resource pool.
+    '''Provides pools of limited resources which can be reserved by
+    callers and released back.
 
-    Callers can try to reserve resources immediately or they can provide
-    a callback function to be invoked when the requested resources are
-    available.
+    An attempt to reserve resources can be made immediately or a
+    callback function to be registered to be invoked when the requested
+    resources are available.
     '''
 
     def __init__(self):
+        # Dictionary: {resource name: (current use, maximum)}
         self._resources = {}
         self._waiting_requests = []
         self._env = None
         self._name = f'{type(self).__name__}'
         self._init_count = 0
-
-    @property
-    def available_resources(self):
-        '''Return a dictionary of unreserved resources.
-        '''
-        return copy.deepcopy(self._resources)
 
     def initialize(self, env):
         '''Prepare ResourceManager for simulation and reset attributes
@@ -46,10 +42,47 @@ class ResourceManager:
             self._resources = copy.deepcopy(self._initial_resources)
 
         # Record initial resource amounts.
-        for resource_name, amount in self._resources.items():
+        for resource_name in self._resources.keys():
             self._record_resource_amount_update(resource_name)
 
         self._init_count += 1
+
+    def get_resource_usage(self, resource_name):
+        '''Get how much of a resource is currently reserved/in-use.
+
+        Arguments
+        ---------
+        resource_name: str
+            Resource type identifier.
+
+        Returns
+        -------
+        float
+            How much of the specified resource is currently reserved.
+        '''
+        try:
+            return self._resources[resource_name][0]
+        except KeyError:
+            return 0.0
+
+    def get_resource_capacity(self, resource_name):
+        '''Get total capacity of a resource (reserved + unreserved).
+
+        Arguments
+        ---------
+        resource_name: str
+            Resource type identifier.
+
+        Returns
+        -------
+        float
+            What is the total amount of the specified resource, this
+            includes both reserved and unreserved resources.
+        '''
+        try:
+            return self._resources[resource_name][1]
+        except KeyError:
+            return 0.0
 
     def add_resources(self, resource_name, amount):
         '''Add new unreserved resources or reduce the pool of available
@@ -59,28 +92,29 @@ class ResourceManager:
         ---------
         resource_name: str
             Resource type identifier.
-        amount: float
-            How much of the specified resource type to add or remove if
-            the value is negative.
+        amount: int, float
+            How much of the specified resource type to add. If the value
+            is negative then then maximum pool of that resource will be
+            reduced.
 
         Raises
         ------
         ValueError
-            When trying to release more of a resource than is currently
-            unreserved.
+            When trying to reduce a resource by more than the maximum
+            capacity of that resource.
         '''
+        assert type(resource_name) == str, 'Resource identifier must be a string.'
         if amount == 0:
             return
-        elif amount > 0:
+        else:
             try:
-                self._resources[resource_name] += amount
+                in_use, max_available = self._resources[resource_name]
+                if amount < 0 and max_available + amount < 0:
+                    raise ValueError(f'Cannot reduce amount of available resource {resource_name}'
+                                     +' below zero.')
+                self._resources[resource_name] = (in_use, max_available + amount)
             except KeyError:
-                self._resources[resource_name] = amount
-        else:  # amount < 0
-            if self._resources[resource_name] < -amount:
-                raise ValueError(f'Cannot reduce amount of available resource {resource_name}'
-                                 +' below zero.')
-            self._resources[resource_name] -= amount
+                self._resources[resource_name] = (0.0, amount)
 
         if self._env != None:
             self._record_resource_amount_update(resource_name)
@@ -96,41 +130,49 @@ class ResourceManager:
         ---------
         request: Dictionary
             A dictionary where each entry specifies what resource is
-            requested and the amount requested, resource_name:amount.
+            requested and an amount requested that is >= 0. For example:
+            {'resourceA': 10, 'resourceB': 1}
 
         Returns
         -------
-        ReservedResources with requested resources if successful.
-        Calling .release() on the returned object will make the reserved
-        resources available again.
-        Returns None if requested resources could not be reserved.
+        ReservedResources
+            ReservedResources with reserved resources if successful.
+            Returns None if the request could not be fulfilled.
         '''
-        if self._can_fulfill_request(request):
+        filtered_request = {name: n for name, n in request.items() if n > 0}
+        if self._can_fulfill_request(filtered_request):
             # Reduce pools of available resources.
             for resource_name, amount in request.items():
-                self._resources[resource_name] -= amount
+                if amount == 0:
+                    continue
+                if amount < 0:
+                    raise ValueError(f'Requested amount for {resource_name} is less than 0.')
+                in_use, max_available = self._resources[resource_name]
+                self._resources[resource_name] = (in_use + amount, max_available)
                 self._record_resource_amount_update(resource_name)
-            return ReservedResources(self, copy.deepcopy(request))
+            return ReservedResources(self, filtered_request)
         else:
             return None
 
     def reserve_resources_with_callback(self, request, callback):
-        '''Set the callback function to be called when the request can
-        be fulfilled.
+        '''Register a callback function to be invoked when the request
+        can be fulfilled.
 
-        The caller can use .reserve_resources within the callback to
-        ensure that the available resources are not reserved elsewhere.
+        Resources will not be automatically reserved when the callback
+        is invoked. The caller can use the reserve_resources function
+        within the callback to immediately reserve those resources.
 
         Arguments
         ---------
         request: Dictionary
             A Dictionary where each entry specifies what resource is
             requested and the amount requested, resource_name:amount.
-        callback: function
+        callback: function(resource_manager, request)
             Function to be invoked when there are sufficient available
             resources to fulfill the request.
-            The functions needs to accept one parameter which will be
-            the copy of the request.
+            The callback needs to accept two parameter:
+            - the resource manager
+            - copy of the request Dictionary
         '''
         self._waiting_requests.append((copy.deepcopy(request), callback))
         self._schedule_check_pending_requesters()
@@ -143,35 +185,41 @@ class ResourceManager:
         i = 0
         while i < len(self._waiting_requests):
             if self._can_fulfill_request(self._waiting_requests[i][0]):
-                self._waiting_requests[i][1](self._waiting_requests[i][0])
+                self._waiting_requests[i][1](self, self._waiting_requests[i][0])
                 self._waiting_requests.pop(i)
             else:
                 i += 1
 
     def _release_resources(self, resources):
         for resource_name, amount in resources.items():
-            self._resources[resource_name] += amount
+            if amount == 0:
+                continue
+            in_use, max_available = self._resources[resource_name]
+            self._resources[resource_name] = (in_use - amount, max_available)
             self._record_resource_amount_update(resource_name)
         self._schedule_check_pending_requesters()
 
     def _can_fulfill_request(self, request):
-        for resource_name, amount in request.items():
+        for resource_name, requested_amount in request.items():
+            if requested_amount == 0:
+                continue
             try:
-                if self._resources[resource_name] < amount:
+                in_use, max_available = self._resources[resource_name]
+                if max_available - in_use < requested_amount:
                     return False
             except KeyError:
                 return False
         return True
 
     def _record_resource_amount_update(self, resource_name):
-        self._env.add_datapoint('resource_update', resource_name,
-                                (self._env.now, self._resources[resource_name]))
+        in_use, max_available = self._resources[resource_name]
+        self._env.add_datapoint('resource_update', resource_name, (self._env.now, in_use, max_available))
 
 
 class ReservedResources():
     '''Tracks reserved resources from a request.
 
-    Use .release() function to release all reserved resources tracked by
+    Use .release() function to release the reserved resources tracked by
     this ReservedResources instance.
     '''
 
@@ -193,14 +241,16 @@ class ReservedResources():
         ---------
         resources: Dictionary, default=None
             A Dictionary where each entry specifies what resource to
-            release and the amount to be released, resource_name:amount
+            release and an amount to be released that is >= 0.
+            For example: {'resourceA': 10, 'resourceB': 1}
             If None then it will release all the resources reserved here.
 
         Raises
         ------
         ValueError
             If trying to release an amount of a resources that is more
-            than is still reserved.
+            than is still reserved or trying to release a negative
+            amount of a resource.
         RuntimeError
             When trying to release resources after the simulation was
             reset.
@@ -215,14 +265,46 @@ class ReservedResources():
             # If resources to release were specified then ensure that
             # sufficient resources are reserved.
             for resource_name, amount in resources.items():
-                if self._reserved_resources[resource_name] < amount:
-                    raise ValueError(f'Trying to release {amount} of {resource_name} but only ' + \
-                                    f'{self._reserved_resources[resource_name]} is reserved.')
+                if amount < 0:
+                    raise ValueError(f'Trying to release a negative amount of {resource_name}')
+                try:
+                    if amount != 0 and self._reserved_resources[resource_name] < amount:
+                        raise ValueError(f'Trying to release {amount} of {resource_name} but only ' + \
+                                        f'{self._reserved_resources[resource_name]} is reserved.')
+                except KeyError:
+                    raise KeyError(f'This request did not reserve any {resource_name}')
 
         self._resource_manager._release_resources(resources)
         # Reduce reserved resources by amounts released.
+        to_delete = []
         for resource_name, amount in resources.items():
-            self._reserved_resources[resource_name] -= amount
+            if amount > 0:
+                self._reserved_resources[resource_name] -= amount
+            if self._reserved_resources[resource_name] == 0:
+                to_delete.append(resource_name)
+        # Remove from the dictionary of reserved resources any resource
+        # pool that reaches 0..
+        for resource_name in to_delete:
+            del self._reserved_resources[resource_name]
+
+    def merge(self, reserved_resources):
+        '''Merge the resources reserved by another ReservedResources
+        object into this one.
+
+        Arguments
+        ---------
+        reserved_resources: ReservedResources
+            ReservedResources object whose reserved resources will be
+            merged into this. The provided reserved_resources object
+            will be set to have no reserve resources.
+        '''
+        assert_is_instance(reserved_resources, ReservedResources)
+        for resource_name, amount in reserved_resources._reserved_resources.items():
+            try:
+                self._reserved_resources[resource_name] += amount
+            except KeyError:
+                self._reserved_resources[resource_name] = amount
+        reserved_resources._reserved_resources = {}
 
     def __del__(self):
         if (self._init_count_when_made != self._resource_manager._init_count
@@ -230,9 +312,4 @@ class ReservedResources():
             # Simulation is over or it has been reset since the
             # resources were reserved.
             return
-        for resource_name, amount in self._reserved_resources.items():
-            if amount != 0:
-                print(f'WARNING: ReservedResources was deleted/GCed before releasing it\'s resources:')
-                print(f'\t{self._reserved_resources}')
-                return
 
