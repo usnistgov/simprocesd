@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Part, Machine, Buffer
+from ....model.factory_floor import Batch, Buffer, Machine, Part
 
 
 class BufferTestCase(TestCase):
@@ -35,6 +35,7 @@ class BufferTestCase(TestCase):
         buffer.initialize(self.env)
         self.assertEqual(buffer.name, 'name')
         self.assertEqual(buffer.upstream, self.upstream)
+        self.assertEqual(buffer.capacity, 10)
         self.assertEqual(buffer.value, 20)
         self.assertEqual(buffer.level(), 0)
         self.assertListEqual(buffer.stored_parts, [])
@@ -114,6 +115,19 @@ class BufferTestCase(TestCase):
         for i in range(4):
             args, kwards = self.downstream.give_part.call_args_list[i]
             self.assertEqual(args[0], parts[i])
+
+    def test_give_batch(self):
+        big_batch = Batch(parts = [Part(), Part(), Part()])
+        batch = Batch(parts = [Part(), Part()])
+        buffer = Buffer('name', self.upstream, minimum_delay = 5, capacity = 2)
+        buffer.initialize(self.env)
+
+        self.assertEqual(buffer.level(), 0)
+
+        self.assertFalse(buffer.give_part(big_batch))
+        self.assertTrue(buffer.give_part(batch))
+        self.assertEqual(buffer.level(), 2)
+        self.assertEqual(buffer.capacity, 2)
 
     def test_minimum_delay(self):
         buffer = Buffer(minimum_delay = 100, capacity = 4)

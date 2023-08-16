@@ -2,6 +2,7 @@ import math
 import numpy as np
 
 from .machine import Device
+from .batch import Batch
 
 
 class Buffer(Device):
@@ -42,10 +43,12 @@ class Buffer(Device):
             self._capacity = math.floor(capacity)
         assert self._capacity >= 1, 'Capacity has to be at least 1.'
         self._buffer = []
+        self._level = 0
 
     def initialize(self, env):
         super().initialize(env)
         self._buffer = []
+        self._level = 0
 
     @property
     def stored_parts(self):
@@ -53,18 +56,27 @@ class Buffer(Device):
         '''
         return [x[1] for x in self._buffer]
 
+    @property
+    def capacity(self):
+        '''Maximum number of Parts that can be stored in the Buffer.
+        '''
+        return self._capacity
+
     def level(self):
         '''Returns
         -------
         int
-            Number of Parts currently stored in the Buffer.
+            Number of Parts currently stored in the Buffer. Each Part
+            within a Batch counts as a separate Part.
         '''
-        return len(self._buffer) + (1 if self._part != None else 0)
+        return self._level
 
     def _can_accept_part(self, part):
-        if len(self._buffer) >= self._capacity:
+        part_count = Buffer._get_part_count(part)
+        if self.level() + part_count > self._capacity:
             return False
         else:
+            self._level += part_count
             return super()._can_accept_part(part)
 
     def _on_received_new_part(self):
@@ -79,7 +91,7 @@ class Buffer(Device):
         self._part = None
         self.notify_upstream_of_available_space()
         if len(self._buffer) == 1:
-            # Only if buffer was empty before this new part arrived.
+            # Indicates that the buffer was empty.
             self._schedule_pass_part_downstream(delay = self._minimum_delay)
 
     def notify_upstream_of_available_space(self):
@@ -100,7 +112,9 @@ class Buffer(Device):
                 break
             can_continue = False
             for dwn in self.get_sorted_downstream_list():
+                part_count = Buffer._get_part_count(self._buffer[0][1])
                 if dwn.give_part(self._buffer[0][1]):
+                    self._level -= part_count
                     self._buffer.pop(0)
                     self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
                     can_continue = True
@@ -115,4 +129,11 @@ class Buffer(Device):
             else:
                 self._waiting_for_space_availability = True
         self.notify_upstream_of_available_space()
+
+    @staticmethod
+    def _get_part_count(part):
+        if isinstance(part, Batch):
+            return len(part.parts)
+        else:
+            return 1
 
