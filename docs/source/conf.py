@@ -8,7 +8,7 @@
 
 project = 'SimPROCESD'
 author = 'Serghei Drozdov'
-release = '0.2.0'
+release = '0.3.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

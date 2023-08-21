@@ -5,10 +5,10 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>simprocesd.utils package &mdash; SimPROCESD 0.2.0 documentation</title>
+  <title>simprocesd.utils package &mdash; SimPROCESD 0.3.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />    
@@ -46,11 +46,11 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
 	
 	<!-- leave notice that is to be used when opening external link. -->
@@ -69,11 +69,15 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> SimPROCESD
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SimPROCESD
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -84,6 +88,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li class="toctree-l1"><a class="reference internal" href="../about.html">About SimPROCESD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_a_deeper_look.html">Code, a Deeper Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="simprocesd.html">simprocesd package</a><ul class="current">
@@ -91,7 +96,6 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li class="toctree-l3"><a class="reference internal" href="simprocesd.model.html">simprocesd.model package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">simprocesd.utils package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-simprocesd.utils.enums">simprocesd.utils.enums module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-simprocesd.utils.math_utils">simprocesd.utils.math_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-simprocesd.utils.simulation_info_utils">simprocesd.utils.simulation_info_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-simprocesd.utils.utils">simprocesd.utils.utils module</a></li>
@@ -118,9 +122,9 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="simprocesd.html">simprocesd package</a> &raquo;</li>
-      <li>simprocesd.utils package</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="simprocesd.html">simprocesd package</a></li>
+      <li class="breadcrumb-item active">simprocesd.utils package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/api_docs/simprocesd.utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -131,40 +135,15 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
            <div itemprop="articleBody">
              
   <section id="simprocesd-utils-package">
-<h1>simprocesd.utils package<a class="headerlink" href="#simprocesd-utils-package" title="Permalink to this heading"></a></h1>
+<h1>simprocesd.utils package<a class="headerlink" href="#simprocesd-utils-package" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
-<section id="module-simprocesd.utils.enums">
-<span id="simprocesd-utils-enums-module"></span><h2>simprocesd.utils.enums module<a class="headerlink" href="#module-simprocesd.utils.enums" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="simprocesd.utils.enums.DataStorageType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.utils.enums.</span></span><span class="sig-name descname"><span class="pre">DataStorageType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.enums.DataStorageType" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
-<p>Options for how to store data.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simprocesd.utils.enums.DataStorageType.FILE">
-<span class="sig-name descname"><span class="pre">FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#simprocesd.utils.enums.DataStorageType.FILE" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simprocesd.utils.enums.DataStorageType.MEMORY">
-<span class="sig-name descname"><span class="pre">MEMORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#simprocesd.utils.enums.DataStorageType.MEMORY" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simprocesd.utils.enums.DataStorageType.NONE">
-<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simprocesd.utils.enums.DataStorageType.NONE" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-simprocesd.utils.math_utils">
-<span id="simprocesd-utils-math-utils-module"></span><h2>simprocesd.utils.math_utils module<a class="headerlink" href="#module-simprocesd.utils.math_utils" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-utils-math-utils-module"></span><h2>simprocesd.utils.math_utils module<a class="headerlink" href="#module-simprocesd.utils.math_utils" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.math_utils.geometric_distribution_sample">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">geometric_distribution_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_successes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.math_utils.geometric_distribution_sample" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">geometric_distribution_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_successes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.math_utils.geometric_distribution_sample" title="Link to this definition"></a></dt>
 <dd><p>How many Bernoulli trials will it take to reach a number of
 successes.</p>
 <p>This function performs random trials based on provided probability.
@@ -172,16 +151,16 @@ Because the trials are random calling the function will same
 parameters does not mean same results.</p>
 <p>Randomness is generated with Python’s ‘random’ module.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>probability</strong> (<em>float</em>) – Chance of success of each trial (0 to 1).</p></li>
 <li><p><strong>target_successes</strong> (<em>int</em><em>, </em><em>default=1</em>) – Desired number of successes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Number of iterations it took to get desired number of successes.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -189,22 +168,54 @@ parameters does not mean same results.</p>
 
 </section>
 <section id="module-simprocesd.utils.simulation_info_utils">
-<span id="simprocesd-utils-simulation-info-utils-module"></span><h2>simprocesd.utils.simulation_info_utils module<a class="headerlink" href="#module-simprocesd.utils.simulation_info_utils" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-utils-simulation-info-utils-module"></span><h2>simprocesd.utils.simulation_info_utils module<a class="headerlink" href="#module-simprocesd.utils.simulation_info_utils" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_damage">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_damage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_damage" title="Permalink to this definition"></a></dt>
-<dd><p>Show a step function graph of damage over time for each machine.</p>
+<dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_buffer_levels">
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_buffer_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_buffer_levels" title="Link to this definition"></a></dt>
+<dd><p>Show a graph of Buffer levels over time.</p>
 <p>Graph is shown using matplotlib library.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Won’t work if System was initialized with
-simulation_data_storage_type = DataStorageType.NONE</p>
-</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p></li>
-<li><p><strong>machines</strong> (<em>list</em>) – List of Machines to plot.</p></li>
+<li><p><strong>buffers</strong> (<em>list</em>) – List of Buffers whose data will be plotted.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_damage">
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_damage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_damage" title="Link to this definition"></a></dt>
+<dd><p>Show a graph of damage over time for MachineWithDamage.</p>
+<p>Graph is shown using matplotlib library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p></li>
+<li><p><strong>machines</strong> (<em>list</em>) – List of Machines whose damage data will be plotted. One example
+of a Machine that tracks damage is MachineWithDamage.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_resources">
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hide_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_resources" title="Link to this definition"></a></dt>
+<dd><p>Show a graph of active resource usage over time.</p>
+<p>Graph is shown using matplotlib library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p></li>
+<li><p><strong>resources</strong> (<em>list</em>) – List of resource names for resources whose data will be plotted.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
 </ul>
 </dd>
 </dl>
@@ -212,21 +223,18 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_throughput">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_throughput" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_throughput" title="Link to this definition"></a></dt>
 <dd><p>Show a graph of cumulative mean throughput over time.</p>
 <p>Cumulative throughput means at time=100 the graph will show the mean
 throughput between time 0 and 100.</p>
 <p>Graph is shown using matplotlib library.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Won’t work if System was initialized with
-simulation_data_storage_type = DataStorageType.NONE</p>
-</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p></li>
-<li><p><strong>machines</strong> (<em>list</em>) – List of Machines to plot.</p></li>
+<li><p><strong>machines</strong> (<em>list</em>) – List of Machines whose data will be plotted.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
 </ul>
 </dd>
 </dl>
@@ -234,28 +242,27 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.plot_value">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assets</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_value" title="Permalink to this definition"></a></dt>
-<dd><p>Show a graph of value over time for assets.</p>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">plot_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.plot_value" title="Link to this definition"></a></dt>
+<dd><p>Show a graph of value over time for any assets.</p>
 <p>Graph is shown using matplotlib library.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>assets</strong> (<em>list</em>) – List of Asset objects to plot.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>assets</strong> (<em>list</em>) – List of Assets whose data will be plotted.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.print_finished_work_order_counts">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">print_finished_work_order_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.print_finished_work_order_counts" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">print_finished_work_order_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.print_finished_work_order_counts" title="Link to this definition"></a></dt>
 <dd><p>Print which machines had work orders completed on them and how
 many of those work orders there were.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Won’t work if System was initialized with
-simulation_data_storage_type = DataStorageType.NONE</p>
-</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p>
 </dd>
 </dl>
@@ -263,19 +270,14 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.print_produced_parts_and_average_quality">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">print_produced_parts_and_average_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.print_produced_parts_and_average_quality" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">print_produced_parts_and_average_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.print_produced_parts_and_average_quality" title="Link to this definition"></a></dt>
 <dd><p>Print the number of Parts produced by each machine in the list
 and the Part’s average quality.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Won’t work if System was initialized with
-simulation_data_storage_type = DataStorageType.NONE</p>
-</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>system</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.system.System" title="simprocesd.model.system.System"><em>System</em></a>) – System object used in the simulation.</p></li>
-<li><p><strong>machines</strong> (<em>list</em>) – List of Machines to consider.</p></li>
+<li><p><strong>machines</strong> (<em>list</em>) – List of Machines whose data will be printed.</p></li>
 </ul>
 </dd>
 </dl>
@@ -283,14 +285,19 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.simulation_info_utils.simple_plot">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">simple_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.simple_plot" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.simulation_info_utils.</span></span><span class="sig-name descname"><span class="pre">simple_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.simulation_info_utils.simple_plot" title="Link to this definition"></a></dt>
 <dd><p>Show a graph with a single plot from the provided data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>list</em>) – List of x values.</p></li>
 <li><p><strong>y</strong> (<em>list</em>) – List of y values, must be same length as &lt;x&gt;.</p></li>
-<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Graph title.</p></li>
+<li><p><strong>data_label</strong> – Label for the data being graphed.</p></li>
+<li><p><strong>fmt</strong> (<em>string</em><em>, </em><em>default = None</em>) – Format string that defines the appearance of the line.
+See matplotlib.pyplot.plot documentation for more information.</p></li>
+<li><p><strong>subplot</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>default = None</em>) – Optional subplot to graph the data on.
+If None then a new figure will be created and shown.</p></li>
 </ul>
 </dd>
 </dl>
@@ -298,24 +305,24 @@ simulation_data_storage_type = DataStorageType.NONE</p>
 
 </section>
 <section id="module-simprocesd.utils.utils">
-<span id="simprocesd-utils-utils-module"></span><h2>simprocesd.utils.utils module<a class="headerlink" href="#module-simprocesd.utils.utils" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-utils-utils-module"></span><h2>simprocesd.utils.utils module<a class="headerlink" href="#module-simprocesd.utils.utils" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.utils.assert_callable">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">assert_callable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">none_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.assert_callable" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">assert_callable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">none_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.assert_callable" title="Link to this definition"></a></dt>
 <dd><p>Check if an object appears callable.</p>
 <p>The check is done using the built-in ‘callable()’ function. In some
 cases it is possible the function not to raise an error even if
 &lt;obj&gt; cannot be called like a function.</p>
 <p>Returns immediately if not in debug mode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> (<em>object</em>) – Object that will be checked.</p></li>
 <li><p><strong>none_allowed</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If the value of None is allowed.</p></li>
 <li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – Error message if object is not callable.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TypeError</strong> – If object is not callable.</p>
 </dd>
 </dl>
@@ -323,18 +330,19 @@ cases it is possible the function not to raise an error even if
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.utils.assert_is_instance">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">assert_is_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.assert_is_instance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">assert_is_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.assert_is_instance" title="Link to this definition"></a></dt>
 <dd><p>Check if an object is an instance of a specific class type.</p>
 <p>Returns immediately if not in debug mode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> (<em>object</em>) – Object that will be checked.</p></li>
-<li><p><strong>class_type</strong> (<em>type</em>) – Class type that the object needs to be.</p></li>
+<li><p><strong>class_type</strong> (<em>type</em>) – Class type that the object needs to be or a tuple of all
+acceptable class types.</p></li>
 <li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – Error message if object is not an instance of &lt;class_type&gt;.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>TypeError</strong> – If &lt;obj&gt; is not an instance of &lt;class_type&gt;</p>
 </dd>
 </dl>
@@ -342,7 +350,7 @@ cases it is possible the function not to raise an error even if
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.utils.load_object">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">load_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.load_object" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">load_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.load_object" title="Link to this definition"></a></dt>
 <dd><p>Load an object from a file that was created using save_object().</p>
 <p>See save_object() for information on how objects are stored.</p>
 <div class="admonition warning">
@@ -352,7 +360,7 @@ Recommended to only load object from files you created or ones from
 a source with a high degree of trust.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Relative or absolute path to the file to load.</p>
 </dd>
 </dl>
@@ -360,7 +368,7 @@ a source with a high degree of trust.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.utils.save_list_to_csv">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">save_list_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.save_list_to_csv" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">save_list_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.save_list_to_csv" title="Link to this definition"></a></dt>
 <dd><p>Save a list or table as a CSV file.</p>
 <p>Each list entry will occupy one row and if the list entry is a list
 or a tuple then the entry’s elements will be split into columns.</p>
@@ -375,7 +383,7 @@ or a tuple then the entry’s elements will be split into columns.</p>
 </div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – Relative or absolute path of where to store the CSV file.</p></li>
 <li><p><strong>data_list</strong> (<em>list</em>) – Data to be stored, can be a 1 or 2 dimensional list.</p></li>
@@ -386,13 +394,13 @@ or a tuple then the entry’s elements will be split into columns.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simprocesd.utils.utils.save_object">
-<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">save_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.save_object" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">simprocesd.utils.utils.</span></span><span class="sig-name descname"><span class="pre">save_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.utils.utils.save_object" title="Link to this definition"></a></dt>
 <dd><p>Serialize, compress, and save an object as a file.</p>
 <p>Uses Dill module to serialize the object.
 <a class="reference external" href="https://pypi.org/project/dill/">https://pypi.org/project/dill/</a></p>
 <p>Serialized data is compresses using lzma module.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> (<em>object</em>) – Object to be serialized and stored.</p></li>
 <li><p><strong>file_path</strong> (<em>str</em>) – Relative or absolute path of where to store the object.</p></li>
@@ -400,7 +408,7 @@ or a tuple then the entry’s elements will be split into columns.</p>
 overwritten.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>FileExistsError</strong> – If a file at &lt;file_path&gt; already exists and &lt;override_file&gt; is
     set to False.</p>
 </dd>
@@ -409,7 +417,7 @@ overwritten.</p></li>
 
 </section>
 <section id="module-simprocesd.utils">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.utils" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.utils" title="Link to this heading"></a></h2>
 </section>
 </section>
 

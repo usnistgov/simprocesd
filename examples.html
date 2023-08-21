@@ -5,10 +5,10 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples &mdash; SimPROCESD 0.2.0 documentation</title>
+  <title>Examples &mdash; SimPROCESD 0.3.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />    
@@ -46,11 +46,11 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=e259d695"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
 	
 	<!-- leave notice that is to be used when opening external link. -->
@@ -61,7 +61,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="simprocesd package" href="api_docs/simprocesd.html" />
-    <link rel="prev" title="Code Introduction" href="code_introduction.html" />
+    <link rel="prev" title="Code, a Deeper Look" href="code_a_deeper_look.html" />
  
 </head>
 
@@ -70,11 +70,15 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> SimPROCESD
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SimPROCESD
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,6 +89,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li class="toctree-l1"><a class="reference internal" href="about.html">About SimPROCESD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_a_deeper_look.html">Code, a Deeper Look</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_docs/simprocesd.html">simprocesd package</a></li>
@@ -103,8 +108,8 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Examples</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/examples.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -115,87 +120,100 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
            <div itemprop="articleBody">
              
   <section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
 <p>All of the examples are part of the open source repository on GitHub: <a class="reference external" href="https://github.com/usnistgov/simprocesd/tree/master/examples">examples/</a></p>
-<p>Once you have the SimPROCESD package installed and the source code downloaded you can run examples like so:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># To run SingleMachine.py example navigate to the root folder of SimPROCESD</span>
-<span class="c1"># and run the following command:</span>
-<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">examples</span><span class="o">.</span><span class="n">SingleMachine</span>
+<p>Once you have the source code downloaded and the SimPROCESD package installed you can run examples like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Navigate to the root folder of SimPROCESD source code and run the following command:</span>
+<span class="n">python</span> <span class="n">examples</span><span class="o">/</span><span class="n">SingleProcessor</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachine.py">SingleMachine.py</a></strong></p>
+<p>List of examples with notes on what each one shows:</p>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleProcessor.py">SingleProcessor.py</a></strong></p>
 <ul class="simple">
-<li><p>Basic setup: Source -&gt; Machine -&gt; Sink</p></li>
+<li><p>Basic setup: Source -&gt; PartProcessor -&gt; Sink</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/BufferExample.py">BufferExample.py</a></strong></p>
 <ul class="simple">
-<li><p>Using a <code class="docutils literal notranslate"><span class="pre">Buffer</span></code>.</p></li>
+<li><p>Using a Buffer.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ParallelStations.py">ParallelStations.py</a></strong></p>
 <ul class="simple">
-<li><p>Multi-stage production line with multiple machines in each stage running in parallel.</p></li>
+<li><p>Modeling a multi-stage production line with multiple processors in each stage.</p></li>
 </ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/VariousFlows.py">VariousFlows.py</a></strong></p>
-<ul class="simple">
-<li><p>Model with 2 parallel production paths that both share one of the machines.</p></li>
-<li><p>Visual representation of the setup (see below):</p>
-<ul>
-<li><p>Top diagram: the design being modeled with M3 machine as part of 2 production paths.</p></li>
-<li><p>Bottom diagram: the actual model layout with a single M3 machine followed by 2 filters (<code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code>) that control part flow.</p></li>
-</ul>
-</li>
-</ul>
-<p><img alt="various_flows_example_diagram" src="_images/various_flows_diagram.jpg" /></p>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/PartQuality.py">PartQuality.py</a></strong></p>
 <ul class="simple">
-<li><p>Changing/updating part quality when parts are processed by machines.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ExtendingPartObject.py">ExtendingPartObject.py</a></strong></p>
-<ul class="simple">
-<li><p>New class that extends Part in order to add a new property.</p></li>
-<li><p>Example model using the new class.</p></li>
+<li><p>Configuring PartProcessors to change part quality of processed parts.</p></li>
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">random.seed(n)</span></code> to ensure same results every time the simulation is ran.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/FilterParts.py">FilterParts.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup <code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code> devices to manage where parts go based on part quality.</p></li>
+<li><p>Using DecisionGates to manage where parts go based on part quality.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/VariousFlows.py">VariousFlows.py</a></strong></p>
+<ul class="simple">
+<li><p>Modeling a system with 2 parallel production paths that both share one of the processors.</p></li>
+<li><p>Visual representation of the setup (see below):</p>
+<ul>
+<li><p>Top diagram: the design being modeled with M3 machine as part of 2 production paths.</p></li>
+<li><p>Bottom diagram: the actual model layout with a single M3 machine followed by 2 filters (DecisionGates) that control part flow.</p></li>
+</ul>
+</li>
+</ul>
+<a class="reference internal image-reference" href="_images/various_flows_diagram.jpg"><img alt="various_flows_diagram.jpg" src="_images/various_flows_diagram.jpg" style="width: 500px;" /></a>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ExtendingPartObject.py">ExtendingPartObject.py</a></strong></p>
+<ul class="simple">
+<li><p>Extending Part and PartGenerator classes in order to add a new weight property.</p></li>
+<li><p>Using the new classes.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/OperatingSchedule.py">OperatingSchedule.py</a></strong></p>
 <ul class="simple">
-<li><p>Using <code class="docutils literal notranslate"><span class="pre">ActionScheduler</span></code> to control when a machine can produce parts.</p></li>
+<li><p>Using ActionScheduler to control when a machine can produce parts.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/BatchProcessing.py">BatchProcessing.py</a></strong></p>
 <ul class="simple">
-<li><p>Using <code class="docutils literal notranslate"><span class="pre">Batch</span></code> part type vs using individual parts.</p></li>
-<li><p>Using <code class="docutils literal notranslate"><span class="pre">PartBatcher</span></code> to batch and unbatch parts.</p></li>
-</ul>
-<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachineWithFaults.py">SingleMachineWithFaults.py</a></strong></p>
-<ul class="simple">
-<li><p>Using an extended machine class to model periodic faults.</p></li>
-<li><p>Configuring maintenance times determined by a geometric distribution.</p></li>
-<li><p>Request maintenance when machine has a fault.</p></li>
+<li><p>Generating and processing of part Batches.</p></li>
+<li><p>Using PartBatcher to batch and un-batch parts.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SharedResources.py">SharedResources.py</a></strong></p>
 <ul class="simple">
-<li><p>Setting up machines that have to reserve limited resources in order to process parts.</p></li>
+<li><p>Configuring pools of limited resources.</p></li>
+<li><p>Setting up PartProcessors that have to reserve limited resources in order to process parts.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ReentrantFlow.py">ReentrantFlow.py</a></strong></p>
+<ul class="simple">
+<li><p>Using Group class to have the same PartProcessor in 2 different stages of production.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SingleMachineWithFaults.py">SingleMachineWithFaults.py</a></strong></p>
+<ul class="simple">
+<li><p>Using an extended PartProcessor (MachineWithFaults) class to model periodic faults.</p></li>
+<li><p>Configuring fault rate and maintenance times to be based on a geometric distribution.</p></li>
+<li><p>Requesting maintenance when the custom machine has a fault.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/ConditionBasedMaintenance.py">ConditionBasedMaintenance.py</a></strong></p>
 <ul class="simple">
-<li><p>Using an extended machine class to model accumulating damage on the machine.</p></li>
-<li><p>Use sensors to periodically measure machine damage and request maintenance if damage is over threshold.</p></li>
+<li><p>Using an extended PartProcessor (MachineWithDamage) class to model accumulating wear and tear on a device.</p></li>
+<li><p>Using sensors to periodically measure accumulated damage and to request maintenance if damage is over threshold.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SimulateMultipleTimes.py">SimulateMultipleTimes.py</a></strong></p>
+<ul class="simple">
+<li><p>Running multiple simulations of the model using multiple CPU cores.</p></li>
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">random.seed(n)</span></code> to ensure same results every time the simulation is ran.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/MaintenanceOptimization.py">MaintenanceOptimization.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup 5 parallel machines that accrue damage which negatively impacts part quality.</p></li>
-<li><p>Run a series of simulations where a different damage threshold is used to trigger machine maintenance.</p></li>
-<li><p>Show final results in graphs to assist with deciding the best maintenance policy.</p></li>
+<li><p>Setup: 5 parallel processors that accrue damage which negatively impacts part quality.</p></li>
+<li><p>Simulating the model with different damage thresholds needed to trigger maintenance.</p></li>
+<li><p>Running multiple simulations of each configuration using multiple CPU cores.</p></li>
+<li><p>Showing summary graphs of the simulation data.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/DataExploration.py">DataExploration.py</a></strong></p>
 <ul class="simple">
-<li><p>Setup a Buffer with a sensor measuring buffer level (how many parts it is holding).</p></li>
-<li><p>Setup parallel machines that accumulate damage over time at different rates.</p></li>
-<li><p>Quality of parts is reduced based on machine’s accrued damage since last maintenance.</p></li>
-<li><p>Machines are maintained only when they experience a hard failure.</p></li>
-<li><p>Demonstrate using built-in graph functions and plotting data.</p></li>
+<li><p>Setup:</p></li>
+<li><p>5 parallel processors that accumulate damage over time at different rates.</p></li>
+<li><p>Quality of parts is reduced based on processor’s accrued damage since last maintenance.</p></li>
+<li><p>Processors are maintained only when they experience a hard failure.</p></li>
+<li><p>Using a sensor to periodically measure Buffer level (how many parts the Buffer has).</p></li>
+<li><p>Using built-in graphing functions to show data:</p></li>
 <li><p>Cumulative average throughput over time.</p></li>
 <li><p>Machine damage over time.</p></li>
 <li><p>Cumulative costs/values associated with sourcing parts and final part products.</p></li>
@@ -203,15 +221,27 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SaveSimulationToFile.py">SaveSimulationToFile.py</a></strong></p>
 <ul class="simple">
-<li><p>Example of saving the <code class="docutils literal notranslate"><span class="pre">System</span></code> object to a file and loading it back from the file.</p></li>
+<li><p>Saving the System object to a file and loading it back from the file. System stores the current
+of the model and all of the recorded datapoints.</p></li>
 </ul>
 <p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/PaperMillCmsEvaluation.py">PaperMillCmsEvaluation.py</a>[Experiemental]</strong></p>
 <ul class="simple">
-<li><p>Simulate a manufacturing system with and without Condition Monitoring System (CMS) to get expected benefit
-of using a CMS.</p></li>
-<li><p>Setup a simulated CMS that tracks machine status through a sensor of part quality and has configurable
-false alert and missed alert rates.</p></li>
-<li><p>Setup machines with periodic soft faults, cost of maintenance, and cost of false alerts.</p></li>
+<li><p>Simulating a manufacturing system with and without a Condition Monitoring System (CMS).</p></li>
+<li><p>Simulating CMS that tracks processor status through a sensor of part quality; the CMS has a
+configurable false alert and missed alert rates.</p></li>
+<li><p>Track spending and earning with the value property.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/SharedResourcesComplex.py">SharedResourcesComplex.py</a>[Experiemental]</strong></p>
+<ul class="simple">
+<li><p>Using ActionSchedulers, limited shared resources, and a Group in one model.</p></li>
+<li><p>Configuring a limited resource whose quantity varies with time.</p></li>
+<li><p>Setup:</p></li>
+<li><p>2 parallel production paths that share one processor.</p></li>
+<li><p>PartProcessors are each set to one of 3 schedules: morning, evening, both.</p></li>
+</ul>
+<p><strong><a class="reference external" href="https://github.com/usnistgov/simprocesd/blob/master/examples/MachineFaultDetection.py">MachineFaultDetection.py</a>[Experiemental]</strong></p>
+<ul class="simple">
+<li><p>Determining faulty machine by inspecting final part quality and part routing history.</p></li>
 </ul>
 </section>
 
@@ -219,7 +249,7 @@ false alert and missed alert rates.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="code_introduction.html" class="btn btn-neutral float-left" title="Code Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code_a_deeper_look.html" class="btn btn-neutral float-left" title="Code, a Deeper Look" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="api_docs/simprocesd.html" class="btn btn-neutral float-right" title="simprocesd package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

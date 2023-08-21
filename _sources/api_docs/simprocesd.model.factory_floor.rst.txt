@@ -44,18 +44,10 @@ simprocesd.model.factory\_floor.decision\_gate module
    :undoc-members:
    :show-inheritance:
 
-simprocesd.model.factory\_floor.device module
----------------------------------------------
+simprocesd.model.factory\_floor.group module
+--------------------------------------------
 
-.. automodule:: simprocesd.model.factory_floor.device
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simprocesd.model.factory\_floor.machine module
-----------------------------------------------
-
-.. automodule:: simprocesd.model.factory_floor.machine
+.. automodule:: simprocesd.model.factory_floor.group
    :members:
    :undoc-members:
    :show-inheritance:
@@ -80,6 +72,30 @@ simprocesd.model.factory\_floor.part\_batcher module
 ----------------------------------------------------
 
 .. automodule:: simprocesd.model.factory_floor.part_batcher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simprocesd.model.factory\_floor.part\_flow\_controller module
+-------------------------------------------------------------
+
+.. automodule:: simprocesd.model.factory_floor.part_flow_controller
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simprocesd.model.factory\_floor.part\_handler module
+----------------------------------------------------
+
+.. automodule:: simprocesd.model.factory_floor.part_handler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simprocesd.model.factory\_floor.part\_processor module
+------------------------------------------------------
+
+.. automodule:: simprocesd.model.factory_floor.part_processor
    :members:
    :undoc-members:
    :show-inheritance:

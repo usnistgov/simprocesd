@@ -4,14 +4,6 @@ simprocesd.utils package
 Submodules
 ----------
 
-simprocesd.utils.enums module
------------------------------
-
-.. automodule:: simprocesd.utils.enums
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 simprocesd.utils.math\_utils module
 -----------------------------------
 

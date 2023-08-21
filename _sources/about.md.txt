@@ -1,13 +1,13 @@
 # About SimPROCESD
 
-Sim-PROCESD is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines. It also provides functionality for modeling the degradation and maintenance of machines in these systems.
+SimPROCESD is a discrete event simulation package written in Python that is designed to model the behavior of discrete manufacturing systems. Specifically, it focuses on asynchronous production lines. It also provides functionality for modeling the degradation and maintenance of devices in these systems.
 
-In addition to modeling the behavior of existing systems, Sim-PROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
+In addition to modeling the behavior of existing systems, SimPROCESD is also intended to help with optimizing those systems by simulating various changes to them and reviewing the results. For instance, users may be interested in evaluating alternative maintenance policies for a particular system.
 
 The software is available for public use through a publicly available [Github repository](https://github.com/usnistgov/simprocesd).  
 
 &nbsp;  
-**NOTE:** Sim-PROCESD project is in early development and may receive updates that are not backwards compatible.
+**NOTE:** SimPROCESD project is in early development and may receive updates that are not backwards compatible.
 
 ## NIST
 

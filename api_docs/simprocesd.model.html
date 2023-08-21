@@ -5,10 +5,10 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>simprocesd.model package &mdash; SimPROCESD 0.2.0 documentation</title>
+  <title>simprocesd.model package &mdash; SimPROCESD 0.3.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />    
@@ -46,11 +46,11 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
 	
 	<!-- leave notice that is to be used when opening external link. -->
@@ -70,11 +70,15 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> SimPROCESD
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SimPROCESD
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,6 +89,7 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 <li class="toctree-l1"><a class="reference internal" href="../about.html">About SimPROCESD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../code_introduction.html">Code Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_a_deeper_look.html">Code, a Deeper Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/usnistgov/simprocesd">    GitHub Page [External link]</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="simprocesd.html">simprocesd package</a><ul class="current">
@@ -119,9 +124,9 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="simprocesd.html">simprocesd package</a> &raquo;</li>
-      <li>simprocesd.model package</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="simprocesd.html">simprocesd package</a></li>
+      <li class="breadcrumb-item active">simprocesd.model package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/api_docs/simprocesd.model.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -132,38 +137,257 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
            <div itemprop="articleBody">
              
   <section id="simprocesd-model-package">
-<h1>simprocesd.model package<a class="headerlink" href="#simprocesd-model-package" title="Permalink to this heading"></a></h1>
+<h1>simprocesd.model package<a class="headerlink" href="#simprocesd-model-package" title="Link to this heading"></a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="simprocesd.model.cms.html">simprocesd.model.cms package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.cms.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.cms.html#module-simprocesd.model.cms.cms">simprocesd.model.cms.cms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.cms.html#module-simprocesd.model.cms.cms">simprocesd.model.cms.cms module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.cms.html#simprocesd.model.cms.cms.Cms"><code class="docutils literal notranslate"><span class="pre">Cms</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.cms.html#simprocesd.model.cms.cms.Cms.add_sensor"><code class="docutils literal notranslate"><span class="pre">Cms.add_sensor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.cms.html#simprocesd.model.cms.cms.Cms.on_sense"><code class="docutils literal notranslate"><span class="pre">Cms.on_sense()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.cms.html#module-simprocesd.model.cms">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simprocesd.model.factory_floor.html">simprocesd.model.factory_floor package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.action_scheduler">simprocesd.model.factory_floor.action_scheduler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.asset">simprocesd.model.factory_floor.asset module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.batch">simprocesd.model.factory_floor.batch module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.buffer">simprocesd.model.factory_floor.buffer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.decision_gate">simprocesd.model.factory_floor.decision_gate module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.device">simprocesd.model.factory_floor.device module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.machine">simprocesd.model.factory_floor.machine module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.maintainer">simprocesd.model.factory_floor.maintainer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part">simprocesd.model.factory_floor.part module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part_batcher">simprocesd.model.factory_floor.part_batcher module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.sink">simprocesd.model.factory_floor.sink module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.source">simprocesd.model.factory_floor.source module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.action_scheduler">simprocesd.model.factory_floor.action_scheduler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler"><code class="docutils literal notranslate"><span class="pre">ActionScheduler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler.current_state"><code class="docutils literal notranslate"><span class="pre">ActionScheduler.current_state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler.default_action"><code class="docutils literal notranslate"><span class="pre">ActionScheduler.default_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler.initialize"><code class="docutils literal notranslate"><span class="pre">ActionScheduler.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler.register_object"><code class="docutils literal notranslate"><span class="pre">ActionScheduler.register_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.action_scheduler.ActionScheduler.unregister_object"><code class="docutils literal notranslate"><span class="pre">ActionScheduler.unregister_object()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.asset">simprocesd.model.factory_floor.asset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset"><code class="docutils literal notranslate"><span class="pre">Asset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.add_cost"><code class="docutils literal notranslate"><span class="pre">Asset.add_cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.add_value"><code class="docutils literal notranslate"><span class="pre">Asset.add_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.env"><code class="docutils literal notranslate"><span class="pre">Asset.env</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.id"><code class="docutils literal notranslate"><span class="pre">Asset.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.initialize"><code class="docutils literal notranslate"><span class="pre">Asset.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.name"><code class="docutils literal notranslate"><span class="pre">Asset.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.value"><code class="docutils literal notranslate"><span class="pre">Asset.value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset.value_history"><code class="docutils literal notranslate"><span class="pre">Asset.value_history</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.batch">simprocesd.model.factory_floor.batch module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch"><code class="docutils literal notranslate"><span class="pre">Batch</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.parts"><code class="docutils literal notranslate"><span class="pre">Batch.parts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.add_routing_history"><code class="docutils literal notranslate"><span class="pre">Batch.add_routing_history()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.add_value"><code class="docutils literal notranslate"><span class="pre">Batch.add_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.initialize"><code class="docutils literal notranslate"><span class="pre">Batch.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.remove_from_routing_history"><code class="docutils literal notranslate"><span class="pre">Batch.remove_from_routing_history()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.batch.Batch.value"><code class="docutils literal notranslate"><span class="pre">Batch.value</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.buffer">simprocesd.model.factory_floor.buffer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer"><code class="docutils literal notranslate"><span class="pre">Buffer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.capacity"><code class="docutils literal notranslate"><span class="pre">Buffer.capacity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.cycle_time"><code class="docutils literal notranslate"><span class="pre">Buffer.cycle_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.level"><code class="docutils literal notranslate"><span class="pre">Buffer.level()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.minimum_delay"><code class="docutils literal notranslate"><span class="pre">Buffer.minimum_delay</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.notify_upstream_of_available_space"><code class="docutils literal notranslate"><span class="pre">Buffer.notify_upstream_of_available_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.buffer.Buffer.stored_parts"><code class="docutils literal notranslate"><span class="pre">Buffer.stored_parts</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.decision_gate">simprocesd.model.factory_floor.decision_gate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.decision_gate.DecisionGate"><code class="docutils literal notranslate"><span class="pre">DecisionGate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.decision_gate.DecisionGate.give_part"><code class="docutils literal notranslate"><span class="pre">DecisionGate.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.decision_gate.DecisionGate.part_pass_decider"><code class="docutils literal notranslate"><span class="pre">DecisionGate.part_pass_decider()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.group">simprocesd.model.factory_floor.group module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.Group"><code class="docutils literal notranslate"><span class="pre">Group</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.Group.get_new_group_path"><code class="docutils literal notranslate"><span class="pre">Group.get_new_group_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput"><code class="docutils literal notranslate"><span class="pre">GroupInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput.give_part"><code class="docutils literal notranslate"><span class="pre">GroupInput.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput.notify_upstream_of_available_space"><code class="docutils literal notranslate"><span class="pre">GroupInput.notify_upstream_of_available_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput.set_upstream"><code class="docutils literal notranslate"><span class="pre">GroupInput.set_upstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput.space_available_downstream"><code class="docutils literal notranslate"><span class="pre">GroupInput.space_available_downstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupInput.upstream"><code class="docutils literal notranslate"><span class="pre">GroupInput.upstream</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupOutput"><code class="docutils literal notranslate"><span class="pre">GroupOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupOutput.downstream"><code class="docutils literal notranslate"><span class="pre">GroupOutput.downstream</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupOutput.give_part"><code class="docutils literal notranslate"><span class="pre">GroupOutput.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupOutput.space_available_downstream"><code class="docutils literal notranslate"><span class="pre">GroupOutput.space_available_downstream()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupPath"><code class="docutils literal notranslate"><span class="pre">GroupPath</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupPath.give_part"><code class="docutils literal notranslate"><span class="pre">GroupPath.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.group.GroupPath.space_available_downstream"><code class="docutils literal notranslate"><span class="pre">GroupPath.space_available_downstream()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.maintainer">simprocesd.model.factory_floor.maintainer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable"><code class="docutils literal notranslate"><span class="pre">Maintainable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable.end_work"><code class="docutils literal notranslate"><span class="pre">Maintainable.end_work()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_capacity"><code class="docutils literal notranslate"><span class="pre">Maintainable.get_work_order_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_cost"><code class="docutils literal notranslate"><span class="pre">Maintainable.get_work_order_cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable.get_work_order_duration"><code class="docutils literal notranslate"><span class="pre">Maintainable.get_work_order_duration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainable.start_work"><code class="docutils literal notranslate"><span class="pre">Maintainable.start_work()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer"><code class="docutils literal notranslate"><span class="pre">Maintainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer.available_capacity"><code class="docutils literal notranslate"><span class="pre">Maintainer.available_capacity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer.create_work_order"><code class="docutils literal notranslate"><span class="pre">Maintainer.create_work_order()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer.total_capacity"><code class="docutils literal notranslate"><span class="pre">Maintainer.total_capacity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.maintainer.Maintainer.try_working_requests"><code class="docutils literal notranslate"><span class="pre">Maintainer.try_working_requests()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part">simprocesd.model.factory_floor.part module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.Part"><code class="docutils literal notranslate"><span class="pre">Part</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.Part.quality"><code class="docutils literal notranslate"><span class="pre">Part.quality</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.Part.add_routing_history"><code class="docutils literal notranslate"><span class="pre">Part.add_routing_history()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.Part.remove_from_routing_history"><code class="docutils literal notranslate"><span class="pre">Part.remove_from_routing_history()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.Part.routing_history"><code class="docutils literal notranslate"><span class="pre">Part.routing_history</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.PartGenerator"><code class="docutils literal notranslate"><span class="pre">PartGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.PartGenerator.generate_part"><code class="docutils literal notranslate"><span class="pre">PartGenerator.generate_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part.PartGenerator.generate_part_helper"><code class="docutils literal notranslate"><span class="pre">PartGenerator.generate_part_helper()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part_batcher">simprocesd.model.factory_floor.part_batcher module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_batcher.PartBatcher"><code class="docutils literal notranslate"><span class="pre">PartBatcher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_batcher.PartBatcher.output_batch_size"><code class="docutils literal notranslate"><span class="pre">PartBatcher.output_batch_size</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part_flow_controller">simprocesd.model.factory_floor.part_flow_controller module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController"><code class="docutils literal notranslate"><span class="pre">PartFlowController</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.block_input"><code class="docutils literal notranslate"><span class="pre">PartFlowController.block_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.downstream"><code class="docutils literal notranslate"><span class="pre">PartFlowController.downstream</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.downstream_priority_sorter"><code class="docutils literal notranslate"><span class="pre">PartFlowController.downstream_priority_sorter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.get_sorted_downstream_list"><code class="docutils literal notranslate"><span class="pre">PartFlowController.get_sorted_downstream_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.give_part"><code class="docutils literal notranslate"><span class="pre">PartFlowController.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.is_operational"><code class="docutils literal notranslate"><span class="pre">PartFlowController.is_operational()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.joined_groups"><code class="docutils literal notranslate"><span class="pre">PartFlowController.joined_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.notify_upstream_of_available_space"><code class="docutils literal notranslate"><span class="pre">PartFlowController.notify_upstream_of_available_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.set_upstream"><code class="docutils literal notranslate"><span class="pre">PartFlowController.set_upstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.space_available_downstream"><code class="docutils literal notranslate"><span class="pre">PartFlowController.space_available_downstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.upstream"><code class="docutils literal notranslate"><span class="pre">PartFlowController.upstream</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_flow_controller.PartFlowController.waiting_for_part_start_time"><code class="docutils literal notranslate"><span class="pre">PartFlowController.waiting_for_part_start_time</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part_handler">simprocesd.model.factory_floor.part_handler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler"><code class="docutils literal notranslate"><span class="pre">PartHandler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.add_receive_part_callback"><code class="docutils literal notranslate"><span class="pre">PartHandler.add_receive_part_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.cycle_time"><code class="docutils literal notranslate"><span class="pre">PartHandler.cycle_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.give_part"><code class="docutils literal notranslate"><span class="pre">PartHandler.give_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.initialize"><code class="docutils literal notranslate"><span class="pre">PartHandler.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.notify_upstream_of_available_space"><code class="docutils literal notranslate"><span class="pre">PartHandler.notify_upstream_of_available_space()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.offset_next_cycle_time"><code class="docutils literal notranslate"><span class="pre">PartHandler.offset_next_cycle_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.set_upstream"><code class="docutils literal notranslate"><span class="pre">PartHandler.set_upstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.space_available_downstream"><code class="docutils literal notranslate"><span class="pre">PartHandler.space_available_downstream()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_handler.PartHandler.waiting_for_part_start_time"><code class="docutils literal notranslate"><span class="pre">PartHandler.waiting_for_part_start_time</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.part_processor">simprocesd.model.factory_floor.part_processor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor"><code class="docutils literal notranslate"><span class="pre">PartProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.add_finish_processing_callback"><code class="docutils literal notranslate"><span class="pre">PartProcessor.add_finish_processing_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.add_restored_callback"><code class="docutils literal notranslate"><span class="pre">PartProcessor.add_restored_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.add_shutdown_callback"><code class="docutils literal notranslate"><span class="pre">PartProcessor.add_shutdown_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.end_work"><code class="docutils literal notranslate"><span class="pre">PartProcessor.end_work()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.get_work_order_capacity"><code class="docutils literal notranslate"><span class="pre">PartProcessor.get_work_order_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.get_work_order_cost"><code class="docutils literal notranslate"><span class="pre">PartProcessor.get_work_order_cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.get_work_order_duration"><code class="docutils literal notranslate"><span class="pre">PartProcessor.get_work_order_duration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.initialize"><code class="docutils literal notranslate"><span class="pre">PartProcessor.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.is_operational"><code class="docutils literal notranslate"><span class="pre">PartProcessor.is_operational()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.restore_functionality"><code class="docutils literal notranslate"><span class="pre">PartProcessor.restore_functionality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.schedule_failure"><code class="docutils literal notranslate"><span class="pre">PartProcessor.schedule_failure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.shutdown"><code class="docutils literal notranslate"><span class="pre">PartProcessor.shutdown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.start_work"><code class="docutils literal notranslate"><span class="pre">PartProcessor.start_work()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.uptime"><code class="docutils literal notranslate"><span class="pre">PartProcessor.uptime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.part_processor.PartProcessor.utilization_time"><code class="docutils literal notranslate"><span class="pre">PartProcessor.utilization_time</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.sink">simprocesd.model.factory_floor.sink module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.sink.Sink"><code class="docutils literal notranslate"><span class="pre">Sink</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.sink.Sink.collected_parts"><code class="docutils literal notranslate"><span class="pre">Sink.collected_parts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.sink.Sink.received_parts_count"><code class="docutils literal notranslate"><span class="pre">Sink.received_parts_count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.sink.Sink.value_of_received_parts"><code class="docutils literal notranslate"><span class="pre">Sink.value_of_received_parts</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor.source">simprocesd.model.factory_floor.source module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source"><code class="docutils literal notranslate"><span class="pre">Source</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.adjust_part_count"><code class="docutils literal notranslate"><span class="pre">Source.adjust_part_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.cost_of_produced_parts"><code class="docutils literal notranslate"><span class="pre">Source.cost_of_produced_parts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.initialize"><code class="docutils literal notranslate"><span class="pre">Source.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.produced_parts"><code class="docutils literal notranslate"><span class="pre">Source.produced_parts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.remaining_parts"><code class="docutils literal notranslate"><span class="pre">Source.remaining_parts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.source.Source.set_upstream"><code class="docutils literal notranslate"><span class="pre">Source.set_upstream()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.factory_floor.html#module-simprocesd.model.factory_floor">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simprocesd.model.sensors.html">simprocesd.model.sensors package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#module-simprocesd.model.sensors.part_sensor">simprocesd.model.sensors.part_sensor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#module-simprocesd.model.sensors.sensor">simprocesd.model.sensors.sensor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#module-simprocesd.model.sensors.part_sensor">simprocesd.model.sensors.part_sensor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.part_sensor.OutputPartSensor"><code class="docutils literal notranslate"><span class="pre">OutputPartSensor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.part_sensor.OutputPartSensor.initialize"><code class="docutils literal notranslate"><span class="pre">OutputPartSensor.initialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#module-simprocesd.model.sensors.sensor">simprocesd.model.sensors.sensor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.AttributeProbe"><code class="docutils literal notranslate"><span class="pre">AttributeProbe</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.PeriodicSensor"><code class="docutils literal notranslate"><span class="pre">PeriodicSensor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.PeriodicSensor.initialize"><code class="docutils literal notranslate"><span class="pre">PeriodicSensor.initialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Probe"><code class="docutils literal notranslate"><span class="pre">Probe</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Probe.probe"><code class="docutils literal notranslate"><span class="pre">Probe.probe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor"><code class="docutils literal notranslate"><span class="pre">Sensor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.data"><code class="docutils literal notranslate"><span class="pre">Sensor.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.add_on_sense_callback"><code class="docutils literal notranslate"><span class="pre">Sensor.add_on_sense_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.initialize"><code class="docutils literal notranslate"><span class="pre">Sensor.initialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.last_sense"><code class="docutils literal notranslate"><span class="pre">Sensor.last_sense</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.probes"><code class="docutils literal notranslate"><span class="pre">Sensor.probes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simprocesd.model.sensors.html#simprocesd.model.sensors.sensor.Sensor.sense"><code class="docutils literal notranslate"><span class="pre">Sensor.sense()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simprocesd.model.sensors.html#module-simprocesd.model.sensors">Module contents</a></li>
 </ul>
 </li>
@@ -171,41 +395,53 @@ layout.html for 'sphinx_rtd_theme' can be found here: https://github.com/readthe
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-simprocesd.model.resource_manager">
-<span id="simprocesd-model-resource-manager-module"></span><h2>simprocesd.model.resource_manager module<a class="headerlink" href="#module-simprocesd.model.resource_manager" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-model-resource-manager-module"></span><h2>simprocesd.model.resource_manager module<a class="headerlink" href="#module-simprocesd.model.resource_manager" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ReservedResources">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.resource_manager.</span></span><span class="sig-name descname"><span class="pre">ReservedResources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reserved_resources</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.resource_manager.</span></span><span class="sig-name descname"><span class="pre">ReservedResources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reserved_resources</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Tracks reserved resources from a request.</p>
-<p>Use .release() function to release all reserved resources tracked by
+<p>Use .release() function to release the reserved resources tracked by
 this ReservedResources instance.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.resource_manager.ReservedResources.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reserved_resources</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources.merge" title="Link to this definition"></a></dt>
+<dd><p>Merge the resources reserved by another ReservedResources
+object into this one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reserved_resources</strong> (<a class="reference internal" href="#simprocesd.model.resource_manager.ReservedResources" title="simprocesd.model.resource_manager.ReservedResources"><em>ReservedResources</em></a>) – ReservedResources object whose reserved resources will be
+merged into this. The provided reserved_resources object
+will be set to have no reserve resources.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ReservedResources.release">
-<span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources.release" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources.release" title="Link to this definition"></a></dt>
 <dd><p>Release resources back into the pool of available resources.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>resources</strong> (<em>Dictionary</em><em>, </em><em>default=None</em>) – A Dictionary where each entry specifies what resource to
-release and the amount to be released, resource_name:amount
+release and an amount to be released that is &gt;= 0.
+For example: {‘resourceA’: 10, ‘resourceB’: 1}
 If None then it will release all the resources reserved here.</p>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – If trying to release an amount of a resources that is more
-    than is still reserved.</p></li>
-<li><p><strong>RuntimeError</strong> – When trying to release resources after the simulation was
-    reset.</p></li>
-</ul>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If trying to release an amount of a resources that is more
+    than is still reserved or trying to release a negative
+    amount of a resource.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ReservedResources.reserved_resources">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reserved_resources</span></span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources.reserved_resources" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reserved_resources</span></span><a class="headerlink" href="#simprocesd.model.resource_manager.ReservedResources.reserved_resources" title="Link to this definition"></a></dt>
 <dd><p>Dictionary of the resources reserved and their amounts.</p>
 </dd></dl>
 
@@ -213,48 +449,81 @@ If None then it will release all the resources reserved here.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.resource_manager.</span></span><span class="sig-name descname"><span class="pre">ResourceManager</span></span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.resource_manager.</span></span><span class="sig-name descname"><span class="pre">ResourceManager</span></span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Provides a pool of limited resources which can be reserved by
-callers and released back to the resource pool.</p>
-<p>Callers can try to reserve resources immediately or they can provide
-a callback function to be invoked when the requested resources are
-available.</p>
+<p>Provides pools of limited resources which can be reserved by
+callers and released back.</p>
+<p>An attempt to reserve resources can be made immediately or a
+callback function to be registered to be invoked when the requested
+resources are available.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.add_resources">
-<span class="sig-name descname"><span class="pre">add_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.add_resources" title="Permalink to this definition"></a></dt>
-<dd><p>Add new unreserved resources or reduce the pool of available
-resources.</p>
+<span class="sig-name descname"><span class="pre">add_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.add_resources" title="Link to this definition"></a></dt>
+<dd><p>Add or reduce maximum resource capacity.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reducing resource capacity below current usage will not force
+those resources to be released therefore allowing resource
+usage to remain above the new maximum.</p>
+</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource_name</strong> (<em>str</em>) – Resource type identifier.</p></li>
-<li><p><strong>amount</strong> (<em>float</em>) – How much of the specified resource type to add or remove if
-the value is negative.</p></li>
+<li><p><strong>amount</strong> (<em>int</em><em>, </em><em>float</em>) – How much of the specified resource type to add. If the value
+is negative then then maximum pool of that resource will be
+reduced.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – When trying to release more of a resource than is currently
-    unreserved.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – When trying to reduce a resource by more than the maximum
+    capacity of that resource.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.available_resources">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">available_resources</span></span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.available_resources" title="Permalink to this definition"></a></dt>
-<dd><p>Return a dictionary of unreserved resources.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.get_resource_capacity">
+<span class="sig-name descname"><span class="pre">get_resource_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.get_resource_capacity" title="Link to this definition"></a></dt>
+<dd><p>Get total capacity of a resource (reserved + unreserved).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>resource_name</strong> (<em>str</em>) – Resource type identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>What is the total amount of the specified resource, this
+includes both reserved and unreserved resources.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.get_resource_usage">
+<span class="sig-name descname"><span class="pre">get_resource_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.get_resource_usage" title="Link to this definition"></a></dt>
+<dd><p>Get how much of a resource is currently reserved/in-use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>resource_name</strong> (<em>str</em>) – Resource type identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>How much of the specified resource is currently reserved.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.initialize">
-<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.initialize" title="Permalink to this definition"></a></dt>
-<dd><p>Prepare ResourceManager for simulation and reset attributes
-to starting values.</p>
-<p>Called when simulation starts for the first time or when it is
-restarted.</p>
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Prepare ResourceManager for simulation.</p>
+<p>Called when simulation starts for the first time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used in the simulation.</p>
 </dd>
 </dl>
@@ -262,43 +531,44 @@ restarted.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.reserve_resources">
-<span class="sig-name descname"><span class="pre">reserve_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.reserve_resources" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reserve_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.reserve_resources" title="Link to this definition"></a></dt>
 <dd><p>Try to reserve one or more types of resources.</p>
 <p>If the entire request cannot be completed then no resources will
 be reserved.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>request</strong> (<em>Dictionary</em>) – A dictionary where each entry specifies what resource is
-requested and the amount requested, resource_name:amount.</p>
+requested and an amount requested that is &gt;= 0. For example:
+{‘resourceA’: 10, ‘resourceB’: 1}</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>ReservedResources with requested resources if successful.</em></p></li>
-<li><p><em>Calling .release() on the returned object will make the reserved</em></p></li>
-<li><p><em>resources available again.</em></p></li>
-<li><p><em>Returns None if requested resources could not be reserved.</em></p></li>
-</ul>
-</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ReservedResources with reserved resources if successful.
+Returns None if the request could not be fulfilled.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#simprocesd.model.resource_manager.ReservedResources" title="simprocesd.model.resource_manager.ReservedResources">ReservedResources</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.resource_manager.ResourceManager.reserve_resources_with_callback">
-<span class="sig-name descname"><span class="pre">reserve_resources_with_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.reserve_resources_with_callback" title="Permalink to this definition"></a></dt>
-<dd><p>Set the callback function to be called when the request can
-be fulfilled.</p>
-<p>The caller can use .reserve_resources within the callback to
-ensure that the available resources are not reserved elsewhere.</p>
+<span class="sig-name descname"><span class="pre">reserve_resources_with_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.resource_manager.ResourceManager.reserve_resources_with_callback" title="Link to this definition"></a></dt>
+<dd><p>Register a callback function to be invoked when the request
+can be fulfilled.</p>
+<p>Resources will not be automatically reserved when the callback
+is invoked. The caller can use the reserve_resources function
+within the callback to immediately reserve those resources.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>request</strong> (<em>Dictionary</em>) – A Dictionary where each entry specifies what resource is
 requested and the amount requested, resource_name:amount.</p></li>
-<li><p><strong>callback</strong> (<em>function</em>) – Function to be invoked when there are sufficient available
+<li><p><strong>callback</strong> (<em>function</em><em>(</em><em>resource_manager</em><em>, </em><em>request</em><em>)</em>) – Function to be invoked when there are sufficient available
 resources to fulfill the request.
-The functions needs to accept one parameter which will be
-the copy of the request.</p></li>
+The callback needs to accept two parameter:
+- the resource manager
+- copy of the request Dictionary</p></li>
 </ul>
 </dd>
 </dl>
@@ -308,10 +578,10 @@ the copy of the request.</p></li>
 
 </section>
 <section id="module-simprocesd.model.simulation">
-<span id="simprocesd-model-simulation-module"></span><h2>simprocesd.model.simulation module<a class="headerlink" href="#module-simprocesd.model.simulation" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-model-simulation-module"></span><h2>simprocesd.model.simulation module<a class="headerlink" href="#module-simprocesd.model.simulation" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">Environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'environment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_data_storage_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DataStorageType.NONE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">Environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'environment'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Simulation environment.</p>
 <p>Responsible for creating, prioritizing, executing, and otherwise
@@ -322,20 +592,19 @@ managing Events.</p>
 not be created manually.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em><em>, </em><em>default='environment'</em>) – Environment name.</p></li>
-<li><p><strong>simulation_data_storage_type</strong> (<a class="reference internal" href="simprocesd.utils.html#simprocesd.utils.enums.DataStorageType" title="simprocesd.utils.enums.DataStorageType"><em>DataStorageType</em></a><em>, </em><em>default=DataStorageType.NONE</em>) – How to store &lt;simulation_data&gt;. Does not currently support
-DataStorageType.FILE</p></li>
+<li><p><strong>resource_manager</strong> (<a class="reference internal" href="#simprocesd.model.resource_manager.ResourceManager" title="simprocesd.model.resource_manager.ResourceManager"><em>ResourceManager</em></a><em>, </em><em>default=None</em>) – Instance of a ResourceManager that will be used by Assets.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.now">
-<span class="sig-name descname"><span class="pre">now</span></span><a class="headerlink" href="#simprocesd.model.simulation.Environment.now" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">now</span></span><a class="headerlink" href="#simprocesd.model.simulation.Environment.now" title="Link to this definition"></a></dt>
 <dd><p>Current time of the simulation, starts at 0.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -343,10 +612,10 @@ DataStorageType.FILE</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.simulation_data">
-<span class="sig-name descname"><span class="pre">simulation_data</span></span><a class="headerlink" href="#simprocesd.model.simulation.Environment.simulation_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">simulation_data</span></span><a class="headerlink" href="#simprocesd.model.simulation.Environment.simulation_data" title="Link to this definition"></a></dt>
 <dd><p>Stored datapoints added with Environment.add_datapoint</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -354,12 +623,12 @@ DataStorageType.FILE</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.add_datapoint">
-<span class="sig-name descname"><span class="pre">add_datapoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.add_datapoint" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_datapoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.add_datapoint" title="Link to this definition"></a></dt>
 <dd><p>Record a new datapoint/item in the appropriate list.</p>
 <p>Calling env.simulation_data[list_label][sub_label] will return
 a list of all datapoint that were created using the same labels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>label</strong> (<em>object</em>) – Primary label. Usually a string describing the datapoint.</p></li>
 <li><p><strong>sub_label</strong> (<em>object</em>) – Secondary label. Usually a string specifying the source of
@@ -373,11 +642,11 @@ list.append(datapoint). Can be a single object or a tuple.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.cancel_matching_events">
-<span class="sig-name descname"><span class="pre">cancel_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.cancel_matching_events" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cancel_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.cancel_matching_events" title="Link to this definition"></a></dt>
 <dd><p>Find scheduled Events with matching parameters and mark them
 as cancelled.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>asset_id</strong> (<em>int</em><em>, </em><em>optional</em>) – If set, will only match events with the same asset_id</p>
 </dd>
 </dl>
@@ -385,10 +654,10 @@ as cancelled.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.is_simulation_in_progress">
-<span class="sig-name descname"><span class="pre">is_simulation_in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.is_simulation_in_progress" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_simulation_in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.is_simulation_in_progress" title="Link to this definition"></a></dt>
 <dd><p>Indicates whether a simulation is in progress or not.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>True if the simulation is currently in progress, otherwise False.</p>
 </dd>
 </dl>
@@ -396,40 +665,30 @@ as cancelled.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">now</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">now</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.pause_matching_events">
-<span class="sig-name descname"><span class="pre">pause_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.pause_matching_events" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pause_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.pause_matching_events" title="Link to this definition"></a></dt>
 <dd><p>Find scheduled Events with matching parameters and mark them
 as Paused. Paused Events can be resumed with
 environment.unpause_matching_events</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>asset_id</strong> (<em>int</em><em>, </em><em>optional</em>) – If set, will only match events with the same asset_id</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.reset" title="Permalink to this definition"></a></dt>
-<dd><p>Reset the Environment to its initial state.</p>
-<p>This will clear out all scheduled and paused events and reset
-the simulation_data table. To preserve the old data save a
-reference to simulation_data before calling reset, the reference
-can then be used to access old data.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.run" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.run" title="Link to this definition"></a></dt>
 <dd><p>Simulate the system for a limited duration.</p>
 <p>Will repeatedly execute a scheduled Event with the highest
 priority until specified simulation time passes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>simulation_duration</strong> (<em>float</em>) – For how long to run the simulation. Measured in simulation
 time.</p></li>
@@ -442,10 +701,10 @@ to a file at: ‘~/Downloads/{environment.name}_trace.json’</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.schedule_event">
-<span class="sig-name descname"><span class="pre">schedule_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">EventType.OTHER_LOW_PRIORITY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.schedule_event" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">schedule_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">EventType.OTHER_LOW_PRIORITY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.schedule_event" title="Link to this definition"></a></dt>
 <dd><p>Schedule an Event to be executed at a later simulation time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> (<em>float</em>) – Simulation time of when to perform the action. Cannot be
 lower than the current simulation time (Environment.now).</p></li>
@@ -463,18 +722,18 @@ debugging information.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.step" title="Link to this definition"></a></dt>
 <dd><p>Execute a scheduled Event with the highest priority.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Environment.unpause_matching_events">
-<span class="sig-name descname"><span class="pre">unpause_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.unpause_matching_events" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">unpause_matching_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Environment.unpause_matching_events" title="Link to this definition"></a></dt>
 <dd><p>Find paused Events with matching parameters and unpause them.</p>
 <p>The Events to be unpaused will be scheduled for their original
 time plus the duration of their pause.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>asset_id</strong> (<em>int</em><em>, </em><em>optional</em>) – If set, will only match events with the same asset_id</p>
 </dd>
 </dl>
@@ -484,7 +743,7 @@ time plus the duration of their pause.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Event">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Event" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Event" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class used for scheduling actions within the simulation.</p>
 <div class="line-block">
@@ -495,7 +754,7 @@ time plus the duration of their pause.</p>
 <div class="line">4. if there is a tie, then lower &lt;asset_id&gt;</div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> (<em>float</em>) – Simulation time when the event will be executed.</p></li>
 <li><p><strong>asset_id</strong> (<em>int</em>) – ID of the Asset who the action belongs to.</p></li>
@@ -508,7 +767,7 @@ debugging information.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.Event.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Event.execute" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.Event.execute" title="Link to this definition"></a></dt>
 <dd><p>Calls the event’s action unless the event is marked as
 cancelled or as executed.</p>
 </dd></dl>
@@ -517,7 +776,7 @@ cancelled or as executed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">EventType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.EventType" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.simulation.</span></span><span class="sig-name descname"><span class="pre">EventType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.simulation.EventType" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
 <p>Events in the order of lowest to highest priority.</p>
 <p>EventType priority makes a difference when multiple events are
@@ -529,67 +788,67 @@ is slightly higher or lower than another event. For example:
 will be executed with a slightly lower priority than EventType.FAIL</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.FAIL">
-<span class="sig-name descname"><span class="pre">FAIL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FAIL" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">FAIL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FAIL" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.FINISH_PROCESSING">
-<span class="sig-name descname"><span class="pre">FINISH_PROCESSING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FINISH_PROCESSING" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">FINISH_PROCESSING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FINISH_PROCESSING" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.FINISH_WORK">
-<span class="sig-name descname"><span class="pre">FINISH_WORK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FINISH_WORK" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">FINISH_WORK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.FINISH_WORK" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.OTHER_HIGH_PRIORITY">
-<span class="sig-name descname"><span class="pre">OTHER_HIGH_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.OTHER_HIGH_PRIORITY" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">OTHER_HIGH_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.OTHER_HIGH_PRIORITY" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.OTHER_LOW_PRIORITY">
-<span class="sig-name descname"><span class="pre">OTHER_LOW_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.OTHER_LOW_PRIORITY" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">OTHER_LOW_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.OTHER_LOW_PRIORITY" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.PASS_PART">
-<span class="sig-name descname"><span class="pre">PASS_PART</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.PASS_PART" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">PASS_PART</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.PASS_PART" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.RELEASE_RESERVED_RESOURCES">
-<span class="sig-name descname"><span class="pre">RELEASE_RESERVED_RESOURCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.RELEASE_RESERVED_RESOURCES" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">RELEASE_RESERVED_RESOURCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.RELEASE_RESERVED_RESOURCES" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.RESTORE">
-<span class="sig-name descname"><span class="pre">RESTORE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.RESTORE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">RESTORE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.RESTORE" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.SENSOR">
-<span class="sig-name descname"><span class="pre">SENSOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.SENSOR" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">SENSOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.SENSOR" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.START_WORK">
-<span class="sig-name descname"><span class="pre">START_WORK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.START_WORK" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">START_WORK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.START_WORK" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simprocesd.model.simulation.EventType.TERMINATE">
-<span class="sig-name descname"><span class="pre">TERMINATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.TERMINATE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">TERMINATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simprocesd.model.simulation.EventType.TERMINATE" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-simprocesd.model.system">
-<span id="simprocesd-model-system-module"></span><h2>simprocesd.model.system module<a class="headerlink" href="#module-simprocesd.model.system" title="Permalink to this heading"></a></h2>
+<span id="simprocesd-model-system-module"></span><h2>simprocesd.model.system module<a class="headerlink" href="#module-simprocesd.model.system" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="simprocesd.model.system.System">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.system.</span></span><span class="sig-name descname"><span class="pre">System</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_data_storage_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DataStorageType.MEMORY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simprocesd.model.system.</span></span><span class="sig-name descname"><span class="pre">System</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A required class that helps setup and run simulations.</p>
 <p>System handles Asset initialization and manages the Environment
@@ -601,18 +860,14 @@ simulations.</p>
 will automatically try to register themselves with the active
 System.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>simulation_data_storage_type</strong> (<a class="reference internal" href="simprocesd.utils.html#simprocesd.utils.enums.DataStorageType" title="simprocesd.utils.enums.DataStorageType"><em>DataStorageType</em></a><em>, </em><em>default=DataStorageType.MEMORY</em>) – How to store &lt;simulation_data&gt;. Does not currently support
-DataStorageType.FILE</p></li>
-<li><p><strong>resource_manager</strong> (<a class="reference internal" href="#simprocesd.model.resource_manager.ResourceManager" title="simprocesd.model.resource_manager.ResourceManager"><em>ResourceManager</em></a><em>, </em><em>default=None</em>) – A ResourceManager instance to use for this simulation. If None
-then the default ResourceManager will be used.</p></li>
-</ul>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>resource_manager</strong> (<a class="reference internal" href="#simprocesd.model.resource_manager.ResourceManager" title="simprocesd.model.resource_manager.ResourceManager"><em>ResourceManager</em></a><em>, </em><em>default=None</em>) – A ResourceManager instance to use for this simulation. If None
+then the default ResourceManager will be used.</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.add_asset">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_asset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.add_asset" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_asset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.add_asset" title="Link to this definition"></a></dt>
 <dd><p>Register an Asset with the active System.</p>
 <p>Automatically called by newly created Assets. If the simulation
 is already in progress then the new_asset will be initialized
@@ -622,23 +877,29 @@ assets should not be added here or they will remain loaded into
 memory. For example, Parts are not added here and parts are
 initialized by the Source that created them.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>new_asset</strong> (<a class="reference internal" href="simprocesd.model.factory_floor.html#simprocesd.model.factory_floor.asset.Asset" title="simprocesd.model.factory_floor.asset.Asset"><em>Asset</em></a>) – Asset to be registered.</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – System object must be created before non-transitory Assets.</p>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="simprocesd.model.system.System.env">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">env</span></span><a class="headerlink" href="#simprocesd.model.system.System.env" title="Link to this definition"></a></dt>
+<dd><p>Simulation’s Environment instance.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.find_assets">
-<span class="sig-name descname"><span class="pre">find_assets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.find_assets" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">find_assets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.find_assets" title="Link to this definition"></a></dt>
 <dd><p>Search through Assets registered with the System.</p>
 <p>If multiple arguments are provided then it will return only the
 Assets that match all of the arguments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Filter Assets by name.</p></li>
 <li><p><strong>id</strong> (<em>int</em><em>, </em><em>optional</em>) – Filter Assets by ID.</p></li>
@@ -647,10 +908,10 @@ Assets that match all of the arguments.</p>
 using isinstance()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of Assets that match the provided arguments.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -658,14 +919,14 @@ using isinstance()</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.get_net_value_of_assets">
-<span class="sig-name descname"><span class="pre">get_net_value_of_assets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.get_net_value_of_assets" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_net_value_of_assets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.get_net_value_of_assets" title="Link to this definition"></a></dt>
 <dd><p>Calculate the net value of all Assets which are registered
 with the System.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Net value of Assets.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
@@ -673,24 +934,20 @@ with the System.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.resource_manager">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resource_manager</span></span><a class="headerlink" href="#simprocesd.model.system.System.resource_manager" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resource_manager</span></span><a class="headerlink" href="#simprocesd.model.system.System.resource_manager" title="Link to this definition"></a></dt>
 <dd><p>ResourceManager instance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.simulate">
-<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.simulate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation_duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.simulate" title="Link to this definition"></a></dt>
 <dd><p>Run the simulation for the specified duration.</p>
-<p>Ensures objects are initialized or re-initialized as needed.</p>
+<p>Ensures Assets are initialized when called for the first time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>simulation_duration</strong> (<em>float</em>) – For how long to run the simulation. Measured in simulation
 time.</p></li>
-<li><p><strong>reset</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True then the simulation will be restarted from time
-zero and states of all Devices and other Assets will be
-reset to initial states. If False then the simulation will
-continue from the current simulation time.</p></li>
 <li><p><strong>trace</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True then the executed events will be recorded and the
 trace will be exported to a file at
 ‘~/Downloads/environment_trace.json’</p></li>
@@ -701,9 +958,62 @@ simulation.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.system.System.simulate_multiple_times">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simulate_multiple_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_simulations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.system.System.simulate_multiple_times" title="Link to this definition"></a></dt>
+<dd><p>Run a simulation multiple times using multiple processes.</p>
+<p>Simulation function is executed multiple times with a new
+System instance each time. The simulation function needs to
+initialize the model and run the simulation by calling
+system_parameter.simulate(…)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to familiarize yourself with Python’s
+multi-process code execution such as each process having a
+separate copy of static variables.
+Each process may run multiple simulations, one after another.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulation</strong> (<em>function</em>) – Function that sets up the model and runs it. The function
+will be called with 2+ parameter:
+- System instance to be used for this simulation.
+- integer index of the simulation
+- additional arguments, see <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</p></li>
+<li><p><strong>number_of_simulations</strong> (<em>int &gt; 0</em>) – Number of times to run &lt;simulation&gt;.</p></li>
+<li><p><strong>max_processes</strong> (<em>int</em><em>, </em><em>default=0</em>) – Maximum number of processes to create for running
+simultaneous simulations.
+If 0, then simulations will run one after another in the
+current thread (and the current process).
+If None, then default to the number of processors on the
+machine</p></li>
+<li><p><strong>*args</strong> – Additional arguments will be passed to the simulation
+function.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments will be passed to the simulation
+function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of System objects that were used to run each
+simulation. List length will equal &lt;iterations&gt;.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If you see error like:
+    Can’t pickle local object ‘simulation.&lt;locals&gt;.function’
+    It means you defined an anonymous function (e.g. function
+    within a function) in your code that the multiprocess
+    setup does not support.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="simprocesd.model.system.System.simulation_data">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simulation_data</span></span><a class="headerlink" href="#simprocesd.model.system.System.simulation_data" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simulation_data</span></span><a class="headerlink" href="#simprocesd.model.system.System.simulation_data" title="Link to this definition"></a></dt>
 <dd><p>Stored datapoints added with
 Environment.add_datapoint(list_label, sub_label, datapoint)</p>
 <div class="line-block">
@@ -716,7 +1026,7 @@ Environment.add_datapoint(list_label, sub_label, datapoint)</p>
 
 </section>
 <section id="module-simprocesd.model">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.model" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simprocesd.model" title="Link to this heading"></a></h2>
 </section>
 </section>
 
