@@ -67,8 +67,13 @@ def main(is_test = False):
         # Sink collects parts and increases its own value by the value of collected parts.
         plot_value([source, sink])
         # Show data from custom sensor.
-        simple_plot(sensor.data['time'], sensor.data[level_probe],
-                    "Parts in Buffer", 'time', 'parts')
+        simple_plot(x = sensor.data['time'],
+                    y = sensor.data[level_probe],
+                    title = 'Parts in Buffer',
+                    xlabel = 'time',
+                    ylabel = 'parts',
+                    data_label = buffer.name,
+                    fmt = '.-g')
 
 
 if __name__ == '__main__':

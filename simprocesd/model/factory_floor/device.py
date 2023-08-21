@@ -21,8 +21,6 @@ class Device(Asset):
     '''
 
     def __init__(self, name = None, upstream = None, value = 0):
-        super().__init__(name, value)
-
         self._downstream = []
         self._upstream = []
         self._part = None
@@ -32,6 +30,7 @@ class Device(Asset):
         self._received_part_callbacks = []
         self._block_input = False
 
+        super().__init__(name, value)
         if upstream == None:
             upstream = []
         self.set_upstream(upstream)
