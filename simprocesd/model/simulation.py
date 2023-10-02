@@ -4,7 +4,7 @@ import json
 import os
 import random
 
-from ..utils import DataStorageType, assert_is_instance, assert_callable
+from ..utils import assert_is_instance, assert_callable
 
 
 @unique
@@ -123,9 +123,8 @@ class Environment:
     ---------
     name: str, default='environment'
         Environment name.
-    simulation_data_storage_type: DataStorageType, default=DataStorageType.NONE
-        How to store <simulation_data>. Does not currently support
-        DataStorageType.FILE
+    resource_manager: ResourceManager, default=None
+        Instance of a ResourceManager that will be used by Assets.
 
     Attributes
     ----------
@@ -135,12 +134,8 @@ class Environment:
         Stored datapoints added with Environment.add_datapoint
     '''
 
-    def __init__(self, name = 'environment', simulation_data_storage_type = DataStorageType.NONE,
-                 resource_manager = None):
+    def __init__(self, name = 'environment', resource_manager = None):
         self.name = name
-        self._simulation_data_storage_type = simulation_data_storage_type
-        if self._simulation_data_storage_type == DataStorageType.FILE:
-            raise NotImplementedError('Storing to file/disk is not supported yet.')
         self.resource_manager = resource_manager
         self.reset()
 
@@ -334,18 +329,13 @@ class Environment:
             New datapoint that will be added to the list using
             list.append(datapoint). Can be a single object or a tuple.
         '''
-        if self._simulation_data_storage_type == DataStorageType.NONE:
-            return
-        elif self._simulation_data_storage_type == DataStorageType.MEMORY:
-            try:
-                table_dictionary = self.simulation_data[list_label]
-            except KeyError:
-                table_dictionary = {}
-                self.simulation_data[list_label] = table_dictionary
+        try:
+            table_dictionary = self.simulation_data[list_label]
+        except KeyError:
+            table_dictionary = {}
+            self.simulation_data[list_label] = table_dictionary
 
-            try:
-                table_dictionary[sub_label].append(datapoint)
-            except KeyError:
-                table_dictionary[sub_label] = [datapoint]
-        elif self._simulation_data_storage_type == DataStorageType.FILE:
-            raise NotImplementedError('Storing to file/disk is not supported.')
+        try:
+            table_dictionary[sub_label].append(datapoint)
+        except KeyError:
+            table_dictionary[sub_label] = [datapoint]

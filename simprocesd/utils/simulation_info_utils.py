@@ -5,11 +5,6 @@ def print_produced_parts_and_average_quality(system, machines):
     '''Print the number of Parts produced by each machine in the list
     and the Part's average quality.
 
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
-
     Arguments
     ---------
     system: System
@@ -35,11 +30,6 @@ def print_finished_work_order_counts(system):
     '''Print which machines had work orders completed on them and how
     many of those work orders there were.
 
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
-
     Arguments
     ---------
     system: System
@@ -63,11 +53,6 @@ def plot_throughput(system, machines, subplot = None):
     throughput between time 0 and 100.
 
     Graph is shown using matplotlib library.
-
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
 
     Arguments
     ---------
@@ -106,11 +91,6 @@ def plot_damage(system, machines, subplot = None):
     '''Show a graph of damage over time for MachineWithDamage.
 
     Graph is shown using matplotlib library.
-
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
 
     Arguments
     ---------
@@ -172,11 +152,6 @@ def plot_resources(system, resources, subplot = None, hide_max = False):
 
     Graph is shown using matplotlib library.
 
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
-
     Arguments
     ---------
     system: System
@@ -211,11 +186,6 @@ def plot_buffer_levels(system, buffers, subplot = None):
     '''Show a graph of Buffer levels over time.
 
     Graph is shown using matplotlib library.
-
-    Note
-    ----
-    Won't work if System was initialized with
-    simulation_data_storage_type = DataStorageType.NONE
 
     Arguments
     ---------

@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 
 from .. import add_side_effect_to_class_method
 from ...model import Event, Environment, EventType
-from ...utils import DataStorageType
 
 
 class EnvironmentTestCase(TestCase):
@@ -15,7 +14,7 @@ class EnvironmentTestCase(TestCase):
         EnvironmentTestCase.execution_order.append(event)
 
     def setUp(self):
-        self.env = Environment('env', DataStorageType.MEMORY)
+        self.env = Environment('env')
         self.action = MagicMock()
         # Clear the list between tests.
         EnvironmentTestCase.execution_order = []
@@ -40,10 +39,6 @@ class EnvironmentTestCase(TestCase):
         self.assertEqual(self.env.now, 0)
         self.assertEqual(self.env._paused_events, [])
         self.assertFalse(self.env.is_simulation_in_progress())
-
-    def test_file_storage(self):
-        self.assertRaises(NotImplementedError,
-                          lambda: Environment(simulation_data_storage_type = DataStorageType.FILE))
 
     def test_schedule_event(self):
         self.env.schedule_event(5, 45537, self.action, EventType.FAIL, 'test_msg')

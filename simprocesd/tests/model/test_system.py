@@ -6,14 +6,13 @@ from unittest.mock import MagicMock, patch
 from .. import add_side_effect_to_class_method
 from ...model import Environment, System, ResourceManager
 from ...model.factory_floor import Asset, Machine, Sink
-from ...utils import DataStorageType
 
 
 class SystemTestCase(TestCase):
 
     def setUp(self):
         System._instance = None
-        self.sys = System(DataStorageType.MEMORY)
+        self.sys = System()
         # Mock out the Environment class.
         self.env_mock = MagicMock(spec = Environment)
         self.env_mock.resource_manager = MagicMock(spec = ResourceManager)
@@ -26,11 +25,10 @@ class SystemTestCase(TestCase):
 
     def test_initialize(self):
         res_manager = ResourceManager()
-        sys = System(DataStorageType.MEMORY, res_manager)
+        sys = System(res_manager)
         assets = [Asset()]  # Adds to System automatically.
 
         self.assertEqual(sys._assets, assets)
-        self.assertEqual(sys._env._simulation_data_storage_type, DataStorageType.MEMORY)
         self.assertEqual(sys._env.resource_manager, res_manager)
 
     def test_simulation_data(self):

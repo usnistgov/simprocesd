@@ -8,7 +8,7 @@ import random
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, DecisionGate
-from simprocesd.utils import DataStorageType, print_produced_parts_and_average_quality
+from simprocesd.utils import print_produced_parts_and_average_quality
 
 
 def process_part(machine, part):
@@ -20,7 +20,7 @@ def improve_part(machine, part):
 
 
 def main():
-    system = System(DataStorageType.MEMORY)
+    system = System()
 
     source = Source()
     M1 = Machine('Processor', upstream = [source], cycle_time = 1)

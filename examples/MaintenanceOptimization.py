@@ -14,7 +14,6 @@ from matplotlib import pyplot
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Sink, Maintainer, Part
-from simprocesd.utils import DataStorageType
 
 from .machine_with_damage import MachineWithDamage
 
@@ -40,7 +39,7 @@ def main(is_test = False):
         # Reduce example runtime during testing.
         iterations = 1
 
-    system = System(DataStorageType.MEMORY)
+    system = System()
     # Setup the experiment.
     maintainer = Maintainer(capacity = maintainer_capacity)
     source = Source('Source', Part(quality = 1), 1)

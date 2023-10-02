@@ -8,11 +8,11 @@ diagram shows the actual Sim-PROCESD setup to represent it.
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Machine, Sink, DecisionGate
-from simprocesd.utils import DataStorageType, print_produced_parts_and_average_quality
+from simprocesd.utils import print_produced_parts_and_average_quality
 
 
 def main():
-    system = System(DataStorageType.MEMORY)
+    system = System()
 
     source = Source()
 

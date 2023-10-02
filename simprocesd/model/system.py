@@ -1,7 +1,6 @@
 import time
 
 from . import Environment, ResourceManager
-from ..utils import DataStorageType
 
 
 class System:
@@ -20,9 +19,6 @@ class System:
 
     Arguments
     ---------
-    simulation_data_storage_type: DataStorageType, default=DataStorageType.MEMORY
-        How to store <simulation_data>. Does not currently support
-        DataStorageType.FILE
     resource_manager: ResourceManager, default=None
         A ResourceManager instance to use for this simulation. If None
         then the default ResourceManager will be used.
@@ -60,12 +56,11 @@ class System:
             if System._instance._simulation_is_initialized:
                 new_asset.initialize(System._instance._env)
 
-    def __init__(self, simulation_data_storage_type = DataStorageType.MEMORY, resource_manager = None):
+    def __init__(self, resource_manager = None):
         self._assets = []
         if resource_manager == None:
             resource_manager = ResourceManager()
-        self._env = Environment(simulation_data_storage_type = simulation_data_storage_type,
-                                resource_manager = resource_manager)
+        self._env = Environment(resource_manager = resource_manager)
         self._simulation_is_initialized = False
 
         System._instance = self

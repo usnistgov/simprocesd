@@ -13,7 +13,7 @@ from scipy.optimize import minimize
 
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Buffer, Sink, Part, Maintainer
-from simprocesd.utils import DataStorageType, geometric_distribution_sample, \
+from simprocesd.utils import geometric_distribution_sample, \
     print_produced_parts_and_average_quality
 
 from .machine_with_damage import MachineWithDamage
@@ -42,7 +42,7 @@ def new_machine(name, upstream, cycle_time, probability_to_degrade,
 
 
 def main():
-    system = System(DataStorageType.MEMORY)
+    system = System()
 
     maintainer = Maintainer(capacity = 1)
     source = Source('Source', Part('Part', 1, 2))
