@@ -76,10 +76,10 @@ class Buffer(Device):
         if self.level() + part_count > self._capacity:
             return False
         else:
-            self._level += part_count
             return super()._can_accept_part(part)
 
     def _on_received_new_part(self):
+        self._level += Buffer._get_part_count(self._part)
         self._env.add_datapoint('level', self.name, (self._env.now, self.level()))
         super()._on_received_new_part()
 
