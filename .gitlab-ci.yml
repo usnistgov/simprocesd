@@ -5,7 +5,7 @@ default:
 testing:
     stage: test
     script:
-        - pip --trusted-host files.pythonhosted.org --trusted-host pypi.org install .[examples]             # Install sim-procesd package
+        - pip install .[examples]             # Install sim-procesd package
         - python -m unittest                  # Run unittests
         - |                                   # Run examples with 'testing' flag:
            for f in examples/*.py             # List all example. f=examples/Test.py
