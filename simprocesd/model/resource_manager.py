@@ -19,7 +19,6 @@ class ResourceManager:
         self._waiting_requests = []
         self._env = None
         self._name = f'{type(self).__name__}'
-        self._init_count = 0
 
     def initialize(self, env):
         '''Prepare ResourceManager for simulation.
@@ -35,8 +34,6 @@ class ResourceManager:
         # Record initial resource amounts.
         for resource_name in self._resources.keys():
             self._record_resource_amount_update(resource_name)
-
-        self._init_count += 1
 
     def get_resource_usage(self, resource_name):
         '''Get how much of a resource is currently reserved/in-use.
@@ -217,7 +214,6 @@ class ReservedResources():
     def __init__(self, resource_manager, reserved_resources):
         self._resource_manager = resource_manager
         self._reserved_resources = reserved_resources
-        self._init_count_when_made = self._resource_manager._init_count
 
     @property
     def reserved_resources(self):

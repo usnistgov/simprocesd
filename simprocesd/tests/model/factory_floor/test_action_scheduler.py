@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, EventType, System
-from ....model.factory_floor import ActionScheduler, Machine
+from ....model.factory_floor import ActionScheduler, PartProcessor
 
 
 class ExtendedActionScheduler(ActionScheduler):
@@ -89,7 +89,7 @@ class ActionSchedulerTestCase(TestCase):
                 expected_default_calls += 1
 
     def test_acyclical_schedule(self):
-        obj1 = Machine()
+        obj1 = PartProcessor()
         sched = ActionScheduler([(1, obj1), (3, 'banana')], is_cyclical = False)
         sched.initialize(self.env)
 

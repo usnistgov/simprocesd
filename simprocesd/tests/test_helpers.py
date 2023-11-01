@@ -43,7 +43,7 @@ def mock_wrap(object_):
     list of MagicMock items is returned where each object_ item is
     wrapped individually.
     '''
-    wrap = lambda obj_: MagicMock(spec = obj_, wraps = obj_)
+    wrap = lambda item: MagicMock(spec = item, wraps = item)
     if hasattr(object_ , '__iter__'):
         rtn = []
         for o in object_:

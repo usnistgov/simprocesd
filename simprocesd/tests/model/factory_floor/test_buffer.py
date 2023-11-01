@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Batch, Buffer, Machine, Part
+from ....model.factory_floor import Batch, Buffer, PartProcessor, Part
 
 
 class BufferTestCase(TestCase):
@@ -13,10 +13,10 @@ class BufferTestCase(TestCase):
         self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 0
-        self.upstream = [mock_wrap(Machine()), mock_wrap(Machine())]
+        self.upstream = [mock_wrap(PartProcessor()), mock_wrap(PartProcessor())]
         for u in self.upstream:
             u.initialize(self.env)
-        self.downstream = MagicMock(spec = Machine)
+        self.downstream = MagicMock(spec = PartProcessor)
         self.downstream.give_part.return_value = True
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):

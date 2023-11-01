@@ -1,11 +1,11 @@
 import math
 import numpy as np
 
-from .machine import Device
+from .part_handler import PartHandler
 from .batch import Batch
 
 
-class Buffer(Device):
+class Buffer(PartHandler):
     '''A device that can store multiple parts.
 
     Buffer stores received Parts and can pass the stored Parts
@@ -34,7 +34,7 @@ class Buffer(Device):
 
     def __init__(self, name = None, upstream = None, minimum_delay = 0,
                  capacity = None, value = 0):
-        super().__init__(name, upstream, value)
+        super().__init__(name, upstream, 0, value)
 
         self._minimum_delay = minimum_delay
         if capacity == None:
@@ -44,6 +44,12 @@ class Buffer(Device):
         assert self._capacity >= 1, 'Capacity has to be at least 1.'
         self._buffer = []
         self._level = 0
+
+    @PartHandler.cycle_time.getter
+    def cycle_time(self):
+        '''Cycle time is not used by the buffer.
+        '''
+        return 0
 
     @property
     def stored_parts(self):
@@ -87,7 +93,7 @@ class Buffer(Device):
         self.notify_upstream_of_available_space()
         if len(self._buffer) == 1:
             # Indicates that the buffer was empty.
-            self._schedule_pass_part_downstream(delay = self._minimum_delay)
+            self._schedule_pass_part_downstream(self._minimum_delay)
 
     def notify_upstream_of_available_space(self):
         if self.level() < self._capacity:
@@ -120,9 +126,9 @@ class Buffer(Device):
             # have arrived at the same time or later.
             remaining_wait = self._remaining_wait_time(self._buffer[0][0])
             if remaining_wait > min_time_change:
-                self._schedule_pass_part_downstream(delay = remaining_wait)
+                self._schedule_pass_part_downstream(time_offset = remaining_wait)
             else:
-                self._waiting_for_space_availability = True
+                self._waiting_for_downstream_space = True
         self.notify_upstream_of_available_space()
 
     @staticmethod

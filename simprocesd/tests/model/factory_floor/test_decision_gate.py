@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, System
-from ....model.factory_floor import Part, Machine, DecisionGate
+from ....model.factory_floor import Part, PartProcessor, DecisionGate
 
 
 class DecisionGateTestCase(TestCase):
@@ -12,10 +12,11 @@ class DecisionGateTestCase(TestCase):
         self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
-        self.upstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
-        self.downstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
+        self.upstream = [MagicMock(spec = PartProcessor), MagicMock(spec = PartProcessor)]
+        self.downstream = [MagicMock(spec = PartProcessor), MagicMock(spec = PartProcessor)]
         for d in self.downstream:
             d.give_part.return_value = True
+            d.waiting_for_part_start_time = None
 
     def test_initialize(self):
         gate_ = DecisionGate(lambda gate, part: True, 'name', self.upstream)

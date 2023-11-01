@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from .. import add_side_effect_to_class_method
 from ...model import Environment, System, ResourceManager
-from ...model.factory_floor import Asset, Machine, Sink
+from ...model.factory_floor import Asset, PartHandler, PartProcessor, Sink
 
 
 class SystemTestCase(TestCase):
@@ -93,18 +93,18 @@ class SystemTestCase(TestCase):
         self.assertEqual(self.sys.get_net_value_of_assets(), 100 + 50 - 33)
 
     def test_find_asset(self):
-        assets = [Asset('asset'), Machine('machine'), Sink('sink')]
+        assets = [Asset('asset'), PartProcessor('machine'), Sink('sink')]
         self.assertEqual(self.sys.find_assets(name = 'sink'), assets[2:])
         self.assertEqual(self.sys.find_assets(id_ = assets[1].id), assets[1:2])
-        self.assertEqual(self.sys.find_assets(type_ = Machine), assets[1:2])
+        self.assertEqual(self.sys.find_assets(type_ = PartProcessor), assets[1:2])
         self.assertEqual(self.sys.find_assets(subtype = Asset), assets[0:])
-        self.assertEqual(self.sys.find_assets(subtype = Machine), assets[1:])
+        self.assertEqual(self.sys.find_assets(subtype = PartHandler), assets[1:])
         self.assertEqual(self.sys.find_assets(subtype = Sink), assets[2:])
 
     def test_find_asset_mix(self):
-        assets = [Asset('machine'), Machine('machine'), Sink('machine')]
-        self.assertEqual(self.sys.find_assets(name = 'machine', subtype = Machine), assets[1:])
-        self.assertEqual(self.sys.find_assets(name = 'machine', type_ = Machine), assets[1:2])
+        assets = [Asset('machine'), PartProcessor('machine'), Sink('machine')]
+        self.assertEqual(self.sys.find_assets(name = 'machine', subtype = PartHandler), assets[1:])
+        self.assertEqual(self.sys.find_assets(name = 'machine', type_ = PartProcessor), [assets[1]])
 
 
 if __name__ == '__main__':

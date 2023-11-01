@@ -3,7 +3,7 @@ Sink is receiving Batch parts but tracks how many individual parts it
 received.
 '''
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink, Batch, PartBatcher, Part
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink, Batch, PartBatcher, Part
 
 
 def main():
@@ -18,10 +18,10 @@ def main():
 
     # Path 1: Unbatch, process individually, and batch parts together again.
     M1 = PartBatcher('M1', upstream = [source], output_batch_size = None)
-    M2 = Machine('M2', upstream = [M1], cycle_time = 1)
+    M2 = PartProcessor('M2', upstream = [M1], cycle_time = 1)
     M3 = PartBatcher('M3', upstream = [M2], output_batch_size = parts_per_batch)
     # Path 2: Process in batches. Cycle time changed to account for batch size.
-    M4 = Machine('M4', upstream = [source], cycle_time = parts_per_batch)
+    M4 = PartProcessor('M4', upstream = [source], cycle_time = parts_per_batch)
 
     sink = Sink(upstream = [M3, M4])
 

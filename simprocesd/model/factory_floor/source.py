@@ -1,11 +1,9 @@
-import math
-
 from ...utils import assert_is_instance
-from .machine import Machine
+from .part_handler import PartHandler
 from .part import Part
 
 
-class Source(Machine):
+class Source(PartHandler):
     '''A Device that produces Part objects and supplies them to Devices
     downstream. It is the start of a production line.
 
@@ -52,40 +50,40 @@ class Source(Machine):
     def initialize(self, env):
         super().initialize(env)
         self._sample_part.initialize(env)
-        self._schedule_finish_processing_part()
+        self._schedule_finish_cycle()
 
     def set_upstream(self, new_upstream_list):
-        ''' Source cannot have upstream Devices.
+        '''Source cannot have upstream Devices.
 
         Raises
         ------
         ValueError
             if new_upstream_list is not an empty list.
         '''
-        if new_upstream_list != []:
+        if new_upstream_list != [] and new_upstream_list != None:
             raise ValueError('Source cannot have an upstream.')
 
     @property
     def cost_of_produced_parts(self):
-        ''' Returns the summed value of the parts that have been
+        '''Returns the summed value of the parts that have been
         produced by this Source and passed downstream.
         '''
         return self._cost_of_produced_parts
 
     @property
     def produced_parts(self):
-        ''' Returns the count of the parts that have been produced by
+        '''Returns the count of the parts that have been produced by
         this Source and passed downstream.
         '''
         return self._produced_parts
 
     @property
     def remaining_parts(self):
-        ''' How many Parts parts are left to be produced.
+        '''How many Parts parts are left to be produced.
         '''
         return max(self._max_produced_parts - self._produced_parts, 0)
 
-    def _finish_processing_part(self):
+    def _finish_cycle(self):
         if self._output == None:
             self._output = self._sample_part.make_copy()
             self._output.initialize(self._env)
@@ -103,10 +101,10 @@ class Source(Machine):
             self.add_cost('supplied_part', supplied_part_value)
             self._cost_of_produced_parts += supplied_part_value
             self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
-            self._schedule_finish_processing_part()
+            self._schedule_finish_cycle()
 
     def adjust_part_count(self, value):
-        ''' Update the number of remaining Parts.
+        '''Update the number of remaining Parts.
 
         Increase or decrease the number of Parts this Source can
         supply/produce. Cannot decrease by more than the remaining
@@ -121,7 +119,9 @@ class Source(Machine):
             Remaining Parts count will never be decreased below 0.
         '''
         assert_is_instance(value, int)
+        was_empty = self._max_produced_parts - self._produced_parts < 1
         # Maximum parts to produce can't be lower than produced parts.
         self._max_produced_parts = max(self._max_produced_parts + value, self._produced_parts)
-        self._schedule_finish_processing_part()
+        if was_empty:
+            self._schedule_pass_part_downstream()
 

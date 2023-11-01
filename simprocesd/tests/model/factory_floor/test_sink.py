@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Batch, Machine, Part, Sink
+from ....model.factory_floor import Batch, PartProcessor, Part, Sink
 
 
 class SinkTestCase(TestCase):
@@ -25,7 +25,7 @@ class SinkTestCase(TestCase):
             self.assertEqual(args[4], message)
 
     def test_initialize(self):
-        upstream = [MagicMock(spec = Machine)]
+        upstream = [MagicMock(spec = PartProcessor)]
         sink = Sink('name', upstream, 4, True)
         self.assertIn(sink, self.sys._assets)
         sink.initialize(self.env)
@@ -39,7 +39,7 @@ class SinkTestCase(TestCase):
 
     def test_add_downstream(self):
         sink = Sink()
-        self.assertRaises(RuntimeError, lambda: Machine(upstream = [sink]))
+        self.assertRaises(RuntimeError, lambda: PartProcessor(upstream = [sink]))
 
     def test_collect_parts(self):
         part = Part()
@@ -55,12 +55,12 @@ class SinkTestCase(TestCase):
 
     def test_receive_part(self):
         part = Part(value = 2.5)
-        upstream = [mock_wrap(Machine())]
+        upstream = [mock_wrap(PartProcessor())]
         sink = Sink('', upstream, 4, True)
         sink.initialize(self.env)
 
         self.assertTrue(sink.give_part(part))
-        self.assert_last_scheduled_event(4, sink.id, sink._finish_processing_part,
+        self.assert_last_scheduled_event(4, sink.id, sink._finish_cycle,
                                          EventType.FINISH_PROCESSING)
         self.assertEqual(part.routing_history, [sink])
         upstream[0].space_available_downstream.assert_not_called()
@@ -73,7 +73,7 @@ class SinkTestCase(TestCase):
         self.assertFalse(sink.give_part(Part()))
 
         self.env.now = 3
-        sink._finish_processing_part()
+        sink._finish_cycle()
         upstream[0].space_available_downstream.assert_called_once()
         self.assertEqual(sink.waiting_for_part_start_time, 3)
         self.assertTrue(sink.give_part(Part()))
@@ -89,7 +89,7 @@ class SinkTestCase(TestCase):
             self.assertEqual(sink.value, 2.5 * (i + 1))
             self.assertEqual(sink.received_parts_count, i + 1)
             self.assertEqual(sink.value_of_received_parts, 2.5 * (i + 1))
-            sink._finish_processing_part()
+            sink._finish_cycle()
 
     def test_receive_batch_parts(self):
         sink = Sink()

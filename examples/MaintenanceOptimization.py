@@ -1,5 +1,4 @@
-'''
-Example for quantifying the impact of different
+'''Example for quantifying the impact of different
 Condition Based Maintenance (CBM) policies.
 
 Setup: there are 5 machines in parallel that accrue damage over time

@@ -8,8 +8,8 @@ class Asset:
     Arguments
     ----------
     name: str, default=None
-        Name of the Asset. If name is None then the Asset's name will be
-        changed to Asset_<id>
+        Name of the Asset. If name is None then a default name will be
+        used: <class_name>_<asset_id>
     value: float, default=0
         Starting value of the Asset.
     is_transitory: bool, default=False

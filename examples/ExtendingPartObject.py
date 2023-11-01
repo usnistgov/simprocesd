@@ -5,7 +5,7 @@ Average weight: ~18
 import random
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Part, Source, Machine, Sink
+from simprocesd.model.factory_floor import Part, Source, PartProcessor, Sink
 
 
 class CustomPart(Part):
@@ -39,13 +39,13 @@ def main():
     system = System()
 
     source = Source(sample_part = CustomPart('part', 0, 25))
-    M1 = Machine('M1',
-                 upstream = [source],
-                 cycle_time = 1)
+    M1 = PartProcessor('M1',
+                       upstream = [source],
+                       cycle_time = 1)
     M1.add_finish_processing_callback(lambda m, p: process_part(p, 0.5, 0.75))
-    M2 = Machine('M2',
-                 upstream = [M1],
-                 cycle_time = 1)
+    M2 = PartProcessor('M2',
+                       upstream = [M1],
+                       cycle_time = 1)
     M2.add_finish_processing_callback(lambda m, p: process_part(p, 0.1, 0.25))
     sink = Sink(upstream = [M2], collect_parts = True)
 

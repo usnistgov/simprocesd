@@ -1,13 +1,13 @@
 import random
 
 from simprocesd.model.cms.cms import Cms
-from simprocesd.model.factory_floor import Machine
+from simprocesd.model.factory_floor import PartProcessor
 from simprocesd.model.simulation import EventType
 from simprocesd.utils import assert_callable
 
 
-class MachineWithFaults(Machine):
-    ''' A Machine that can be configured with a set of failure types
+class MachineWithFaults(PartProcessor):
+    '''A machine that can be configured with a set of failure types
     where each failure is independent of the others and can be
     periodic or based on number of parts processed.
     See MachineWithFaults.add_recurring_fault()
@@ -71,9 +71,10 @@ class MachineWithFaults(Machine):
                  capacity_to_repair = 1,
                  receive_part_callback = None,
                  failed_callback = None):
-        '''
-        Do not call after simulation starts.
-        Arguments:
+        '''Do not call after simulation starts.
+
+        Arguments
+        ---------
         name -- name of fault, used as maintenance tag to fix fault.
         get_time_to_fault -- function that gives time to fault, no
             periodic faults if not set.

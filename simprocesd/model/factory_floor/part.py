@@ -1,6 +1,6 @@
 from ...utils.utils import assert_is_instance
 from .asset import Asset
-from .device import Device
+from .part_flow_controller import PartFlowController
 
 
 class Part(Asset):
@@ -38,8 +38,31 @@ class Part(Asset):
         return self._routing_history.copy()
 
     def add_routing_history(self, device):
-        assert_is_instance(device, Device)
+        '''Adds a device to the end of the routing history.
+
+        Arguments
+        ---------
+        device: PartFlowController
+            Item to be added to routing history.
+        '''
+        assert_is_instance(device, PartFlowController)
         self._routing_history.append(device)
+
+    def remove_from_routing_history(self, index):
+        '''Removes an item from the routing history.
+
+        Arguments
+        ---------
+        index: int
+            Index of an element in the routing history to be removed.
+
+        Raises
+        ------
+        IndexError
+            If the provided index is outside the routing history's
+            range.
+        '''
+        del self._routing_history[index]
 
     def make_copy(self):
         ''' Create a copy of this Part.

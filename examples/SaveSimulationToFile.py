@@ -8,7 +8,7 @@ all of the collected data so far.
 import os
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink
 from simprocesd.utils import save_object, load_object
 
 
@@ -17,7 +17,7 @@ def main():
 
     system = System()
     source = Source()
-    M1 = Machine('Machine', [source], 1)
+    M1 = PartProcessor('PartProcessor', [source], 1)
     sink = Sink(upstream = [M1])
 
     system.simulate(simulation_duration = 100)
@@ -29,7 +29,7 @@ def main():
     finally:
         os.remove(file_name)
 
-    machines = loaded_system.find_assets(type_ = Machine)
+    machines = loaded_system.find_assets(type_ = PartProcessor)
     print(f'Machines from loaded system: {[m.name for m in machines]}')
 
 

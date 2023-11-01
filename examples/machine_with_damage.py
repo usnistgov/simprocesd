@@ -1,13 +1,14 @@
-from simprocesd.model.factory_floor import Machine
+from simprocesd.model.factory_floor import PartProcessor
 from simprocesd.model.simulation import EventType
 from simprocesd.utils import geometric_distribution_sample, assert_callable
 
 
-class MachineWithDamage(Machine):
-    ''' A Machine that periodically accumulates damage and that can be
-    maintained to reset accumulated damage.
+class MachineWithDamage(PartProcessor):
+    '''A machine that periodically accumulates damage and that
+    can be maintained to reset accumulated damage.
 
-    Arguments:
+    Arguments
+    ---------
     name -- name of the machine.
     upstream -- list of upstream devices.
     cycle_time -- how long it takes to complete one process cycle.
@@ -55,7 +56,7 @@ class MachineWithDamage(Machine):
 
     @property
     def damage(self):
-        ''' Represents accrued wear and tear on the machine.
+        '''Represents accrued wear and tear on the machine.
         '''
         return self._damage
 
@@ -70,7 +71,7 @@ class MachineWithDamage(Machine):
         self._prepare_next_degrade_event()
 
     def add_on_degrade_callback(self, callback):
-        ''' Adds a callback to be called when status degrades.
+        '''Adds a callback to be called when status degrades.
 
         Arguments:
         callback -- function with a signature callback(this_machine)

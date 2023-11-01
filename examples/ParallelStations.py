@@ -1,7 +1,7 @@
 ''' Expected parts produced: 10074
 '''
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Machine, Sink
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink
 
 
 def main():
@@ -9,17 +9,17 @@ def main():
 
     source = Source()
 
-    M1 = Machine('M1', upstream = [source], cycle_time = 2)
-    M2 = Machine('M2', upstream = [source], cycle_time = 2)
+    M1 = PartProcessor('M1', upstream = [source], cycle_time = 2)
+    M2 = PartProcessor('M2', upstream = [source], cycle_time = 2)
     first_stage = [M1, M2]
 
-    M3 = Machine('M3', upstream = first_stage, cycle_time = 3)
-    M4 = Machine('M4', upstream = first_stage, cycle_time = 3)
-    M5 = Machine('M5', upstream = first_stage, cycle_time = 3)
+    M3 = PartProcessor('M3', upstream = first_stage, cycle_time = 3)
+    M4 = PartProcessor('M4', upstream = first_stage, cycle_time = 3)
+    M5 = PartProcessor('M5', upstream = first_stage, cycle_time = 3)
     second_stage = [M3, M4, M5]
 
-    M6 = Machine('M6', upstream = second_stage, cycle_time = 2)
-    M7 = Machine('M7', upstream = second_stage, cycle_time = 2)
+    M6 = PartProcessor('M6', upstream = second_stage, cycle_time = 2)
+    M7 = PartProcessor('M7', upstream = second_stage, cycle_time = 2)
 
     sink = Sink(upstream = [M6, M7])
 

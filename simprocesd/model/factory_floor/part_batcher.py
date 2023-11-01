@@ -1,8 +1,8 @@
 from .batch import Batch
-from .device import Device
+from .part_handler import PartHandler
 
 
-class PartBatcher(Device):
+class PartBatcher(PartHandler):
     '''Organize input items into Batches of specific size or into
     individual Parts.
 
@@ -19,19 +19,19 @@ class PartBatcher(Device):
     Arguments
     ---------
     name: str, default=None
-        Name of the Device. If name is None then the Device's name will
-        be changed to Device_<id>
+        Name of the Asset. If name is None then a default name will be
+        used: <class_name>_<asset_id>
     upstream: list, default=None
-        A list of upstream Device objects.
+        A list of upstream PartHandler objects.
     value: float, default=0
-        Starting value of the Device.
+        Starting value of the Asset.
     output_batch_size: int, default=None
         Specify the batch size for the output. If set to None then
         the output will be individual Parts.
     '''
 
     def __init__(self, name = None, upstream = None, value = 0, output_batch_size = None):
-        super().__init__(name, upstream, value)
+        super().__init__(name, upstream, 0, value)
         assert output_batch_size == None or output_batch_size > 0, \
                     f'output_batch_size ({output_batch_size}) cannot be 0 or less.'
         self._output_batch_size = output_batch_size

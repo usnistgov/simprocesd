@@ -14,7 +14,8 @@ evaluate the effectiveness of the current configuration.
 import sys
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import ActionScheduler, Buffer, DecisionGate, Machine, Sink, Source
+from simprocesd.model.factory_floor import ActionScheduler, Buffer, DecisionGate, PartProcessor, \
+    Sink, Source
 from simprocesd.utils.simulation_info_utils import plot_buffer_levels, plot_resources
 from random import random
 from matplotlib import pyplot
@@ -65,17 +66,17 @@ def main(is_test = False):
     buffer_limit = 50
 
     source1 = Source()
-    M1 = Machine('M1', upstream = [source1], cycle_time = 16,
-                 resources_for_processing = {'operators': 1, 'power': 11000})
-    M2_1 = Machine('M2', upstream = [M1], cycle_time = 23,
-                 resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
+    M1 = PartProcessor('M1', upstream = [source1], cycle_time = 16,
+                       resources_for_processing = {'operators': 1, 'power': 11000})
+    M2_1 = PartProcessor('M2', upstream = [M1], cycle_time = 23,
+                         resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
     B1 = Buffer('B1', upstream = [M2_1], capacity = buffer_limit)
-    M3 = Machine('M3', upstream = [B1], cycle_time = 7,
-                 resources_for_processing = {'operators': 1, 'power': 43000})
+    M3 = PartProcessor('M3', upstream = [B1], cycle_time = 7,
+                       resources_for_processing = {'operators': 1, 'power': 43000})
     M3.add_finish_processing_callback(M3_process)
     B2 = Buffer('B2', upstream = [M3], capacity = buffer_limit)
-    M4 = Machine('M4', upstream = [B2], cycle_time = 12,
-                 resources_for_processing = {'operators': 1, 'power': 95000})
+    M4 = PartProcessor('M4', upstream = [B2], cycle_time = 12,
+                       resources_for_processing = {'operators': 1, 'power': 95000})
     M4.add_finish_processing_callback(M4_process)
     gate1 = DecisionGate(should_pass_part = lambda g, part: part.quality < 0.8, upstream = [M4])
     gate2 = DecisionGate(should_pass_part = lambda g, part: part.quality >= 0.8, upstream = [M4])
@@ -83,14 +84,14 @@ def main(is_test = False):
     sink1 = Sink('Sink1', upstream = [gate2])
 
     source2 = Source()
-    M5 = Machine('M1', upstream = [source2], cycle_time = 14,
-                 resources_for_processing = {'operators': 1, 'power': 37000})
+    M5 = PartProcessor('M1', upstream = [source2], cycle_time = 14,
+                       resources_for_processing = {'operators': 1, 'power': 37000})
     B3 = Buffer('B3', upstream = [M5], capacity = buffer_limit)
-    M2_2 = Machine('M2', upstream = [B3], cycle_time = 13,
-                 resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
+    M2_2 = PartProcessor('M2', upstream = [B3], cycle_time = 13,
+                         resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
     B4 = Buffer('B4', upstream = [M2_2], capacity = buffer_limit)
-    M6 = Machine('M6', upstream = [B4], cycle_time = 9,
-                 resources_for_processing = {'operators': 1, 'power': 29000})
+    M6 = PartProcessor('M6', upstream = [B4], cycle_time = 9,
+                       resources_for_processing = {'operators': 1, 'power': 29000})
     sink2 = Sink('Sink2', upstream = [M6])
 
     # Two 8 hours shift schedules and one that is both.

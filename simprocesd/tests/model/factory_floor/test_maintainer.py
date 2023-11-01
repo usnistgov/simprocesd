@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Machine, Maintainer
+from ....model.factory_floor import PartProcessor, Maintainer
 
 
 class MaintainerTestCase(TestCase):
@@ -14,7 +14,7 @@ class MaintainerTestCase(TestCase):
         self.env.now = 2
         self.machines = []
         for i in range(3):
-            self.machines.append(MagicMock(spec = Machine))
+            self.machines.append(MagicMock(spec = PartProcessor))
             self.machines[i].name = f'machine_{i}'
             # Configure the capacity to fix and time to fix.
             self.machines[i].get_work_order_capacity.return_value = i + 1

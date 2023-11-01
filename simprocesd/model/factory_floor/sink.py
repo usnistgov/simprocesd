@@ -1,7 +1,7 @@
-from . import Batch, Machine
+from . import Batch, PartHandler
 
 
-class Sink(Machine):
+class Sink(PartHandler):
     '''A Device that can receive any number of Parts but not pass
     those Parts. It is the end of a production line.
 
@@ -71,8 +71,8 @@ class Sink(Machine):
 
         super()._on_received_new_part()
 
-    def _finish_processing_part(self):
-        super()._finish_processing_part(record_produced_part_data = False)
+    def _finish_cycle(self):
+        super()._finish_cycle()
         self._output = None
         self.notify_upstream_of_available_space()
 

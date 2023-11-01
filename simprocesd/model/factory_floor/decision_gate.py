@@ -1,9 +1,9 @@
-from .device import Device
+from .part_flow_controller import PartFlowController
 
 
-class DecisionGate(Device):
-    '''Device that can conditionally prevent Parts from passing between
-    upstream and downstream Devices.
+class DecisionGate(PartFlowController):
+    '''PartFlowController that can conditionally prevent Parts from
+    passing between upstream and downstream Devices.
 
     DecisionGate does not hold/buffer any parts.
 
@@ -24,24 +24,11 @@ class DecisionGate(Device):
                  should_pass_part,
                  name = None,
                  upstream = None):
-        super().__init__(name, upstream, 0)
+        super().__init__(name, upstream)
         self._should_pass_part = should_pass_part
 
     def give_part(self, part):
-        assert part != None, 'Part cannot be set to None.'
-        if not self.is_operational() or not self._should_pass_part(self, part):
+        if not self._should_pass_part(self, part):
             return False
-
-        for dwn in self._downstream:
-            if dwn.give_part(part):
-                return True
-        return False
-
-    def space_available_downstream(self):
-        if self.is_operational():
-            self.notify_upstream_of_available_space()
-
-    def _pass_part_downstream(self, part):
-        # Safety check, function should never be called.
-        raise RuntimeError('This method should never be called.')
+        return super().give_part(part)
 

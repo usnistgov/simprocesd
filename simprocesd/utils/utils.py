@@ -15,7 +15,8 @@ def assert_is_instance(obj, class_type, message = None):
     obj: object
         Object that will be checked.
     class_type: type
-        Class type that the object needs to be.
+        Class type that the object needs to be or a tuple of all
+        acceptable class types.
     message: str, optional
         Error message if object is not an instance of <class_type>.
 

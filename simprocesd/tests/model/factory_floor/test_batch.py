@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment
-from ....model.factory_floor import Part, Machine, Batch
+from ....model.factory_floor import Part, PartProcessor, Batch
 
 
 class BatchTestCase(TestCase):
@@ -22,7 +22,7 @@ class BatchTestCase(TestCase):
     def test_make_copy(self):
         ids = []
         part = Part('p', 100, 3)
-        part.add_routing_history(MagicMock(spec = Machine))
+        part.add_routing_history(MagicMock(spec = PartProcessor))
         batch = Batch('b', [part])
         batches = [batch]
 

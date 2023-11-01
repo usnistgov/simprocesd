@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Part, Machine, Source
+from ....model.factory_floor import Part, PartProcessor, Source
 
 
 class SourceTestCase(TestCase):
@@ -37,11 +37,11 @@ class SourceTestCase(TestCase):
     def test_initialize(self):
         source = Source(cycle_time = 6, sample_part = Part(value = 5))
         source.initialize(self.env)
-        self.assert_last_scheduled_event(6, source.id, source._finish_processing_part,
+        self.assert_last_scheduled_event(6, source.id, source._finish_cycle,
                                          EventType.FINISH_PROCESSING)
 
         self.env.now = 6
-        source._finish_processing_part()
+        source._finish_cycle()
         self.assertEqual(source.value, 0)
         self.assertEqual(source.produced_parts, 0)
         self.assertEqual(source.cost_of_produced_parts, 0)
@@ -52,7 +52,7 @@ class SourceTestCase(TestCase):
         # Source is not allowed to have upstream machines.
         source = Source()
 
-        def helper(): source.set_upstream([Machine()])
+        def helper(): source.set_upstream([PartProcessor()])
 
         self.assertRaises(ValueError, helper)
 
@@ -60,14 +60,14 @@ class SourceTestCase(TestCase):
         part = Part('n', 10, 3)
         wrapped_part = mock_wrap(part)
         source = Source(sample_part = wrapped_part, cycle_time = 1)
-        downstream = MagicMock(spec = Machine)
+        downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
 
         source.initialize(self.env)
         wrapped_part.make_copy.assert_not_called()
         self.env.now = 1
-        source._finish_processing_part()
+        source._finish_cycle()
         wrapped_part.make_copy.assert_called_once()
 
         source._pass_part_downstream()
@@ -81,19 +81,19 @@ class SourceTestCase(TestCase):
         self.assertEqual(args[0].quality, part.quality)
         self.assertNotEqual(args[0].id, part.id)
 
-        self.assert_last_scheduled_event(2, source.id, source._finish_processing_part,
+        self.assert_last_scheduled_event(2, source.id, source._finish_cycle,
                                          EventType.FINISH_PROCESSING)
 
     def test_max_produced_parts(self):
         part = Part('n', 10, 3)
         source = Source(sample_part = part, starting_parts = 5, cycle_time = 1)
-        downstream = MagicMock(spec = Machine)
+        downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
         source.initialize(self.env)
 
         for i in range (1, 5):
-            source._finish_processing_part()
+            source._finish_cycle()
             source._pass_part_downstream()
             self.assertEqual(len(downstream.give_part.call_args_list), i)
             self.assertEqual(source.value, -10 * i)
@@ -101,7 +101,7 @@ class SourceTestCase(TestCase):
             self.assertEqual(source.cost_of_produced_parts, 10 * i)
             self.assertEqual(source.remaining_parts, 5 - i)
 
-        source._finish_processing_part()
+        source._finish_cycle()
         source._pass_part_downstream()
         # 6th part should not have been produced or passed downstream.
         self.assertEqual(source.value, -10 * 5)
@@ -111,7 +111,7 @@ class SourceTestCase(TestCase):
 
     def test_zero_cycle_time(self):
         source = Source(cycle_time = 0, sample_part = Part())
-        downstream = MagicMock(spec = Machine)
+        downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
 
@@ -124,7 +124,7 @@ class SourceTestCase(TestCase):
 
     def test_adjust_part_count(self):
         source = Source(sample_part = Part(), starting_parts = 5)
-        downstream = MagicMock(spec = Machine)
+        downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
         source.initialize(self.env)
@@ -135,14 +135,14 @@ class SourceTestCase(TestCase):
         source.adjust_part_count(-6)
         self.assertEqual(source.remaining_parts, 2)
 
-        source._finish_processing_part()
+        source._finish_cycle()
         source._pass_part_downstream()
         self.assertEqual(source.produced_parts, 1)
         self.assertEqual(source.remaining_parts, 1)
 
         source.adjust_part_count(-6)
         self.assertEqual(source.remaining_parts, 0)
-        source._finish_processing_part()
+        source._finish_cycle()
         source._pass_part_downstream()
         self.assertEqual(source.produced_parts, 1)
         self.assertEqual(source.remaining_parts, 0)

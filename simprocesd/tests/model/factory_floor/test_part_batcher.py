@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, System, EventType
-from ....model.factory_floor import Part, Machine, PartBatcher, Batch
+from ....model.factory_floor import Part, PartProcessor, PartBatcher, Batch
 
 
 class PartBatcherTestCase(TestCase):
@@ -12,8 +12,8 @@ class PartBatcherTestCase(TestCase):
         self.sys = System()
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
-        self.upstream = [MagicMock(spec = Machine)]
-        self.downstream = [MagicMock(spec = Machine), MagicMock(spec = Machine)]
+        self.upstream = [MagicMock(spec = PartProcessor)]
+        self.downstream = [MagicMock(spec = PartProcessor), MagicMock(spec = PartProcessor)]
         for d in self.downstream:
             d.give_part.return_value = True
 

@@ -1,52 +1,59 @@
 from ...utils.utils import assert_callable
 from ..simulation import EventType
-from .device import Device
+from .part_handler import PartHandler
 from .maintainer import Maintainable
 
 
-class Machine(Device, Maintainable):
-    '''Machine is a Device that can process parts.
+class PartProcessor(PartHandler, Maintainable):
+    '''Production device that can modify Parts.
 
-    Machine accepts a Part, holds onto it for the duration of a cycle
-    (processing time) and then passes it to a downstream Device when
-    possible before accepting a new Part to process. To change the Part
-    in some way when processing is done use
-    add_finish_processing_callback.
+    Extends PartHandler to closer simulate a production machine:
+    - Parts can be modified in a callback function by adding it with
+    add_finish_processing_callback. When the processing cycle finishes
+    the callback will be called with the Part as a parameter.
+    - Implements Maintainable so it can be a target of Maintainer's
+    work orders.
+    - Can require resources from ResourceManager in order to process
+    Parts. If specified resources are unavailable then new Parts will
+    not be accepted by the PartProcessor.
 
     Callback functions can be added to this machine by using functions:
     add_<trigger>_callback such as add_shutdown_callback.
     Multiple callbacks on the same trigger are called in the order they
     were added.
 
-    Machine extends Maintainable class with basic functionality and the
+    PartProcessor extends Maintainable class with basic functionality and the
     class should be extended to simulate a more complex maintenance
     scheme.
 
     Arguments
     ---------
     name: str, default=None
-        Name of the Device. If name is None then the Device's name will
-        be changed to Machine_<id>
-    upstream: list, default=None
-        A list of upstream Devices.
+        Name of the Asset. If name is None then a default name will be
+        used: <class_name>_<asset_id>
+    upstream: list of PartFlowController, default=None
+        Will add self as a destination for Parts for each of the
+        upstream entries in the list.
     cycle_time: float, default=0
         How long it takes to process a Part.
     value: float, default=0
-        Starting value of the Machine.
+        Starting value of the Asset.
     resources_for_processing: Dictionary, default=None
-        A dictionary specifying resources needed for this Machine to
-        process Parts. Each key-value entry in the dictionary identifies
-        what resource (key) needs to be reserved and how much(value) of
+        A dictionary specifying resources needed for processing Parts.
+        Each key-value entry in the dictionary identifies what
+        resource (key) needs to be reserved and how much(value) of
         it needs to be reserved.
-        These resources will be reserved at the beginning of Part
-        processing and they will be released when the processing is
-        done.
+        These resources will be reserved before a Part is accepted
+        and they will be released when the processing of the Part is
+        done. If the processed Part can be passed and a new Part is
+        provided immediately then the PartProcessor will skip
+        releasing and re-acquiring the resources.
 
-    Warning
+    Note
     -------
-    If Machine fails with a Part that hasn't been fully processed then
-    the Part is lost. A lost Part can be detected by using
-    add_shutdown_callback and checking if part != None in the callback.
+    If PartProcessor fails with a Part that hasn't been fully
+    processed then the Part is lost. A lost Part can be captured by
+    using add_shutdown_callback.
     '''
 
     def __init__(self,
@@ -55,10 +62,9 @@ class Machine(Device, Maintainable):
                  cycle_time = 0,
                  value = 0,
                  resources_for_processing = None):
-        super().__init__(name, upstream, value)
-
-        self.cycle_time = cycle_time
+        super().__init__(name, upstream, cycle_time, value)
         self._is_shut_down = False
+
         self._resources_for_processing = resources_for_processing
         self._reserved_resources = None
         self._waiting_for_resources = False
@@ -71,25 +77,10 @@ class Machine(Device, Maintainable):
         self._last_restore = 0
         self._time_in_use = 0
         self._last_use_start = None
-        self._next_cycle_time_offset = 0
-
-    @property
-    def cycle_time(self):
-        ''' How long it takes to process one Part.
-
-        Setting a new cycle time will affect all future process cycles
-        but not a cycle that is already in progress.
-        '''
-        return self._cycle_time
-
-    @cycle_time.setter
-    def cycle_time(self, new_value):
-        assert new_value >= 0, 'Cycle time cannot be negative.'
-        self._cycle_time = new_value
 
     @property
     def uptime(self):
-        ''' How much time has the Machine been operational (not
+        '''Total time that the PartProcessor been operational (not
         shutdown).
         '''
         if self._last_restore == None:
@@ -99,7 +90,7 @@ class Machine(Device, Maintainable):
 
     @property
     def utilization_time(self):
-        ''' How much time has the Machine spent on processing Parts.
+        '''Total time that the PartProcessor spent processing Parts.
         '''
         if self._last_use_start == None:
             return self._time_in_use
@@ -110,6 +101,9 @@ class Machine(Device, Maintainable):
         super().initialize(env)
         self._last_restore = self.env.now
 
+    def is_operational(self):
+        return not self._is_shut_down
+
     def _can_accept_part(self, part):
         '''Override the standard function for deciding whether to accept
         an incoming Part. This version also tries to reserve the needed
@@ -117,7 +111,8 @@ class Machine(Device, Maintainable):
         '''
         if not super()._can_accept_part(part):
             return False
-        # Reserving resources if any are needed for Part processing.
+        # Reserving resources if any are needed and none are
+        # already reserved.
         if self._resources_for_processing != None and self._reserved_resources == None:
             self._reserved_resources = self.env.resource_manager.reserve_resources(
                     self._resources_for_processing)
@@ -130,39 +125,14 @@ class Machine(Device, Maintainable):
         return True
 
     def _try_move_part_to_output(self):
-        if self._part != None and self._output == None:
+        if self.is_operational() and self._part != None and self._output == None:
             self._last_use_start = self.env.now
-            self._schedule_finish_processing_part()
+            self._schedule_finish_cycle()
 
-    def _schedule_finish_processing_part(self, time_offset = 0):
-        '''If the final cycle time <= 0 then _finish_processing_part
-        will be called immediately.
-        '''
-        next_cycle_time = max(0, self.cycle_time + self._next_cycle_time_offset + time_offset)
-        self._next_cycle_time_offset = 0
-        if next_cycle_time <= 0:
-            self._finish_processing_part()
-        else:
-            self._env.schedule_event(
-                self._env.now + next_cycle_time,
-                self.id,
-                self._finish_processing_part,
-                EventType.FINISH_PROCESSING,
-                f'By {self.name}'
-            )
-
-    def _finish_processing_part(self, record_produced_part_data = True):
-        # If Machine is not operational then the finish processing event
-        # should have been paused or cancelled.
-        assert self.is_operational(), 'Invalid Machine state.'
-        assert self._part != None, f'Input part is missing.'
-        assert self._output == None, f'Output part slot is already full.'
-
-        self._output = self._part
-        self._part = None
+    def _finish_cycle(self):
+        super()._finish_cycle()
         self._time_in_use += self.env.now - self._last_use_start
         self._last_use_start = None
-
         if self._reserved_resources != None:
             self._env.schedule_event(self._env.now,
                                      self.id,
@@ -172,22 +142,17 @@ class Machine(Device, Maintainable):
 
         for c in self._finish_processing_callbacks:
             c(self, self._output)
-
-        if self._output == None:
-            self.notify_upstream_of_available_space()
-        else:
-            self._schedule_pass_part_downstream()
-            if record_produced_part_data:
-                self._env.add_datapoint('produced_part', self.name, (self._env.now,
-                                                                      self._output.id,
-                                                                      self._output.quality,
-                                                                      self._output.value))
+        self._env.add_datapoint('produced_part', self.name, (self._env.now,
+                                                             self._output.id,
+                                                             self._output.quality,
+                                                             self._output.value))
 
     def schedule_failure(self, time, message = ''):
-        '''Schedule a failure for this Machine.
+        '''Schedule a failure for this PartProcessor.
 
-        When the Machine fails it will lose functionality any Part in
-        the middle of processing will be lost.
+        When the PartProcessor fails it will lose functionality and
+        any Part in the middle of processing will be lost.
+        For capturing the lost Part see add_shutdown_callback.
 
         Arguments
         ---------
@@ -209,21 +174,19 @@ class Machine(Device, Maintainable):
         self._shutdown(True, lost_part)
 
     def shutdown(self):
-        '''Shutdown Part related functionality.
+        '''Shutdown the PartProcessor.
 
         Part being processed will pause and resume processing when
-        Machine is restored. New parts cannot be accepted but any Part
-        that was already processed may still move downstream.
+        PartProcessor is restored. New parts cannot be accepted.
+        Does nothing if the PartProcessor is already in a shutdown or
+        failed state.
 
-        Does nothing if machine is already in a shutdown or failed
-        state.
-
-        Call restore_functionality to bring Machine back online.
+        Call restore_functionality to bring PartProcessor back online.
 
         Warning
         -------
         Do not to call in the middle of another operation from this
-        Machine, safest way to call it is to schedule it as a separate
+        PartProcessor, safest way to call it is to schedule it as a separate
         event.
         '''
         self._shutdown(False, None)
@@ -248,10 +211,10 @@ class Machine(Device, Maintainable):
             c(self, is_failure, lost_part)
 
     def restore_functionality(self):
-        '''Restore Part related functionality and/or recover from a
-        failed state.
+        '''Restore the PartProcessor from a shutdown and failed
+        states.
 
-        Does nothing if machine is not in a shutdown or failed state.
+        Does nothing if not in a shutdown or failed states.
         '''
         if not self._is_shut_down:
             return
@@ -270,13 +233,8 @@ class Machine(Device, Maintainable):
         for c in self._restored_callbacks:
             c(self)
 
-    def is_operational(self):
-        return not self._is_shut_down
-
     def _reserve_resource_callback(self, resource_manager, request):
-        '''When requested resources are available the Machine will
-        signal that it can receive a Part. When a new Part is offered to
-        the Machine, it will try to reserve the resources.
+        '''Indicates that the needed resources became available.
         '''
         self._waiting_for_resources = False
         self.notify_upstream_of_available_space()
@@ -290,30 +248,13 @@ class Machine(Device, Maintainable):
             self._reserved_resources.release()
             self._reserved_resources = None
 
-    def offset_next_cycle_time(self, offset):
-        '''Offset the cycle time of the next processing cycle.
-
-        The effects are cumulative across multiple calls of
-        offset_next_cycle_time. If the cycle time plus the final offset
-        are less than 0 then a cycle time of 0 will be used.
-
-        Once the next cycle starts the offset will reset to 0.
-
-        Arguments
-        ---------
-        offset: float
-            By how much to offset the cycle time of the next processing
-            cycle.
-        '''
-        self._next_cycle_time_offset += offset
-
     def add_finish_processing_callback(self, callback):
-        '''Setup a function to be called when the Machine finishes
-        processing a Part.
+        '''Register a function to be called when the PartProcessor
+        finishes processing a Part.
 
         | Callback signature: callback(machine, part)
-        | machine - Machine to which the callback was added.
-        | part - Part that was received.
+        | part_processor - PartProcessor doing the processing.
+        | part - Part that was processed.
 
         Arguments
         ---------
@@ -324,13 +265,14 @@ class Machine(Device, Maintainable):
         self._finish_processing_callbacks.append(callback)
 
     def add_shutdown_callback(self, callback):
-        '''Setup a function to be called when the Machine shuts down.
+        '''Register a function to be called when the PartProcessor
+        shuts down.
 
         | Callback signature: callback(machine, part)
-        | machine - Machine to which the callback was added.
+        | part_processor - PartProcessor that was shutdown.
         | is_failure - True if the shutdown occurred due to failure,
             False otherwise.
-        | part - Part that was received.
+        | part - Part that was lost or None if no Part was lost.
 
         Arguments
         ---------
@@ -341,11 +283,11 @@ class Machine(Device, Maintainable):
         self._shutdown_callbacks.append(callback)
 
     def add_restored_callback(self, callback):
-        '''Setup a function to be called when the Machine is restored
-        after a shutdown or failure.
+        '''Register a function to be called when the PartProcessor is
+        restored after a shutdown or failure.
 
         | Callback signature: callback(machine)
-        | machine - Machine to which the callback was added.
+        | part_processor - PartProcessor that was restored.
 
         Arguments
         ---------
