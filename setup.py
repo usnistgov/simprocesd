@@ -12,7 +12,7 @@ setup(
     version = '0.2.0',
     author = 'Serghei Drozdov',
     author_email = 'serghei.drozdov@nist.gov',
-    description = 'Discreet event simulator for manufacturing systems.',
+    description = 'Discrete event simulator for manufacturing systems.',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     project_urls = {
