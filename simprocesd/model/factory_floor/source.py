@@ -50,18 +50,8 @@ class Source(Machine):
         self._produced_parts = 0
 
     def initialize(self, env):
-        if self._env == None:
-            # First time initialize.
-            self._initial_max_produced_parts = self._max_produced_parts
-        else:
-            # Simulation is resetting, restore starting values.
-            self._max_produced_parts = self._initial_max_produced_parts
-
         super().initialize(env)
         self._sample_part.initialize(env)
-        self._cost_of_produced_parts = 0
-        self._produced_parts = 0
-
         self._schedule_finish_processing_part()
 
     def set_upstream(self, new_upstream_list):

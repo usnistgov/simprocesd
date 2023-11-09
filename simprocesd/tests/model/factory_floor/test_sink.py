@@ -37,24 +37,6 @@ class SinkTestCase(TestCase):
         self.assertEqual(sink.collected_parts, [])
         self.assertEqual(sink.waiting_for_part_start_time, 0)
 
-    def test_re_initialize(self):
-        upstream = [Machine()]
-        sink = Sink('name', upstream, 4, True)
-        sink.initialize(self.env)
-
-        part = Part(value = 10)
-        sink.give_part(part)
-        self.assertEqual(sink.value, 10)
-        self.assertEqual(sink.received_parts_count, 1)
-        self.assertEqual(sink.value_of_received_parts, 10)
-        self.assertEqual(sink.collected_parts, [part])
-
-        sink.initialize(self.env)
-        self.assertEqual(sink.value, 0)
-        self.assertEqual(sink.received_parts_count, 0)
-        self.assertEqual(sink.value_of_received_parts, 0)
-        self.assertEqual(sink.collected_parts, [])
-
     def test_add_downstream(self):
         sink = Sink()
         self.assertRaises(RuntimeError, lambda: Machine(upstream = [sink]))

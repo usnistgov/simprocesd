@@ -36,18 +36,7 @@ class Device(Asset):
         self.set_upstream(upstream)
 
     def initialize(self, env):
-        if self._env == None:
-            # If this is the the first time initialize is called then
-            # save the starting upstream list.
-            self._initial_upstream = self.upstream
-        else:
-            # Simulation is resetting, restore starting upstream list.
-            self.set_upstream(self._initial_upstream)
-
         super().initialize(env)
-        self._part = None
-        self._output = None
-        self._waiting_for_space_availability = False
         self._waiting_for_part_since = self._env.now
 
     def is_operational(self):

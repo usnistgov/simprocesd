@@ -16,25 +16,6 @@ class PartTestCase(TestCase):
         self.assertEqual(part.quality, 5)
         self.assertEqual(part.routing_history, [])
 
-    def test_re_initialize(self):
-        part = Part('name', 2, 5)
-        env = Environment()
-        part.initialize(env)
-
-        machine = MagicMock(spec = Machine)
-        part.add_cost('', 1)
-        part.quality = 3.14
-        part.add_routing_history(machine)
-        self.assertEqual(part.value, 2 - 1)
-        self.assertEqual(part.quality, 3.14)
-        self.assertEqual(part.routing_history, [machine])
-
-        self.assertRaises(AssertionError, lambda: part.initialize(Environment()))
-        part.initialize(env)
-        self.assertEqual(part.value, 2)
-        self.assertEqual(part.quality, 5)
-        self.assertEqual(part.routing_history, [])
-
     def test_make_copy(self):
         ids = []
         part = Part('name', 100, 3)

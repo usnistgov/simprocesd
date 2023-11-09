@@ -57,12 +57,6 @@ class Maintainer(Asset):
         '''
         return self._capacity - self._utilization
 
-    def initialize(self, env):
-        super().initialize(env)
-        self._utilization = 0
-        self._request_queue = []
-        self._active_requests = []
-
     def create_work_order(self, target, tag = None, info = None):
         '''Request a new work order to be performed.
 

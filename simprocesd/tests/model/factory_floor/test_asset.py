@@ -38,21 +38,6 @@ class AssetTestCase(TestCase):
         a.initialize(env)
         self.assertEqual(a.env, env)
 
-    def test_re_initialize(self):
-        a = Asset(name = 'asset', value = 10)
-        id = a.id
-        env = Environment()
-        a.initialize(env)
-
-        a.add_cost('', 5)
-        self.assertEqual(a.name, 'asset')
-        self.assertEqual(a.value, 10 - 5)
-
-        a.initialize(env)
-        self.assertEqual(a.id, id)
-        self.assertEqual(a.name, 'asset')
-        self.assertEqual(a.value, 10)
-
     def test_add_value(self):
         a = Asset(value = 10)
         env = MagicMock(spec = Environment)

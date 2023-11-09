@@ -27,14 +27,8 @@ class Part(Asset):
         super().__init__(name, value, is_transitory = True)
 
         self.copy_counter = 0
-        self.quality = self._initial_quality = quality
+        self.quality = quality
         self._routing_history = []
-
-    def initialize(self, env):
-        super().initialize(env)
-        self.quality = self._initial_quality
-        self._routing_history = []
-        self.copy_counter = 0
 
     @property
     def routing_history(self):

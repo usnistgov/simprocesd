@@ -48,29 +48,6 @@ class SourceTestCase(TestCase):
         self.assert_last_scheduled_event(6, source.id, source._pass_part_downstream,
                                          EventType.PASS_PART)
 
-    def test_re_initialize(self):
-        source = Source('name', Part(value = 5), 1, 15)
-        downstream = MagicMock(spec = Machine)
-        downstream.give_part.return_value = True
-        source._add_downstream(downstream)
-        source.initialize(self.env)
-
-        source._finish_processing_part()
-        source._pass_part_downstream()
-        self.assertEqual(source.value, -5)
-        self.assertEqual(source.produced_parts, 1)
-        self.assertEqual(source.cost_of_produced_parts, 5)
-        self.assertEqual(len(self.env.schedule_event.call_args_list), 3)
-
-        source.initialize(self.env)
-        self.assertEqual(source.value, 0)
-        self.assertEqual(source.produced_parts, 0)
-        self.assertEqual(source.cost_of_produced_parts, 0)
-        # One new scheduled event due to initialize.
-        self.assertEqual(len(self.env.schedule_event.call_args_list), 3 + 1)
-        self.assert_last_scheduled_event(1, source.id, source._finish_processing_part,
-                                         EventType.FINISH_PROCESSING)
-
     def test_upstream(self):
         # Source is not allowed to have upstream machines.
         source = Source()

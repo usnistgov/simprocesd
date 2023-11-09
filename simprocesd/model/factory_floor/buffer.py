@@ -45,11 +45,6 @@ class Buffer(Device):
         self._buffer = []
         self._level = 0
 
-    def initialize(self, env):
-        super().initialize(env)
-        self._buffer = []
-        self._level = 0
-
     @property
     def stored_parts(self):
         '''List of Parts currently stored in the Buffer.

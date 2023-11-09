@@ -54,8 +54,8 @@ class Asset:
         assert_is_instance(env, Environment)
         # Check to avoid using same Assets in multiple Systems, that use
         # case is not supported.
-        assert self._env == None or self._env == env, \
-            f'Asset {self.name} cannot be initialized by multiple Environments.'
+        assert self._env == None, \
+            f'Asset {self.name} cannot be initialized multiple times.'
         self._env = env
         self._value = self._initial_value
         self._value_history = []

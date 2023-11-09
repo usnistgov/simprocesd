@@ -13,36 +13,11 @@ class BatchTestCase(TestCase):
         part = Part()
         part.initialize(env)
         batch = Batch('name', [part])
-        batch.initialize(env)
 
         self.assertEqual(batch.name, 'name')
         self.assertEqual(len(batch.parts), 1)
         self.assertEqual(batch.parts[0], part)
         self.assertEqual(batch.routing_history, [])
-
-    def test_re_initialize(self):
-        env = Environment()
-        part1 = Part()
-        part2 = Part(value = 2)
-        part1.initialize(env)
-        part2.initialize(env)
-        batch = Batch('name', [part1, part2])
-        batch.initialize(env)
-
-        machine = MagicMock(spec = Machine)
-        batch.parts[0].add_value('', 10)
-        batch.add_routing_history(machine)
-        self.assertEqual(batch.value, 2 + 10)
-        self.assertEqual(batch.routing_history, [machine])
-        self.assertEqual(batch.parts[0].routing_history, [machine])
-        self.assertEqual(batch.parts[1].routing_history, [machine])
-
-        self.assertRaises(AssertionError, lambda: batch.initialize(Environment()))
-        batch.initialize(env)
-        self.assertEqual(batch.value, 2)
-        self.assertEqual(batch.routing_history, [])
-        self.assertEqual(batch.parts[0].routing_history, [])
-        self.assertEqual(batch.parts[1].routing_history, [])
 
     def test_make_copy(self):
         ids = []

@@ -37,9 +37,6 @@ class PartBatcher(Device):
         self._output_batch_size = output_batch_size
         self._in_progress_batch = None
 
-    def initialize(self, env):
-        super().initialize(env)
-
     def _try_move_part_to_output(self):
         if not self.is_operational() or self._part == None or self._output != None:
             return

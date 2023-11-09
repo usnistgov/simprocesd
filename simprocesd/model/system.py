@@ -81,21 +81,16 @@ class System:
         '''
         return self._env.resource_manager
 
-    def simulate(self, simulation_duration, reset = True, trace = False, print_summary = True):
+    def simulate(self, simulation_duration, trace = False, print_summary = True):
         '''Run the simulation for the specified duration.
 
-        Ensures objects are initialized or re-initialized as needed.
+        Ensures Assets are initialized when called for the first time.
 
         Arguments
         ---------
         simulation_duration: float
             For how long to run the simulation. Measured in simulation
             time.
-        reset: bool, default=True
-            If True then the simulation will be restarted from time
-            zero and states of all Devices and other Assets will be
-            reset to initial states. If False then the simulation will
-            continue from the current simulation time.
         trace: bool, default=False
             If True then the executed events will be recorded and the
             trace will be exported to a file at
@@ -108,8 +103,7 @@ class System:
             raise RuntimeError('This System can no longer simulate because a new one was created.')
         start = time.time()
 
-        if not self._simulation_is_initialized or reset == True:
-            self._env.reset()
+        if not self._simulation_is_initialized:
             self.resource_manager.initialize(self._env)
             for asset in self._assets:
                 asset.initialize(self._env)

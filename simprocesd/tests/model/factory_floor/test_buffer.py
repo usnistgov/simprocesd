@@ -40,24 +40,6 @@ class BufferTestCase(TestCase):
         self.assertEqual(buffer.level(), 0)
         self.assertListEqual(buffer.stored_parts, [])
 
-    def test_re_initialize(self):
-        buffer = Buffer('name', self.upstream, 5, 10, 20)
-        buffer.initialize(self.env)
-
-        part = Part()
-        buffer.give_part(part)
-        buffer.add_cost('', 3)
-        self.assertListEqual(buffer.upstream, self.upstream)
-        self.assertEqual(buffer.level(), 1)
-        self.assertEqual(buffer.value, 20 - 3)
-        self.assertListEqual(buffer.stored_parts, [part])
-
-        buffer.initialize(self.env)
-        self.assertEqual(buffer.upstream, self.upstream)
-        self.assertEqual(buffer.value, 20)
-        self.assertEqual(buffer.level(), 0)
-        self.assertListEqual(buffer.stored_parts, [])
-
     def test_give_pass_part(self):
         part = Part()
         buffer = Buffer('name', self.upstream, minimum_delay = 5, capacity = 10)

@@ -22,25 +22,16 @@ class ResourceManager:
         self._init_count = 0
 
     def initialize(self, env):
-        '''Prepare ResourceManager for simulation and reset attributes
-        to starting values.
+        '''Prepare ResourceManager for simulation.
 
-        Called when simulation starts for the first time or when it is
-        restarted.
+        Called when simulation starts for the first time.
 
         Arguments
         ---------
         env: Environment
             Environment used in the simulation.
         '''
-        if self._env == None:
-            # Initializing for the first time, save starting parameters.
-            self._initial_resources = copy.deepcopy(self._resources)
-            self._env = env
-        else:
-            # Simulation is resetting, restore starting resources.
-            self._resources = copy.deepcopy(self._initial_resources)
-
+        self._env = env
         # Record initial resource amounts.
         for resource_name in self._resources.keys():
             self._record_resource_amount_update(resource_name)
@@ -251,14 +242,7 @@ class ReservedResources():
             If trying to release an amount of a resources that is more
             than is still reserved or trying to release a negative
             amount of a resource.
-        RuntimeError
-            When trying to release resources after the simulation was
-            reset.
         '''
-        if self._init_count_when_made != self._resource_manager._init_count:
-            raise RuntimeError('Trying to release resources that were reserved before the simulation'
-                               +'was reset.')
-
         if resources == None:
             resources = self._reserved_resources
         else:
@@ -307,9 +291,8 @@ class ReservedResources():
         reserved_resources._reserved_resources = {}
 
     def __del__(self):
-        if (self._init_count_when_made != self._resource_manager._init_count
-            or not self._resource_manager._env.is_simulation_in_progress()):
-            # Simulation is over or it has been reset since the
-            # resources were reserved.
-            return
+        if (self._resource_manager._env.is_simulation_in_progress()
+            and len(self._reserved_resources)) > 0:
+            print('ReservedResources was deleted before all resources'
+                  +f' were released: {self._reserved_resources}')
 

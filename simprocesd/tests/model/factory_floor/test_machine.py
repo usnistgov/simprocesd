@@ -37,21 +37,6 @@ class MachineTestCase(TestCase):
         self.assertEqual(machine.value, 15)
         self.assertEqual(machine.upstream, self.upstream)
 
-    def test_re_initialize(self):
-        machine = Machine('mb', self.upstream, 2, 15)
-        machine.initialize(self.env)
-
-        part = Part()
-        machine.give_part(part)
-        machine.add_value('', 20)
-        self.assertEqual(machine._part, part)
-        self.assertEqual(machine.value, 15 + 20)
-
-        machine.initialize(self.env)
-        self.assertEqual(machine._part, None)
-        self.assertEqual(machine.value, 15)
-        self.assertEqual(machine.upstream, self.upstream)
-
     def test_is_operational(self):
         machine = Machine()
         machine.initialize(self.env)

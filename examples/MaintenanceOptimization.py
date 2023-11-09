@@ -33,11 +33,7 @@ iterations = 10
 damage_threshold = 0
 
 
-def main(is_test = False):
-    global iterations, damage_threshold
-    if is_test:
-        # Reduce example runtime during testing.
-        iterations = 1
+def setup_simulation():
 
     system = System()
     # Setup the experiment.
@@ -50,6 +46,14 @@ def main(is_test = False):
     M5 = generate_machine('M5', [source], maintainer)
     all_machines = [M1, M2, M3, M4, M5]
     sink = Sink('Sink', all_machines, collect_parts = True)
+    return system
+
+
+def main(is_test = False):
+    global iterations, damage_threshold
+    if is_test:
+        # Reduce example runtime during testing.
+        iterations = 1
 
     print('Running simulations...')
     results = []
@@ -59,9 +63,10 @@ def main(is_test = False):
         damage_threshold = current_threshold
         results.append([])
         for i in range(iterations):
+            system = setup_simulation()
             system.simulate(simulation_duration = simulation_duration, print_summary = False)
+            sink = system.find_assets(name = 'Sink')[0]
             results[-1].append([x.quality for x in sink.collected_parts])
-            system.simulate(simulation_duration = 0, print_summary = False, reset = True)
 
     # Prepare data for graphing.
     all_parts_per_dt = []

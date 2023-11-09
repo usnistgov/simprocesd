@@ -46,7 +46,7 @@ class SystemTestCase(TestCase):
         sink = MagicMock(spec = Sink)
         sink.received_parts_count = 56
         self.sys.add_asset(sink)
-        self.sys.simulate(1, False, False, True)
+        self.sys.simulate(1, False, True)
 
         self.env_mock.run.assert_called_once_with(1, trace = False)
         # Net received parts does not change so it is 0.
@@ -55,7 +55,7 @@ class SystemTestCase(TestCase):
 
     @patch('sys.stdout', new_callable = StringIO)
     def test_simulate_no_print(self, stdout_mock):
-        self.sys.simulate(99, False, True, False)
+        self.sys.simulate(99, trace = True, print_summary = False)
 
         self.env_mock.run.assert_called_once_with(99, trace = True)
         self.assertEqual(stdout_mock.getvalue(), '')
@@ -72,14 +72,10 @@ class SystemTestCase(TestCase):
         self.sys.simulate(5, print_summary = False)
         self.env_mock.resource_manager.initialize.assert_called_once_with(self.env_mock)
         sink.initialize.assert_called_once_with(self.env_mock)
-
-        self.sys.simulate(5, reset = False, print_summary = False)
+        # Continue the simulation for another 5 time units.
+        self.sys.simulate(5, print_summary = False)
         self.env_mock.resource_manager.initialize.assert_called_once_with(self.env_mock)
         sink.initialize.assert_called_once_with(self.env_mock)
-
-        self.sys.simulate(5, print_summary = False)
-        self.assertEqual(len(self.env_mock.resource_manager.initialize.call_args_list), 2)
-        self.assertEqual(len(sink.initialize.call_args_list), 2)
 
     def test_simulate_initialize_after_start(self):
         self.sys.simulate(5, print_summary = False)

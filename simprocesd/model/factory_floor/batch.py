@@ -30,16 +30,7 @@ class Batch(Part):
         self.parts = parts
 
     def initialize(self, env):
-        is_first_call = self._env == None
         super().initialize(env)
-
-        if is_first_call:
-            # The first time initialize is called.
-            self._initial_parts = [p.make_copy() for p in self.parts]
-        else:
-            # Simulation is resetting.
-            self.parts = [p.make_copy() for p in self._initial_parts]
-
         for p in self.parts:
             p.initialize(env)
 

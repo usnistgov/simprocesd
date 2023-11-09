@@ -11,6 +11,9 @@ class ResourceManagerTestCase(TestCase):
         self.rm = ResourceManager()
         self.env_mock = MagicMock(spec = Environment)
         self.env_mock.now = 0
+        # Prevents warnings from reserved resources going out of scope
+        # before releasing their resources.
+        self.env_mock.is_simulation_in_progress.return_value = False
 
     def test_init(self):
         self.assert_resource_state_helper({'non_existend_resource': (0, 0)})
@@ -22,23 +25,6 @@ class ResourceManagerTestCase(TestCase):
         self.rm.initialize(self.env_mock)
         self.env_mock.add_datapoint.assert_called_once_with('resource_update', 'a',
                                                             (self.env_mock.now, 0, 5))
-
-    def test_re_initialize(self):
-        self.rm.add_resources('a', 5)
-        self.rm.add_resources('b', 2)
-        self.rm.initialize(self.env_mock)
-
-        self.rm.add_resources('a', 1)
-        rr = self.rm.reserve_resources({'b': 1})
-        self.assert_resource_state_helper({'a': (0, 6), 'b': (1, 2)})
-
-        self.rm.initialize(self.env_mock)
-        self.assert_resource_state_helper({'a': (0, 5), 'b': (0, 2)})
-
-        # If ResourceManager was reinitialized that means the simulation
-        # was restarted so releasing previously reserved resources is
-        # an error.
-        self.assertRaises(RuntimeError, lambda: rr.release())
 
     def test_reserve_resources(self):
         self.rm.add_resources('a', 5)

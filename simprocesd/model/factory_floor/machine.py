@@ -107,22 +107,8 @@ class Machine(Device, Maintainable):
             return self._time_in_use + (self.env.now - self._last_use_start)
 
     def initialize(self, env):
-        if self._env == None:
-            # First time initialize.
-            self._initial_cycle_time = self.cycle_time
-            self._initial_next_cycle_time_offset = self._next_cycle_time_offset
-        else:
-            # Simulation is resetting, restore starting values.
-            self.cycle_time = self._initial_cycle_time
-            self._next_cycle_time_offset = self._initial_next_cycle_time_offset
-
         super().initialize(env)
-        self._is_shut_down = False
-        self._uptime = 0
         self._last_restore = self.env.now
-        self._time_in_use = 0
-        self._last_use_start = None
-        self._reserved_resources = None
 
     def _can_accept_part(self, part):
         '''Override the standard function for deciding whether to accept

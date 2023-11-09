@@ -45,25 +45,6 @@ class ActionSchedulerTestCase(TestCase):
         self.assert_scheduled_event(-1, self.env.now + 1, sched.id, sched._update_state,
                                     EventType.OTHER_HIGH_PRIORITY)
 
-    def test_re_initialize(self):
-        sched = ActionScheduler([(1, True)], 'test', True)
-        sched.register_object(self.objects[0])
-        sched.register_object(self.objects[1])
-        sched.initialize(self.env)
-        self.assertDictEqual(sched._registered_objects, self.object_dict)
-
-        sched.unregister_object(self.objects[0])
-        del self.object_dict[self.objects[0]]
-        self.assertDictEqual(sched._registered_objects, self.object_dict)
-
-        sched.initialize(self.env)
-        self.object_dict[self.objects[0]] = None
-        self.assertEqual(sched.env, self.env)
-        self.assertEqual(sched.current_state, True)
-        self.assertDictEqual(sched._registered_objects, self.object_dict)
-        self.assert_scheduled_event(-1, self.env.now + 1, sched.id, sched._update_state,
-                                    EventType.OTHER_HIGH_PRIORITY)
-
     def test_register_unregister(self):
         sched = ActionScheduler([(1, True)], 'test', True)
 

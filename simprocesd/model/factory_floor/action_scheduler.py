@@ -41,15 +41,7 @@ class ActionScheduler(Asset):
         self._registered_objects = {}
 
     def initialize(self, env):
-        if self._env == None:
-            # First time initializing.
-            self._initial_registered_objects = self._registered_objects.copy()
-        else:
-            # Simulation is resetting, restore starting device list.
-            self._registered_objects = self._initial_registered_objects.copy()
-
         super().initialize(env)
-        self._schedule_index = 0
         self._update_state(False)
 
     @property

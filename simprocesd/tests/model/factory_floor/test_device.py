@@ -39,26 +39,6 @@ class DeviceTestCase(TestCase):
         self.assertTrue(device.is_operational)
         self.assertEqual(device.waiting_for_part_start_time, 0)
 
-    def test_re_initialize(self):
-        device = Device('mb', self.upstream, 10)
-        device.initialize(self.env)
-
-        for i in range(5):
-            part = Part()
-            device.give_part(part)
-            device.add_value('', 3)
-            device.set_upstream([])
-            self.assertEqual(device._output, part)
-            self.assertEqual(device.value, 10 + 3)
-            self.assertEqual(device.upstream, [])
-            self.assertEqual(device.waiting_for_part_start_time, None)
-
-            device.initialize(self.env)
-            self.assertEqual(device._output, None)
-            self.assertEqual(device.value, 10)
-            self.assertEqual(device.upstream, self.upstream)
-            self.assertEqual(device.waiting_for_part_start_time, 0)
-
     def test_set_upstream(self):
         device = Device(upstream = self.upstream)
         device.initialize(self.env)

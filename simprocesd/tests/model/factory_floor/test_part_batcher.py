@@ -29,13 +29,11 @@ class PartBatcherTestCase(TestCase):
 
     def test_initialize(self):
         pb = PartBatcher('name', self.upstream, 10, 2)
-        # Test initialization and re-initialization.
-        for i in range(2):
-            pb.initialize(self.env)
-            self.assertIn(pb, self.sys._assets)
-            self.assertEqual(pb.name, 'name')
-            self.assertCountEqual(pb.upstream, self.upstream)
-            self.assertEqual(pb.value, 10)
+        pb.initialize(self.env)
+        self.assertIn(pb, self.sys._assets)
+        self.assertEqual(pb.name, 'name')
+        self.assertCountEqual(pb.upstream, self.upstream)
+        self.assertEqual(pb.value, 10)
 
     def test_single_part_output(self):
         pb = PartBatcher(output_batch_size = None)

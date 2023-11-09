@@ -41,16 +41,6 @@ class MaintainerTestCase(TestCase):
         self.assertEqual(mt.available_capacity, 7)
         self.assertEqual(mt.value, -20000)
 
-    def test_re_initialize(self):
-        mt = Maintainer('m', 7, -20000)
-        mt.initialize(self.env)
-        self.assertTrue(mt.create_work_order(self.machines[0], 'tag'))
-
-        self.assertEqual(mt.available_capacity, 7 - 1)
-        mt.initialize(self.env)
-        self.assertEqual(mt.available_capacity, 7)
-        self.assertEqual(mt._request_queue, [])
-
     def test_request_lifecycle(self):
         mt = Maintainer(capacity = 5)
         mt.initialize(self.env)
