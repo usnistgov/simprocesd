@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, call
 
 from ... import mock_wrap
 from ....model import Environment, System
-from ....model.factory_floor import Part, PartFlowController
+from ....model.factory_floor import Group, Part, PartFlowController
 
 
 class PartFlowControllerTestCase(TestCase):
@@ -46,19 +46,24 @@ class PartFlowControllerTestCase(TestCase):
         self.env.now = 10
         new_upstream = [PartFlowController()]
         pfc.set_upstream(new_upstream)
-
         self.assertEqual(self.upstream[0].downstream, [])
         self.assertEqual(self.upstream[1].downstream, [])
         self.assertEqual(new_upstream[0].downstream, [pfc])
 
+    def test_set_upstream_within_group(self):
+        pfc1 = PartFlowController()
+        pfc2 = PartFlowController()
+        group = Group('', [pfc1, pfc2])
+        pfc2.set_upstream([pfc1])
+
     def test_set_bad_upstreams(self):
         self.assertRaises(TypeError, lambda: PartFlowController(upstream = [Part()]))
+
         pfc = PartFlowController()
+        self.assertRaises(AssertionError, lambda: pfc.set_upstream([pfc]))
 
-        def test_helper():
-            pfc.set_upstream([pfc])
-
-        self.assertRaises(AssertionError, test_helper)
+        group = Group('', [pfc])
+        self.assertRaises(RuntimeError, lambda: PartFlowController(upstream = [pfc]))
 
     def test_notify_upstream_of_available_space(self):
         mocked_upstream = mock_wrap(self.upstream)

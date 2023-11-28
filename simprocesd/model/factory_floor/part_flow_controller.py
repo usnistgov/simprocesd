@@ -14,8 +14,7 @@ class PartFlowController(Asset):
         Name of the Asset. If name is None then a default name will be
         used: <class_name>_<asset_id>
     upstream: list of PartFlowController, default=None
-        Will add self as a destination for Parts for each of the
-        upstream entries in the list.
+        List of devices from which Parts can be received.
     value: float, default=0
         Starting value of the Asset.
     '''
@@ -25,6 +24,7 @@ class PartFlowController(Asset):
         self._upstream = []
         self._block_input = False
         self._recursion_prevention = False
+        self._joined_groups = []
 
         super().__init__(name, value)
         self.set_upstream(upstream)
@@ -47,40 +47,6 @@ class PartFlowController(Asset):
         Can be changed using set_upstream(new_upstream).
         '''
         return self._upstream.copy()
-
-    def set_upstream(self, new_upstream):
-        '''Replace a set of upstream PartFlowControllers.
-
-        Arguments
-        ---------
-        new_upstream: list of PartFlowController
-            PartFlowControllers that will replace the current
-            collection of upstreams.
-            If None, then an empty list will be used.
-
-        Raises
-        ------
-        TypeError
-            If an object in the list is not a PartFlowController or a
-            child of that class.
-        AssertionError
-            If an element in new_upstream includes itself.
-        '''
-        if new_upstream == None:
-            new_upstream = []
-        else:
-            assert_is_instance(new_upstream, list)
-
-        for up in self._upstream:
-            up._remove_downstream(self)
-        self._upstream = new_upstream.copy()
-        for up in self._upstream:
-            assert_is_instance(up, PartFlowController)
-            # This scenario is not supported.
-            # Use an intermediate buffer or extend the class to do
-            # multiple cycles without releasing the Part.
-            assert up != self, 'Upstream cannot include itself.'
-            up._add_downstream(self)
 
     @property
     def downstream(self):
@@ -127,6 +93,51 @@ class PartFlowController(Asset):
         self._block_input = is_blocked
         if not is_blocked:
             self.notify_upstream_of_available_space()
+
+    @property
+    def joined_groups(self):
+        '''List of Groups that this PartFlowController is a part of.
+        '''
+        return self._joined_groups.copy()
+
+    def set_upstream(self, new_upstream):
+        '''Replace a set of upstream PartFlowControllers.
+
+        Arguments
+        ---------
+        new_upstream: list of PartFlowController
+            PartFlowControllers that will replace the current
+            collection of upstreams.
+            If None, then an empty list will be used.
+
+        Raises
+        ------
+        TypeError
+            If an object in the list is not a PartFlowController or a
+            child of that class.
+        AssertionError
+            If an element in new_upstream includes itself.
+        '''
+        if new_upstream == None:
+            new_upstream = []
+        else:
+            assert_is_instance(new_upstream, list)
+        # Verify that the new upstreams are valid.
+        for up in new_upstream:
+            assert_is_instance(up, PartFlowController)
+            # This scenario is not supported.
+            # Use an intermediate buffer or extend the class to do
+            # multiple cycles without releasing the Part.
+            assert up != self, 'Upstream cannot include itself.'
+            if set(up.joined_groups) != set(self._joined_groups):
+                raise RuntimeError('Upsteam is not a member of the same groups.'
+                                   +f' {self.name}: {self._joined_groups} | {up.name}: {up.joined_groups}')
+
+        for up in self._upstream:
+            up._remove_downstream(self)
+        self._upstream = new_upstream.copy()
+        for up in self._upstream:
+            up._add_downstream(self)
 
     def _add_downstream(self, downstream):
         if downstream not in self._downstream:
@@ -206,15 +217,24 @@ class PartFlowController(Asset):
         bool
             True if the Part has been accepted, otherwise False.
         '''
+        return self._give_part_helper(part, True)
+
+    def _give_part_helper(self, part, add_routing_history):
         if not self._can_accept_part(part):
             return False
 
-        part.add_routing_history(self)
+        if add_routing_history:
+            # Add routing history in case the part is successfully
+            # passed through.
+            part.add_routing_history(self)
+
         for dwn in self.get_sorted_downstream_list():
             if dwn.give_part(part):
                 return True
-        # Part is still in the upstream device.
-        part.remove_from_routing_history(-1)
+
+        if add_routing_history:
+            # Part was never passed and remains in an upstream device.
+            part.remove_from_routing_history(-1)
         return False
 
     def _can_accept_part(self, part):

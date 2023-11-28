@@ -16,8 +16,8 @@ class DecisionGate(PartFlowController):
     name: str, default=None
         Name of the DecisionGate. If name is None then the
         DecisionGate's name will be changed to DecisionGate_<id>
-    upstream: list, default=None
-        A list of upstream Devices.
+    upstream: list of PartFlowController, default=None
+        List of devices from which Parts can be received.
     '''
 
     def __init__(self,

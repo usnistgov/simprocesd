@@ -15,8 +15,8 @@ class Sink(PartHandler):
     name: str, default=None
         Name of the Sink. If name is None then the Sink's name will
         be changed to Sink_<id>
-    upstream: list, default=None
-        A list of upstream Devices.
+    upstream: list of PartFlowController, default=None
+        List of devices from which Parts can be received.
     cycle_time: float, default=0
         Minimum time between receiving Parts.
     collect_parts: bool, default=False

@@ -17,8 +17,9 @@ from simprocesd.model import System
 from simprocesd.model.factory_floor import ActionScheduler, Buffer, DecisionGate, PartProcessor, \
     Sink, Source
 from simprocesd.utils.simulation_info_utils import plot_buffer_levels, plot_resources
-from random import random
+import random
 from matplotlib import pyplot
+from simprocesd.model.factory_floor.group import Group
 
 
 class MachineSchedule(ActionScheduler):
@@ -39,7 +40,17 @@ def M3_process(machine, part):
 
 
 def M4_process(machine, part):
-    part.quality = random()  # 0 to 1
+    part.quality = random.random()  # 0 to 1
+
+
+def M2_on_received_part(machine, part):
+    previous_device_name = part.routing_history[-2].name
+    if previous_device_name == 'G1':
+        machine.cycle_time = 23
+    elif previous_device_name == 'G2':
+        machine.cycle_time = 13
+    else:
+        raise ValueError(f'Unknown routing: {previous_device_name}')
 
 
 def main(is_test = False):
@@ -47,49 +58,48 @@ def main(is_test = False):
 
     # Setting maximum available power at any given time.
     system.resource_manager.add_resources('power', 500000)
-
-    # M2 is setup as two separate machines that both require this
-    # resource to operate meaning only one of them can be processing
-    # parts at any given time. If the value is changed to 2 that
-    # represents having 2 of this type of machine that can both be
-    # processing at once.
-    system.resource_manager.add_resources('shared_machine_M2', 1)
-
     system.resource_manager.add_resources('operators', 4)
-    # 4 operators available for 8 hours and then 3 for 16 hours.
-    # This schedule cycles, 24 hour schedule.
-    operator_schedule = OperatorSchedule([(8 * 60, 4), (16 * 60, 3)])
+    system.resource_manager.add_resources('shared_machine_M2', 1)
+    # Operator availability schedule, 24 hour cycle:
+    # 4 operators for 8 hours, then 3 for 8hrs, and then 0 for 8hrs.
+    operator_schedule = OperatorSchedule([(8 * 60, 4), (8 * 60, 3), (8 * 60, 0)])
     operator_schedule.register_object(system.resource_manager)
 
     # Buffer size for all buffers. Each buffer's limit can be
     # configured independently further down.
-    buffer_limit = 50
+    buffer_capacity = 50
 
+    # Create a Group with a PartProcessor that will be used in
+    # multiple production paths.
+    M2 = PartProcessor('M2', resources_for_processing = {'operators': 1, 'power': 165000})
+    M2.add_receive_part_callback(M2_on_received_part)
+    shared_machine_group = Group('shared_group', [M2])
+
+    # Setup one production line
     source1 = Source()
     M1 = PartProcessor('M1', upstream = [source1], cycle_time = 16,
-                       resources_for_processing = {'operators': 1, 'power': 11000})
-    M2_1 = PartProcessor('M2', upstream = [M1], cycle_time = 23,
-                         resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
-    B1 = Buffer('B1', upstream = [M2_1], capacity = buffer_limit)
+                 resources_for_processing = {'operators': 1, 'power': 11000})
+    M2_1 = shared_machine_group.get_new_group_path('G1', upstream = [M1])
+    B1 = Buffer('B1', upstream = [M2_1], capacity = buffer_capacity)
     M3 = PartProcessor('M3', upstream = [B1], cycle_time = 7,
                        resources_for_processing = {'operators': 1, 'power': 43000})
     M3.add_finish_processing_callback(M3_process)
-    B2 = Buffer('B2', upstream = [M3], capacity = buffer_limit)
+    B2 = Buffer('B2', upstream = [M3], capacity = buffer_capacity)
     M4 = PartProcessor('M4', upstream = [B2], cycle_time = 12,
                        resources_for_processing = {'operators': 1, 'power': 95000})
     M4.add_finish_processing_callback(M4_process)
     gate1 = DecisionGate(should_pass_part = lambda g, part: part.quality < 0.8, upstream = [M4])
     gate2 = DecisionGate(should_pass_part = lambda g, part: part.quality >= 0.8, upstream = [M4])
-    B1.set_upstream(B1.upstream + [gate1])
+    B1.set_upstream(list(B1.upstream) + [gate1])
     sink1 = Sink('Sink1', upstream = [gate2])
 
+    # Setup second production line
     source2 = Source()
     M5 = PartProcessor('M1', upstream = [source2], cycle_time = 14,
                        resources_for_processing = {'operators': 1, 'power': 37000})
-    B3 = Buffer('B3', upstream = [M5], capacity = buffer_limit)
-    M2_2 = PartProcessor('M2', upstream = [B3], cycle_time = 13,
-                         resources_for_processing = {'operators': 1, 'power': 165000, 'shared_machine_M2': 1})
-    B4 = Buffer('B4', upstream = [M2_2], capacity = buffer_limit)
+    B3 = Buffer('B3', upstream = [M5], capacity = buffer_capacity)
+    M2_2 = shared_machine_group.get_new_group_path('G2', upstream = [B3])
+    B4 = Buffer('B4', upstream = [M2_2], capacity = buffer_capacity)
     M6 = PartProcessor('M6', upstream = [B4], cycle_time = 9,
                        resources_for_processing = {'operators': 1, 'power': 29000})
     sink2 = Sink('Sink2', upstream = [M6])
@@ -97,9 +107,8 @@ def main(is_test = False):
     # Two 8 hours shift schedules and one that is both.
     # True = on, False = off.
     schedule_morning = MachineSchedule([(8 * 60, True), (16 * 60, False)])
-    schedule_evening = MachineSchedule([(9 * 60, False), (8 * 60, True), (7 * 60, False)])
-    schedule_both = MachineSchedule([(8 * 60, True), (1 * 60, False), (8 * 60, True), (7 * 60, False)])
-
+    schedule_evening = MachineSchedule([(8 * 60, False), (8 * 60, True), (8 * 60, False)])
+    schedule_both = MachineSchedule([(16 * 60, True), (8 * 60, False)])
     # During which shift(s) can a machine operate.
     schedule_morning.register_object(M1)
     schedule_morning.register_object(M2_1)

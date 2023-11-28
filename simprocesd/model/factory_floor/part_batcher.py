@@ -21,8 +21,8 @@ class PartBatcher(PartHandler):
     name: str, default=None
         Name of the Asset. If name is None then a default name will be
         used: <class_name>_<asset_id>
-    upstream: list, default=None
-        A list of upstream PartHandler objects.
+    upstream: list of PartFlowController, default=None
+        List of devices from which Parts can be received.
     value: float, default=0
         Starting value of the Asset.
     output_batch_size: int, default=None

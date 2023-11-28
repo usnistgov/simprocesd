@@ -16,8 +16,7 @@ class PartHandler(PartFlowController):
         Name of the Asset. If name is None then a default name will be
         used: <class_name>_<asset_id>
     upstream: list of PartFlowController, default=None
-        Will add self as a destination for Parts for each of the
-        upstream entries in the list.
+        List of devices from which Parts can be received.
     cycle_time: float, default=0
         How long an accepted Part will be held before trying to
         pass it downstream.

@@ -73,8 +73,13 @@ class ResourceManager:
             return 0.0
 
     def add_resources(self, resource_name, amount):
-        '''Add new unreserved resources or reduce the pool of available
-        resources.
+        '''Add or reduce maximum resource capacity.
+
+        Note
+        ----
+        Reducing resource capacity below current usage will not force
+        those resources to be released therefore allowing resource
+        usage to remain above the new maximum.
 
         Arguments
         ---------

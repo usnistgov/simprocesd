@@ -29,6 +29,7 @@ class Part(Asset):
         self.copy_counter = 0
         self.quality = quality
         self._routing_history = []
+        self._group_pathing = []
 
     @property
     def routing_history(self):
@@ -75,4 +76,5 @@ class Part(Asset):
         '''
         self.copy_counter += 1
         new_part = Part(f'{self.name}_{self.copy_counter}', self.value, self.quality)
+        new_part._group_pathing = self._group_pathing.copy()
         return new_part

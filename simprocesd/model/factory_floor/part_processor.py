@@ -32,8 +32,7 @@ class PartProcessor(PartHandler, Maintainable):
         Name of the Asset. If name is None then a default name will be
         used: <class_name>_<asset_id>
     upstream: list of PartFlowController, default=None
-        Will add self as a destination for Parts for each of the
-        upstream entries in the list.
+        List of PartFlowControllers from which Parts can be received.
     cycle_time: float, default=0
         How long it takes to process a Part.
     value: float, default=0
