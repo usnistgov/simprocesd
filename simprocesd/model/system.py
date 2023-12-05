@@ -105,8 +105,7 @@ class System:
 
         if not self._simulation_is_initialized:
             self.resource_manager.initialize(self._env)
-            for asset in self._assets:
-                asset.initialize(self._env)
+            self._initialize_assets()
             self._simulation_is_initialized = True
 
         produced_parts_before = self._get_part_count_in_sinks()
@@ -117,6 +116,10 @@ class System:
         if print_summary:
             print(f'Simulation finished in {stop-start:.2f}s')
             print(f'Parts received by sink/s: {produced_parts_after - produced_parts_before}')
+
+    def _initialize_assets(self):
+        for asset in self._assets:
+            asset.initialize(self._env)
 
     def _get_part_count_in_sinks(self):
         from .factory_floor.sink import Sink  # Late import to avoid circular dependency.

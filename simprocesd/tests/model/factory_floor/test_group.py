@@ -16,6 +16,10 @@ class PartTestCase(TestCase):
         self.downstream = MagicMock(spec = PartFlowController)
         self.downstream.give_part.return_value = True
 
+    def reset_joined_groups(self, devices):
+        for d in devices:
+            d._joined_groups = []
+
     def test_create_group(self):
         devices = []
         for i in range(5):
@@ -62,11 +66,10 @@ class PartTestCase(TestCase):
         group = Group('', [group_device1, group_device2])
         gp = group.get_new_group_path('name', [])
         downstream = PartHandler(upstream = [gp])
-        for asset in self.sys._assets:
-            asset.initialize(self.env)
+        self.sys._initialize_assets()
 
         part = Part()
-        gp.give_part(part)
+        self.assertTrue(gp.give_part(part))
         self.assertEqual(group_device1._part, None)
         self.assertEqual(group_device1._output, part)
         self.assertEqual(group_device2._part, None)
@@ -101,8 +104,7 @@ class PartTestCase(TestCase):
         upstream = MagicMock(spec = PartHandler)
         gp = group.get_new_group_path('name', [upstream])
         downstream = PartHandler(upstream = [gp])
-        for asset in self.sys._assets:
-            asset.initialize(self.env)
+        self.sys._initialize_assets()
 
         tracker.space_available_downstream.assert_not_called()
         downstream.notify_upstream_of_available_space()
@@ -112,9 +114,54 @@ class PartTestCase(TestCase):
         group_device.notify_upstream_of_available_space()
         upstream.space_available_downstream.assert_called_once()
 
-    def reset_joined_groups(self, devices):
-        for d in devices:
-            d._joined_groups = []
+    def test_input_override(self):
+        # 4 devices in 2 stages
+        group_devices = [PartHandler() for i in range(3)]
+        group = Group('', group_devices, input_override = group_devices[0:2])
+        gp = group.get_new_group_path('name', [])
+        self.sys._initialize_assets()
+
+        part1, part2 = Part('p1'), Part('p2')
+        self.assertTrue(gp.give_part(part1))
+        self.assertTrue(gp.give_part(part2))
+        # Third device is not configured as an input.
+        self.assertFalse(gp.give_part(Part()))
+
+        self.assertTrue(group_devices[0]._output == part1 or group_devices[0]._output == part2,
+                        f'Device should have part1 or part2 but had: {group_devices[0]._output}')
+        self.assertTrue(group_devices[1]._output == part1 or group_devices[1]._output == part2,
+                        f'Device should have part1 or part2 but had: {group_devices[1]._output}')
+
+    def test_output_override(self):
+        # 4 devices in 2 stages
+        group_devices = [PartHandler() for i in range(3)]
+        group = Group('', group_devices, input_override = group_devices,
+                                         output_override = group_devices[0:2])
+        gp = group.get_new_group_path('name', [])
+        downstream = PartHandler(upstream = [gp])
+        self.sys._initialize_assets()
+
+        self.assertTrue(gp.give_part(Part()))
+        self.assertTrue(gp.give_part(Part()))
+        self.assertTrue(gp.give_part(Part()))
+
+        part = group_devices[0]._output
+        self.assertNotEqual(part, None)
+        group_devices[0]._pass_part_downstream()
+        self.assertEqual(downstream._output, part)
+        downstream._output = None
+
+        part = group_devices[1]._output
+        self.assertNotEqual(part, None)
+        group_devices[1]._pass_part_downstream()
+        self.assertEqual(downstream._output, part)
+        downstream._output = None
+
+        # Third device is not configured as an output.
+        part = group_devices[2]._output
+        self.assertNotEqual(part, None)
+        group_devices[2]._pass_part_downstream()
+        self.assertEqual(downstream._output, None)
 
 
 if __name__ == '__main__':

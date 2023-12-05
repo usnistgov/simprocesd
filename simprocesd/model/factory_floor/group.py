@@ -6,19 +6,18 @@ class Group():
     '''A grouping of devices for the purpose of using them in multiple
     production path locations.
 
-    The first device in the device list will receive Parts that are
-    passed to the group the group while Parts that leave the last
-    device in the list will be routed out of the Group.
-    Group will not interconnect the devices passed to it so upstreams
-    need to be set independently (except for what is stated above).
-
-    First device will also have its upstream set to GroupInput and
-    last device will get a new downstream of GroupOutput.
+    The first device in the device list will be set as the input
+    device for the group and will receive Parts that are passed to the
+    group. The last device will be set as the output device for the
+    group and Parts that leave the the output device will be routed
+    out of the Group.
+    Group will set upstream for the input device(s) and the downstream
+    for the output devices.
 
     Once a group is created use get_new_group_path to create a new
     production line device. Parts that go into this GroupPath will be
-    routed to a device in the group and once the Part leaves the group
-    it will be routed back out of the same GroupPath.
+    routed to an input device in the group and once the Part leaves
+    the group it will be routed back out of the same GroupPath.
 
     Arguments
     ---------
@@ -26,36 +25,58 @@ class Group():
         Name of the group.
     devices: list of PartFlowController
         List of devices that are part of this Group.
+    input_override: list of PartFlowController, default=None
+        If set, override input devices for the Group with this list.
+        These devices will be added to devices list if not already a
+        part of it.
+    output_override: list of PartFlowController, default=None
+        If set, override output devices for the Group with this list.
+        These devices will be added to devices list if not already a
+        part of it.
 
     Raises
     ------
     TypeError
         If any of the devices are not PartFlowController or a
         subclass of it.
+        If any of the Group devices have an upstream or a downstream
+        that is not another device in the Group.
     '''
 
-    def __init__(self, group_name, devices):
+    def __init__(self, group_name, devices, input_override = None, output_override = None):
         assert len(devices) > 0, 'There has to be at least 1 device in the group'
-        self._devices = devices
+        self._devices = devices.copy()
         self.name = group_name
         self._group_paths = []
 
-        for device in self._devices:
+        all_devices = devices
+        if input_override != None:
+            all_devices += input_override
+        if output_override != None:
+            all_devices += output_override
+        all_devices = set(all_devices)
+        for device in all_devices:
             assert_is_instance(device, PartFlowController)
             device._joined_groups.append(self)
             # Devices cannot be directly connected to devices outside
             # of the Group.
             for dwn in device.downstream:
-                if dwn not in self._devices:
+                if dwn not in all_devices:
                     raise ValueError(f'Provided device, ({device.name}) has a downstream ({dwn.name})'
                                      +' that is not one of the other provided devices.')
             for up in device.upstream:
-                if up not in self._devices:
+                if up not in all_devices:
                     raise ValueError(f'Provided device, ({device.name}) has an upstream ({up.name})'
                                      +' that is not one of the other provided devices.')
 
-        self._input_device = GroupInput(self)
-        self._output_device = GroupOutput(self)
+        if input_override != None:
+            self._input_device = GroupInput(self, input_override)
+        else:
+            self._input_device = GroupInput(self, self._devices[0:1])
+        if output_override != None:
+            self._output_device = GroupOutput(self, output_override)
+        else:
+            self._output_device = GroupOutput(self, self._devices[-1:])
 
     def get_new_group_path(self, name = None, upstream = None):
         '''Create a new GroupPath that acts like a device.
@@ -78,13 +99,13 @@ class Group():
 
 class GroupInput(PartFlowController):
 
-    def __init__(self, group):
+    def __init__(self, group, input_devices):
         super().__init__()
         self._group = group
         self._joined_groups.append(self._group)
 
-        first_device = group._devices[0]
-        first_device.set_upstream([self])
+        for d in input_devices:
+            d.set_upstream([self])
 
     @property
     def upstream(self):
@@ -113,13 +134,12 @@ class GroupInput(PartFlowController):
 
 class GroupOutput(PartFlowController):
 
-    def __init__(self, group):
+    def __init__(self, group, output_devices):
         super().__init__()
         self._group = group
         self._joined_groups.append(self._group)
 
-        last_device = group._devices[-1]
-        self.set_upstream([last_device])
+        self.set_upstream(output_devices)
 
     @property
     def downstream(self):
