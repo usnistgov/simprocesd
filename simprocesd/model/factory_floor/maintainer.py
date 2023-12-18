@@ -1,6 +1,7 @@
 from ...utils import assert_is_instance
 from ..simulation import EventType
 from .asset import Asset
+from functools import partial
 
 
 class Maintainer(Asset):
@@ -132,7 +133,7 @@ class Maintainer(Asset):
                 self._env.schedule_event(
                     self._env.now,
                     self.id,
-                    lambda r = req: self._start_work_order(r),
+                    partial(self._start_work_order, request = req),
                     EventType.START_WORK,
                     f'start work order: {req.target.name}')
             else:
@@ -149,7 +150,7 @@ class Maintainer(Asset):
         self._env.schedule_event(
             self._env.now + ttm,
             self.id,
-            lambda r = request: self._finish_work_order(r),
+            partial(self._finish_work_order, request = request),
             EventType.FINISH_WORK,
             f'end work order: {request.target.name}')
 

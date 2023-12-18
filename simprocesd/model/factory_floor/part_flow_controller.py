@@ -182,8 +182,13 @@ class PartFlowController(Asset):
             A sorted list of downstream PartFlowControllers sorted
             from highest to lowest priority.
         '''
-        return sorted(downstream, key = lambda d: d.waiting_for_part_start_time \
-                      if d.waiting_for_part_start_time != None else float('inf'))
+        return sorted(downstream, key = PartFlowController._downstream_sorting_key_generator)
+
+    @staticmethod
+    def _downstream_sorting_key_generator(downstream):
+        if downstream.waiting_for_part_start_time == None:
+            return float('inf')
+        return downstream.waiting_for_part_start_time
 
     def notify_upstream_of_available_space(self):
         '''Communicate to all immediate upstreams that this

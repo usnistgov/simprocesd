@@ -38,7 +38,7 @@ class Cms(Asset):
             return
 
         self._sensors.append(sensor)
-        callback = lambda s, time, data: self.on_sense(s, time, data)
+        callback = self.on_sense
         sensor.add_on_sense_callback(callback)
 
     def on_sense(self, sensor, time, data):

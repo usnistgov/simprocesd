@@ -1,11 +1,14 @@
+import concurrent.futures
+
 from io import StringIO
-from unittest import TestCase
 import unittest
+from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from .. import add_side_effect_to_class_method
 from ...model import Environment, System, ResourceManager
 from ...model.factory_floor import Asset, PartHandler, PartProcessor, Sink
+from dataclasses import replace
 
 
 class SystemTestCase(TestCase):
@@ -18,10 +21,6 @@ class SystemTestCase(TestCase):
         self.env_mock.resource_manager = MagicMock(spec = ResourceManager)
         self.env_mock.now = 0
         self.sys._env = self.env_mock
-        # Mock out time getting method to keep it predictable.
-        self.time_mock = add_side_effect_to_class_method(self, 'time.time')
-        # Calling time.time() will first return 0, then 1, then 2...
-        self.time_mock.side_effect = [i for i in range(10)]
 
     def test_initialize(self):
         res_manager = ResourceManager()
@@ -43,6 +42,11 @@ class SystemTestCase(TestCase):
 
     @patch('sys.stdout', new_callable = StringIO)
     def test_simulate(self, stdout_mock):
+        # Mock out time getting method to keep it predictable.
+        time_mock = add_side_effect_to_class_method(self, 'time.time')
+        # Calling time.time() will first return 0, then 1, then 2...
+        time_mock.side_effect = [i for i in range(10)]
+
         sink = MagicMock(spec = Sink)
         sink.received_parts_count = 56
         self.sys.add_asset(sink)
@@ -105,6 +109,49 @@ class SystemTestCase(TestCase):
         assets = [Asset('machine'), PartProcessor('machine'), Sink('machine')]
         self.assertEqual(self.sys.find_assets(name = 'machine', subtype = PartHandler), assets[1:])
         self.assertEqual(self.sys.find_assets(name = 'machine', type_ = PartProcessor), [assets[1]])
+
+    def test_simulate_multiple_times_bad_input(self):
+        simulation_func = MagicMock(spec = callable)
+        self.assertRaises(AssertionError, lambda: System.simulate_multiple_times(
+            simulation_func, 0, 1))
+        self.assertRaises(AssertionError, lambda: System.simulate_multiple_times(
+            simulation_func, 1, -1))
+
+    def test_simulate_multiple_times(self):
+        future_mock = MagicMock(spec = concurrent.futures.Future)
+        # Mock out the call to create jobs.
+        submit_job_mock = add_side_effect_to_class_method(self, 'concurrent.futures.ProcessPoolExecutor.submit',
+                                                          replacement = lambda *args, **kwargs: future_mock)
+
+        simulation_func = MagicMock(spec = callable)
+        extra_arg = 'a string!'
+        extra_kwarg = 'a kstring!'
+        num_of_runs = 3
+        rtn_systems = System.simulate_multiple_times(simulation_func, num_of_runs, 2, extra_arg, a = extra_kwarg)
+
+        self.assertEqual(len(rtn_systems), num_of_runs)
+        for i in range(num_of_runs):
+            args, kwargs = submit_job_mock.call_args_list[i]
+            self.assertEqual(args[2], simulation_func)
+            self.assertEqual(args[3], i)
+            self.assertEqual(args[4], extra_arg)
+            self.assertEqual(kwargs['a'], extra_kwarg)
+
+        self.assertEqual(len(future_mock.result.call_args_list), num_of_runs)
+
+    def test_simulate_multiple_times_same_thread(self):
+        simulation_func = MagicMock(spec = callable)
+        num_of_runs = 3
+        rtn_systems = System.simulate_multiple_times(simulation_func, num_of_runs, 0)
+
+        systems = []
+        for i in range(num_of_runs):
+            args, kwargs = simulation_func.call_args_list[i]
+            self.assertEqual(type(args[0]), System)
+            systems.append(args[0])
+            self.assertEqual(args[1], i)
+
+        self.assertEqual(rtn_systems, systems)
 
 
 if __name__ == '__main__':

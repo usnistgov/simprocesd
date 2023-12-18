@@ -48,7 +48,10 @@ class AttributeProbe(Probe):
     def __init__(self, attribute_name, target):
         assert_is_instance(attribute_name, str)
         self._attribute_name = attribute_name
-        super().__init__(lambda t: getattr(t, self._attribute_name, None), target)
+        super().__init__(self._get_data, target)
+
+    def _get_data(self, target):
+        return getattr(target, self._attribute_name, None)
 
 
 class Sensor(Asset):

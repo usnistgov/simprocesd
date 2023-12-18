@@ -1,3 +1,4 @@
+import concurrent.futures
 import time
 
 from . import Environment, ResourceManager
@@ -169,4 +170,82 @@ class System:
                 rtn.append(a)
 
         return rtn
+
+    @staticmethod
+    def simulate_multiple_times(simulation, number_of_simulations, max_processes = 0,
+                                *args, **kwargs):
+        '''Run a simulation multiple times using multiple processes.
+
+        Simulation function is executed multiple times with a new
+        System instance each time. The simulation function needs to
+        initialize the model and run the simulation by calling
+        system_parameter.simulate(...)
+
+        Note
+        ----
+        It is recommended to familiarize yourself with Python's
+        multi-process code execution such as each process having a
+        separate copy of static variables.
+        Each process may run multiple simulations, one after another.
+
+        Arguments
+        ---------
+        simulation: function
+            Function that sets up the model and runs it. The function
+            will be called with 2+ parameter:
+            - System instance to be used for this simulation.
+            - integer index of the simulation
+            - additional arguments, see *args, **kwargs
+        number_of_simulations: int > 0
+            Number of times to run <simulation>.
+        max_processes: int, default=0
+            Maximum number of processes to create for running
+            simultaneous simulations.
+            If 0, then simulations will run one after another in the
+            current thread (and the current process).
+            If None, then default to the number of processors on the
+            machine
+        *args, **kwargs:
+            Additional arguments will be passed to the simulation
+            function.
+
+        Returns
+        -------
+        list
+            A list of System objects that were used to run each
+            simulation. List length will equal <iterations>.
+
+        Raises
+        ------
+        AttributeError
+            If you see error like:
+            Can't pickle local object 'simulation.<locals>.function'
+            It means you defined an anonymous function (e.g. function
+            within a function) in your code that the multiprocess
+            setup does not support.
+        '''
+        assert number_of_simulations > 0
+        assert max_processes == None or max_processes >= 0
+
+        # Run simulations on current thread
+        if max_processes == 0:
+            return [System._simulation_helper(simulation, i, *args, **kwargs) for i in range(number_of_simulations)]
+
+        with concurrent.futures.ProcessPoolExecutor(max_processes) as thread_pool:
+            futures = []
+            for i in range(number_of_simulations):
+                futures.append(thread_pool.submit(System._simulation_helper,
+                                                  simulation, i, *args, **kwargs))
+
+            systems = []
+            for i in range(number_of_simulations):
+                systems.append(futures[i].result(timeout = None))
+
+        return systems
+
+    @staticmethod
+    def _simulation_helper(simulation, index, *args, **kwargs):
+        new_system = System()
+        simulation(new_system, index, *args, **kwargs)
+        return new_system
 

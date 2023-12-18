@@ -40,9 +40,9 @@ class MachineWithDamage(PartProcessor):
                  probability_to_degrade = 0,
                  damage_on_degrade = 1,
                  damage_to_fail = float('inf'),
-                 get_maintenance_duration = lambda machine, tag: 0,
-                 get_capacity_to_maintain = lambda machine, tag: 0,
-                 get_cost_to_maintain = lambda machine, tag: 0):
+                 get_maintenance_duration = None,
+                 get_capacity_to_maintain = None,
+                 get_cost_to_maintain = None):
         super().__init__(name, upstream, cycle_time, value)
         self._damage = 0
         self._period_to_degrade = period_to_degrade
@@ -106,12 +106,18 @@ class MachineWithDamage(PartProcessor):
 
     # Beginning of Maintainable function overrides.
     def get_work_order_duration(self, tag):
+        if self._get_maintenance_duration == None:
+            return 0
         return self._get_maintenance_duration(self, tag)
 
     def get_work_order_capacity(self, tag):
+        if self._get_capacity_to_maintain == None:
+            return 0
         return self._get_capacity_to_maintain(self, tag)
 
     def get_work_order_cost(self, tag):
+        if self._get_cost_to_maintain == None:
+            return 0
         return self._get_cost_to_maintain(self, tag)
 
     def start_work(self, tag):

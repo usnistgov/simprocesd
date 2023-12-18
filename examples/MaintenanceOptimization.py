@@ -29,78 +29,77 @@ simulation_duration = 60 * 12 * 7
 # Iterations per threshold.
 iterations = 10
 
-damage_threshold = 0
 
-
-def setup_simulation():
-
-    system = System()
+def simulation(system, index, damage_threshold):
     # Setup the experiment.
     maintainer = Maintainer(capacity = maintainer_capacity)
     source = Source('Source', Part(quality = 1), 1)
-    M1 = generate_machine('M1', [source], maintainer)
-    M2 = generate_machine('M2', [source], maintainer)
-    M3 = generate_machine('M3', [source], maintainer)
-    M4 = generate_machine('M4', [source], maintainer)
-    M5 = generate_machine('M5', [source], maintainer)
+    M1 = CustomMachineWithDamage('M1', [source], maintainer, damage_threshold)
+    M2 = CustomMachineWithDamage('M2', [source], maintainer, damage_threshold)
+    M3 = CustomMachineWithDamage('M3', [source], maintainer, damage_threshold)
+    M4 = CustomMachineWithDamage('M4', [source], maintainer, damage_threshold)
+    M5 = CustomMachineWithDamage('M5', [source], maintainer, damage_threshold)
     all_machines = [M1, M2, M3, M4, M5]
     sink = Sink('Sink', all_machines, collect_parts = True)
-    return system
+
+    system.simulate(simulation_duration = simulation_duration, print_summary = False)
 
 
 def main(is_test = False):
-    global iterations, damage_threshold
+    global iterations
     if is_test:
         # Reduce example runtime during testing.
         iterations = 1
 
     print('Running simulations...')
-    results = []
-    # Damage thresholds to test and plot.
-    thresholds = [x * d_magnitude for x in range(1, round((d_fail / d_magnitude)) + 1)]
+    all_parts_per_dt = []
+    # Damage thresholds go from d_magnitude to d_fail in increments
+    # of  d_magnitude.
+    thresholds = [x * d_magnitude for x in range(1, round(d_fail / d_magnitude) + 1)]
+    tested_policies_count = len(thresholds)
+
+    # Loop for collecting data on each maintenance policy.
     for current_threshold in thresholds:
         damage_threshold = current_threshold
-        results.append([])
-        for i in range(iterations):
-            system = setup_simulation()
-            system.simulate(simulation_duration = simulation_duration, print_summary = False)
-            sink = system.find_assets(name = 'Sink')[0]
-            results[-1].append([x.quality for x in sink.collected_parts])
-
-    # Prepare data for graphing.
-    all_parts_per_dt = []
-    for dt in results:
+        systems = System.simulate_multiple_times(simulation = simulation,
+                                                 number_of_simulations = iterations,
+                                                 max_processes = 4,
+                                                 damage_threshold = damage_threshold)
         all_parts_per_dt.append([])
-        for res in dt:
-            all_parts_per_dt[-1] += res
+        # Collect completed Parts quality from each iteration.
+        for s in systems:
+            sink = s.find_assets(name = 'Sink')[0]
+            all_parts_per_dt[-1] += ([x.quality for x in sink.collected_parts])
 
-    all_parts_counts = [len(dt) / len(results[0]) for dt in all_parts_per_dt]
-    good_parts_counts = [len([x for x in dt if x >= min_acceptable_quality]) / len(results[0])
-                         for dt in all_parts_per_dt]
-    bad_parts_counts = [all_parts_counts[i] - good_parts_counts[i] for i in
-                        range(len(all_parts_counts))]
-    quality_all_parts = [statistics.mean(dt) for dt in all_parts_per_dt]
-    quality_good_parts = [statistics.mean([x for x in dt if x >= min_acceptable_quality])
-                          for dt in all_parts_per_dt]
+    # Get means for each maintenance policy.
+    mean_part_count_per_dt = [len(dt) / iterations for dt in all_parts_per_dt]
+    mean_good_part_count_per_dt = [len([x for x in dt if x >= min_acceptable_quality]) / iterations
+                                   for dt in all_parts_per_dt]
+    mean_bad_part_count_per_dt = [mean_part_count_per_dt[i] - mean_good_part_count_per_dt[i]
+                                  for i in range(tested_policies_count)]
+    mean_quality_per_dt = [statistics.mean(dt) for dt in all_parts_per_dt]
+    mean_quality_good_parts_per_dt = [statistics.mean([x for x in dt if x >= min_acceptable_quality])
+                                      for dt in all_parts_per_dt]
+
     # Plot the data.
     figure, (g1, g2) = pyplot.subplots(1, 2, figsize = (12, 6))
     figure.canvas.manager.set_window_title('Close window to continue.')
     g1.set(xlabel = 'damage threshold to request maintenance',
            ylabel = 'parts produced',
            title = 'Produced Parts')
-    g1.plot(thresholds, all_parts_counts, lw = 1, color = 'b', marker = '.',
+    g1.plot(thresholds, mean_part_count_per_dt, lw = 1, color = 'b', marker = '.',
             label = f'all parts')
-    g1.plot(thresholds, good_parts_counts, lw = 3, color = 'g', marker = 'o',
+    g1.plot(thresholds, mean_good_part_count_per_dt, lw = 3, color = 'g', marker = 'o',
             label = f'quality >= {min_acceptable_quality}')
-    g1.plot(thresholds, bad_parts_counts, lw = 1, color = 'r', marker = '.',
+    g1.plot(thresholds, mean_bad_part_count_per_dt, lw = 1, color = 'r', marker = '.',
             label = f'quality < {min_acceptable_quality}')
     g1.legend()
     g2.set(xlabel = 'damage threshold to request maintenance',
            ylabel = f'mean part quality',
            title = 'Part Quality')
-    g2.plot(thresholds, quality_all_parts, lw = 1, color = 'b', marker = '.',
+    g2.plot(thresholds, mean_quality_per_dt, lw = 1, color = 'b', marker = '.',
             label = 'all parts')
-    g2.plot(thresholds, quality_good_parts, lw = 3, color = 'g', marker = 'o',
+    g2.plot(thresholds, mean_quality_good_parts_per_dt, lw = 3, color = 'g', marker = 'o',
             label = f'quality >= {min_acceptable_quality}')
     g2.legend()
 
@@ -111,37 +110,39 @@ def main(is_test = False):
         print('Simulation finished.')
 
 
-def generate_machine(name, upstream, maintainer):
-    ''' Create and configure a part processing machine for this
-    experiment.
-    '''
-    new_machine = MachineWithDamage(
-            name = name,
-            upstream = upstream,
-            cycle_time = cycle_time,
-            period_to_degrade = d_period,
-            probability_to_degrade = d_probability,
-            damage_on_degrade = d_magnitude,
-            damage_to_fail = d_fail,
-            get_maintenance_duration = lambda d, t: time_to_repair,
-            get_capacity_to_maintain = lambda d, t: capacity_to_repair
-    )
+class CustomMachineWithDamage(MachineWithDamage):
 
-    def finish_processing(machine, part):
+    def __init__(self, name, upstream, maintainer, maintenance_threshhold):
+        super().__init__(name = name,
+                         upstream = upstream,
+                         cycle_time = cycle_time,
+                         period_to_degrade = d_period,
+                         probability_to_degrade = d_probability,
+                         damage_on_degrade = d_magnitude,
+                         damage_to_fail = d_fail)
+        self._maintainer = maintainer
+        self._maintenance_threshhold = maintenance_threshhold
+
+        self.add_finish_processing_callback(self._finish_processing)
+        self.add_on_degrade_callback(self._on_status_degrade)
+
+    def _finish_processing(self, machine, part):
         # Part quality is adjusted based on current machine's damage level.
         damage = machine.damage
         # Damage negatively affects part quality. The relationship is
         # exponential. Gauss distribution is used for noise.
         part.quality = max(0, 1 - max(0, random.gauss(pow(damage, 3) * 0.01, .1)))
 
-    def on_status_degrade(machine):
+    def _on_status_degrade(self, machine):
         # Request maintenance if damage is above threshold.
-        if machine.damage >= damage_threshold:
-            maintainer.create_work_order(new_machine)
+        if machine.damage >= self._maintenance_threshhold and self._maintainer != None:
+            self._maintainer.create_work_order(machine)
 
-    new_machine.add_finish_processing_callback(finish_processing)
-    new_machine.add_on_degrade_callback(on_status_degrade)
-    return new_machine
+    def get_work_order_duration(self, tag):
+        return time_to_repair
+
+    def get_work_order_capacity(self, tag):
+        return capacity_to_repair
 
 
 if __name__ == '__main__':
