@@ -92,7 +92,7 @@ class Source(PartHandler):
         self._schedule_pass_part_downstream()
 
     def _pass_part_downstream(self):
-        if self._max_produced_parts - self._produced_parts < 1 or self._output == None:
+        if self.remaining_parts < 1 or self._output == None:
             return
         supplied_part_value = self._output.value
         super()._pass_part_downstream()

@@ -137,13 +137,13 @@ class Environment:
     def __init__(self, name = 'environment', resource_manager = None):
         self.name = name
         self.resource_manager = resource_manager
-        self.reset()
+        self._reset()
 
     @property
     def now(self):
         return self._now
 
-    def reset(self):
+    def _reset(self):
         '''Reset the Environment to its initial state.
 
         This will clear out all scheduled and paused events and reset

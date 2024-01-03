@@ -22,8 +22,8 @@ def main():
     M3 = PartProcessor('M3', upstream = [M2, M5], cycle_time = 0.5)
     # Filters look on the routing history of the part to determine how
     # it got to M2, this determines which way the part is allowed to go.
-    G1 = DecisionGate(lambda gate, part: part.routing_history[-2] == M2, 'G1', [M3])
-    G2 = DecisionGate(lambda gate, part: part.routing_history[-2] == M5, 'G2', [M3])
+    G1 = DecisionGate('G1', [M3], lambda gate, part: part.routing_history[-2] == M2)
+    G2 = DecisionGate('G2', [M3], lambda gate, part: part.routing_history[-2] == M5)
     M6 = PartProcessor('M6', upstream = [G2], cycle_time = 5)
     M4 = PartProcessor('M4', upstream = [G1, M6], cycle_time = 2)
     machines = [M1, M2, M3, M4, M5, M6]

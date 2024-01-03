@@ -13,12 +13,12 @@ evaluate the effectiveness of the current configuration.
 '''
 import sys
 
+from matplotlib import pyplot
 from simprocesd.model import System
 from simprocesd.model.factory_floor import ActionScheduler, Buffer, DecisionGate, PartProcessor, \
     Sink, Source
 from simprocesd.utils.simulation_info_utils import plot_buffer_levels, plot_resources
 import random
-from matplotlib import pyplot
 from simprocesd.model.factory_floor.group import Group
 
 
@@ -88,8 +88,8 @@ def main(is_test = False):
     M4 = PartProcessor('M4', upstream = [B2], cycle_time = 12,
                        resources_for_processing = {'operators': 1, 'power': 95000})
     M4.add_finish_processing_callback(M4_process)
-    gate1 = DecisionGate(should_pass_part = lambda g, part: part.quality < 0.8, upstream = [M4])
-    gate2 = DecisionGate(should_pass_part = lambda g, part: part.quality >= 0.8, upstream = [M4])
+    gate1 = DecisionGate(decider_override = lambda g, part: part.quality < 0.8, upstream = [M4])
+    gate2 = DecisionGate(decider_override = lambda g, part: part.quality >= 0.8, upstream = [M4])
     B1.set_upstream(list(B1.upstream) + [gate1])
     sink1 = Sink('Sink1', upstream = [gate2])
 

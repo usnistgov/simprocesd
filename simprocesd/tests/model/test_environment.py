@@ -99,19 +99,6 @@ class EnvironmentTestCase(TestCase):
         self.env.run(self.env._events[-1].time)
         self.assertEqual(len(self.execution_order), event_count)
 
-    def test_resetting_simulation(self):
-        self.schedule_events()
-        expected_finish_time = self.env._events[-1].time
-        self.env.run(self.env._events[-1].time)
-        self.assertEqual(self.env.now, expected_finish_time)
-
-        self.env.reset()
-        self.test_initialize()
-
-        self.schedule_events()
-        self.env.run(self.env._events[-1].time)
-        self.assertEqual(self.env.now, expected_finish_time)
-
     def test_event_scheduled_after_simulation_end(self):
         self.schedule_events()
         events = sorted(self.env._events)
