@@ -8,7 +8,7 @@ import sys
 import time
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, PartProcessor, Sink, Part
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink
 from simprocesd.utils.simulation_info_utils import simple_plot
 
 
@@ -22,7 +22,7 @@ def simulation(system, index):
     # the example is ran within the same Python environment no matter
     # how many processes are used to run the simulations.
     random.seed(index)
-    source = Source(sample_part = Part(), cycle_time = 1)
+    source = Source(cycle_time = 1)
     M1 = PartProcessor('M1', upstream = [source], cycle_time = 1)
 
     M1.add_finish_processing_callback(process_part)

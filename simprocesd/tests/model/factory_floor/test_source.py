@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 from ... import mock_wrap
 from ....model import Environment, EventType, System
-from ....model.factory_floor import Part, PartProcessor, Source
+from ....model.factory_floor import Part, PartGenerator, PartProcessor, Source
 
 
 class SourceTestCase(TestCase):
@@ -25,7 +25,7 @@ class SourceTestCase(TestCase):
             self.assertEqual(args[4], message)
 
     def test_init(self):
-        source = Source('name', Part(), 2, 15)
+        source = Source('name', PartGenerator(''), 2, 15)
         self.assertEqual(source.name, 'name')
         self.assertEqual(source.value, 0)
         self.assertEqual(source.upstream, [])
@@ -35,7 +35,7 @@ class SourceTestCase(TestCase):
         self.assertIn(source, self.sys._assets)
 
     def test_initialize(self):
-        source = Source(cycle_time = 6, sample_part = Part(value = 5))
+        source = Source(part_generator = PartGenerator('', value = 5), cycle_time = 6)
         source.initialize(self.env)
         self.assert_last_scheduled_event(6, source.id, source._finish_cycle,
                                          EventType.FINISH_PROCESSING)
@@ -51,24 +51,20 @@ class SourceTestCase(TestCase):
     def test_upstream(self):
         # Source is not allowed to have upstream machines.
         source = Source()
-
-        def helper(): source.set_upstream([PartProcessor()])
-
-        self.assertRaises(ValueError, helper)
+        self.assertRaises(ValueError, lambda: source.set_upstream([PartProcessor()]))
 
     def test_pass_part_downstream(self):
-        part = Part('n', 10, 3)
-        wrapped_part = mock_wrap(part)
-        source = Source(sample_part = wrapped_part, cycle_time = 1)
+        wrapped_pg = mock_wrap(PartGenerator('n', 10, 3))
+        source = Source(part_generator = wrapped_pg, cycle_time = 1)
         downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
 
         source.initialize(self.env)
-        wrapped_part.make_copy.assert_not_called()
+        wrapped_pg.generate_part.assert_not_called()
         self.env.now = 1
         source._finish_cycle()
-        wrapped_part.make_copy.assert_called_once()
+        wrapped_pg.generate_part.assert_called_once()
 
         source._pass_part_downstream()
         self.assertEqual(source.value, -10)
@@ -77,16 +73,15 @@ class SourceTestCase(TestCase):
 
         args, kwargs = downstream.give_part.call_args
         # arg[0] is the part that was passed with give_part
-        self.assertEqual(args[0].value, part.value)
-        self.assertEqual(args[0].quality, part.quality)
-        self.assertNotEqual(args[0].id, part.id)
+        self.assertEqual(args[0].name, 'n_1')
+        self.assertEqual(args[0].value, 10)
+        self.assertEqual(args[0].quality, 3)
 
         self.assert_last_scheduled_event(2, source.id, source._finish_cycle,
                                          EventType.FINISH_PROCESSING)
 
     def test_max_produced_parts(self):
-        part = Part('n', 10, 3)
-        source = Source(sample_part = part, starting_parts = 5, cycle_time = 1)
+        source = Source(part_generator = PartGenerator('n', 10, 3), starting_parts = 5, cycle_time = 1)
         downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
@@ -110,7 +105,7 @@ class SourceTestCase(TestCase):
         self.assertEqual(len(downstream.give_part.call_args_list), 5)
 
     def test_zero_cycle_time(self):
-        source = Source(cycle_time = 0, sample_part = Part())
+        source = Source(cycle_time = 0)
         downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)
@@ -123,7 +118,7 @@ class SourceTestCase(TestCase):
         downstream.give_part.assert_called_once()
 
     def test_adjust_part_count(self):
-        source = Source(sample_part = Part(), starting_parts = 5)
+        source = Source(starting_parts = 5)
         downstream = MagicMock(spec = PartProcessor)
         downstream.give_part.return_value = True
         source._add_downstream(downstream)

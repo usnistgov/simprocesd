@@ -12,7 +12,7 @@ import sys
 from matplotlib import pyplot
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Sink, Maintainer, Part
+from simprocesd.model.factory_floor import Source, Sink, Maintainer
 
 from .machine_with_damage import MachineWithDamage
 
@@ -33,7 +33,7 @@ iterations = 10
 def simulation(system, index, damage_threshold):
     # Setup the experiment.
     maintainer = Maintainer(capacity = maintainer_capacity)
-    source = Source('Source', Part(quality = 1), 1)
+    source = Source('Source', cycle_time = 1)
     M1 = CustomMachineWithDamage('M1', [source], maintainer, damage_threshold)
     M2 = CustomMachineWithDamage('M2', [source], maintainer, damage_threshold)
     M3 = CustomMachineWithDamage('M3', [source], maintainer, damage_threshold)

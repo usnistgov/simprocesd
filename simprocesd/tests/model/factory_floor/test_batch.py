@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment
-from ....model.factory_floor import Part, PartProcessor, Batch
+from ....model.factory_floor import Batch, Part, PartFlowController
 
 
 class BatchTestCase(TestCase):
@@ -19,33 +19,29 @@ class BatchTestCase(TestCase):
         self.assertEqual(batch.parts[0], part)
         self.assertEqual(batch.routing_history, [])
 
-    def test_make_copy(self):
-        ids = []
-        part = Part('p', 100, 3)
-        part.add_routing_history(MagicMock(spec = PartProcessor))
-        batch = Batch('b', [part])
-        batches = [batch]
-
-        for i in range(10):
-            # Check Batch
-            batches.append(batch.make_copy())
-            self.assertNotIn(batches[-1].id, ids)
-            ids.append(batches[-1].id)
-            self.assertRegex(batches[-1].name, f'{batch.name}_{i+1}')
-            self.assertEqual(batches[-1].value, 100)
-            self.assertEqual(len(batches[-1].routing_history), 0)
-            # Check Part in the Batch
-            new_part = batches[-1].parts[0]
-            self.assertNotIn(new_part.id, ids)
-            ids.append(new_part.id)
-            self.assertEqual(new_part.value, 100)
-            self.assertEqual(new_part.quality, 3)
-            self.assertEqual(len(new_part.routing_history), 0)
-
     def test_change_value(self):
         batch = Batch()
         self.assertRaises(NotImplementedError, lambda: batch.add_value('', 1))
         self.assertRaises(NotImplementedError, lambda: batch.add_cost('', 1))
+
+    def test_modify_routing_history(self):
+        part1, part2 = Part(), Part()
+        device1, device2 = [MagicMock(spec = PartFlowController) for i in range(2)]
+        part1.add_routing_history(device1)
+        batch = Batch('name', [part1, part2])
+
+        batch.add_routing_history(device2)
+        self.assertEqual(part1.routing_history, [device1, device2])
+        self.assertEqual(part2.routing_history, [device2])
+
+        batch.remove_from_routing_history(-1)
+        self.assertEqual(part1.routing_history, [device1])
+        self.assertEqual(part2.routing_history, [])
+
+        batch.add_routing_history(device2)
+        batch.remove_from_routing_history(0)
+        self.assertEqual(part1.routing_history, [device2])
+        self.assertEqual(part2.routing_history, [])
 
 
 if __name__ == '__main__':

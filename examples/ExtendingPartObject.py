@@ -5,7 +5,7 @@ Average weight: ~18
 import random
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Part, Source, PartProcessor, Sink
+from simprocesd.model.factory_floor import Part, PartGenerator, PartProcessor, Sink, Source
 
 
 class CustomPart(Part):
@@ -15,16 +15,15 @@ class CustomPart(Part):
         # Assign weight and save starting value.
         self.weight = self._initial_weight = weight
 
-    def initialize(self, env):
-        # Updating initialize is not strictly necessary for this
-        # example because of the limited usage of CustomPart.
-        super().initialize(env)
-        # Reset weight to starting value.
-        self.weight = self._initial_weight
 
-    def make_copy(self):
-        self.copy_counter += 1
-        return CustomPart(f'{self.name}_{self.copy_counter}', self.quality, self.weight)
+class CustomPartGenerator(PartGenerator):
+
+    def __init__(self, name_prefix, quality, weight):
+        super().__init__(name_prefix, 0, quality)
+        self.weight = weight
+
+    def _generate_part_helper(self, part_name, part_counter):
+        return CustomPart(part_name, self.quality, self.weight)
 
 
 def process_part(part, min_, max_):
@@ -38,7 +37,7 @@ def process_part(part, min_, max_):
 def main():
     system = System()
 
-    source = Source(sample_part = CustomPart('part', 0, 25))
+    source = Source(part_generator = CustomPartGenerator('CustomPart', 0, 25))
     M1 = PartProcessor('M1',
                        upstream = [source],
                        cycle_time = 1)

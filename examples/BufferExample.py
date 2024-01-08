@@ -7,7 +7,7 @@ from simprocesd.model.factory_floor import Buffer, PartProcessor, Part, Sink, So
 def main():
     system = System()
 
-    source = Source(sample_part = Part())
+    source = Source()
     M1 = PartProcessor(upstream = [source], cycle_time = 1)
     B1 = Buffer(upstream = [M1], capacity = 5)
     M2 = PartProcessor(upstream = [B1], cycle_time = 1)

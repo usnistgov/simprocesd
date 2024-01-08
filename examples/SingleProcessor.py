@@ -4,15 +4,16 @@ PartProcessor, and are collected by the Sink.
 '''
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, PartProcessor, Sink, Part
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink, PartGenerator
 
 
 def main():
     # System needs to be created first so that other simulation objects
     # can register themselves with it automatically.
     system = System()
-    # Source will create copies of the sample part every 1 time unit.
-    source = Source(sample_part = Part(), cycle_time = 1)
+    # Source will create a new Part every 1 time unit.
+    source = Source(part_generator = PartGenerator(name_prefix = 'DefaultPart'),
+                    cycle_time = 1)
     # Create machine that gets parts from source and takes 1 time unit
     # to process the part.
     M1 = PartProcessor(upstream = [source], cycle_time = 1)

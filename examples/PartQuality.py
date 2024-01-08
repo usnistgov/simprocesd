@@ -6,7 +6,7 @@ M3 average quality: ~43%
 import random
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Part, Source, PartProcessor, Buffer, Sink
+from simprocesd.model.factory_floor import PartGenerator, Source, PartProcessor, Buffer, Sink
 from simprocesd.utils.simulation_info_utils import print_produced_parts_and_average_quality
 
 
@@ -18,7 +18,7 @@ def update_quality(part, min_, max_):
 def main():
     system = System()
 
-    source = Source(sample_part = Part(quality = 1.0))
+    source = Source(part_generator = PartGenerator('Part', value = 0, quality = 1))
     M1 = PartProcessor('M1',
                        upstream = [source],
                        cycle_time = 1)

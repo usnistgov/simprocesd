@@ -1,10 +1,11 @@
-''' This example simulates a multistage manufacturing setup where the
+'''This example simulates a multistage manufacturing setup where the
 machines accrue damage over time which negatively impacts the quality of
 the parts those machines produce.
 After the simulation finishes, the final part quality and the path that
 each part took are used to determine problematic machines.
 In perfect conditions each machine is expected to affect the part
 quality equally.
+Expected machine with lowest part quality impact: M5
 '''
 import random
 
@@ -12,7 +13,7 @@ import numpy
 from scipy.optimize import minimize
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Buffer, Sink, Part, Maintainer
+from simprocesd.model.factory_floor import Source, Buffer, Sink, PartGenerator, Maintainer
 from simprocesd.utils import geometric_distribution_sample, \
     print_produced_parts_and_average_quality
 
@@ -45,7 +46,7 @@ def main():
     system = System()
 
     maintainer = Maintainer(capacity = 1)
-    source = Source('Source', Part('Part', 1, 2))
+    source = Source('Source', PartGenerator('Part', 1, 2))
     M1 = new_machine('M1', [source], 1, 0.02, lambda: random.uniform(0, 0.01), maintainer)
     stage1 = [M1]
     B1 = Buffer('B1', stage1, capacity = 20)

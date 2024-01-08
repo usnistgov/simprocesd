@@ -1,5 +1,5 @@
 from .asset import Asset
-from .part import Part
+from .part import Part, PartGenerator
 from .batch import Batch
 
 from .part_handler import PartHandler

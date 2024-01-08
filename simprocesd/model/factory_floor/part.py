@@ -14,7 +14,7 @@ class Part(Asset):
         changed to Part_<id>
     value: float, default=0
         Starting value of the Part.
-    quality: float, default=1.0
+    quality: float, default=1
         Starting quality of the Part.
 
     Attributes
@@ -23,10 +23,9 @@ class Part(Asset):
         A numerical representation for the quality of the Part.
     '''
 
-    def __init__(self, name = None, value = 0.0, quality = 1.0):
+    def __init__(self, name = None, value = 0, quality = 1):
         super().__init__(name, value, is_transitory = True)
 
-        self.copy_counter = 0
         self.quality = quality
         self._routing_history = []
         self._group_pathing = []
@@ -65,16 +64,57 @@ class Part(Asset):
         '''
         del self._routing_history[index]
 
-    def make_copy(self):
-        ''' Create a copy of this Part.
+
+class PartGenerator():
+    '''Creates new Parts with specified starting parameters.
+
+    Arguments
+    ---------
+    name_prefix: str
+        What the name of each generated Part will start with.
+        Generated names follow the pattern: <name_prefix>_<n> where
+        <n> starts with 1 and increments with each generated Part.
+    value: float, default=0
+        Starting value of generated Parts.
+    quality: float, default=1
+        Starting quality of generated Parts.
+    '''
+
+    def __init__(self, name_prefix, value = 0, quality = 1):
+        self.name_prefix = name_prefix
+        self.value = value
+        self.quality = quality
+
+        self._generated_part_counter = 0
+
+    def generate_part(self):
+        '''Create a new Part.
 
         Returns
         -------
         Part
-            a copy of this Part with a unique ID and an empty
-            routing_history. Returned Part is not initialized.
+            New uninitialized Part.
         '''
-        self.copy_counter += 1
-        new_part = Part(f'{self.name}_{self.copy_counter}', self.value, self.quality)
-        new_part._group_pathing = self._group_pathing.copy()
-        return new_part
+        self._generated_part_counter += 1
+        return self._generate_part_helper(f'{self.name_prefix}_{self._generated_part_counter}',
+                                          self._generated_part_counter)
+
+    def _generate_part_helper(self, part_name, part_counter):
+        '''Helper method that for generating a new Part.
+
+        Made for ease of extending the class.
+
+        Arguments
+        ---------
+        part_name: str
+            Auto-generated name for the new Part. (See class
+            description)
+        part_counter: int
+            Count of the Part being created starting with 1.
+
+        Returns
+        -------
+        Part
+            New uninitialized Part.
+        '''
+        return Part(name = part_name, value = self.value, quality = self.quality)

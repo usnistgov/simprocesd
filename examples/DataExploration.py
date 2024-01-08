@@ -6,7 +6,7 @@ import random
 import sys
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Buffer, Sink, Part, Maintainer
+from simprocesd.model.factory_floor import Source, Buffer, Sink, PartGenerator, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, Probe
 from simprocesd.utils import geometric_distribution_sample, plot_throughput, \
     plot_damage, plot_value, print_produced_parts_and_average_quality, simple_plot
@@ -42,8 +42,9 @@ def main(is_test = False):
     system = System()
     maintainer = Maintainer(capacity = 1)
 
-    sample_part = Part('Part', value = 1, quality = 0)
-    source = Source('source', sample_part, cycle_time = 1)
+    source = Source('source',
+                    part_generator = PartGenerator('Part', value = 1, quality = 0),
+                    cycle_time = 1)
     buffer = Buffer('source_buffer', [source], capacity = 12)
     M1 = new_machine('M1', [buffer], 2.5, 0.15, maintainer)
     M2 = new_machine('M2', [buffer], 2.5, 0.3, maintainer)

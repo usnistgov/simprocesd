@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, System
-from ....model.factory_floor import Part, PartFlowController, Asset
+from ....model.factory_floor import Asset, Part, PartFlowController, PartGenerator
 
 
 class PartTestCase(TestCase):
@@ -53,21 +53,17 @@ class PartTestCase(TestCase):
 
         self.assertRaises(IndexError, lambda: part.remove_from_routing_history(4))
 
-    def test_make_copy(self):
+    def test_part_generator(self):
         ids = []
-        part = Part('name', 100, 3)
-        part.initialize(self.env)
-        part.add_routing_history(MagicMock(spec = PartFlowController))
-        parts = [part]
+        pg = PartGenerator('name', value = 100, quality = 3)
         # Make 10 parts and ensure attributes are set correctly.
         for i in range(10):
-            parts.append(part.make_copy())
-            self.assertNotIn(parts[-1].id, ids)
-            ids.append(parts[-1].id)
-            self.assertRegex(parts[-1].name, f'{part.name}_{i+1}')
-            self.assertEqual(parts[-1].value, 100)
-            self.assertEqual(parts[-1].quality, 3)
-            self.assertEqual(len(parts[-1].routing_history), 0)
+            new_part = pg.generate_part()
+            self.assertNotIn(new_part.id, ids)
+            ids.append(new_part.id)
+            self.assertRegex(new_part.name, f'name_{i+1}')
+            self.assertEqual(new_part.value, 100)
+            self.assertEqual(new_part.quality, 3)
 
 
 if __name__ == '__main__':

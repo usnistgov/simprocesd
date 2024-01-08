@@ -48,9 +48,8 @@ class Batch(Part):
         for p in self.parts:
             p.add_routing_history(device)
 
-    def make_copy(self):
-        self.copy_counter += 1
-        new_batch = Batch(f'{self.name}_{self.copy_counter}')
+    def remove_from_routing_history(self, index):
+        super().remove_from_routing_history(index)
         for p in self.parts:
-            new_batch.parts.append(p.make_copy())
-        return new_batch
+            p.remove_from_routing_history(index)
+

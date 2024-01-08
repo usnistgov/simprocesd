@@ -1,20 +1,30 @@
-''' Expected parts produced: 20150
+''' Expected parts produced: 10075
 Sink is receiving Batch parts but tracks how many individual parts it
 received.
 '''
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, PartProcessor, Sink, Batch, PartBatcher, Part
+from simprocesd.model.factory_floor import Source, PartProcessor, Sink, Batch, PartBatcher, Part, PartGenerator
+
+
+class CustomPartGenerator(PartGenerator):
+
+    def __init__(self, parts_per_batch):
+        super().__init__('CustomBatch')
+        self.parts_per_batch = parts_per_batch
+
+    def _generate_part_helper(self, part_name, part_counter):
+        batch = Batch(name = part_name)
+        for i in range(self.parts_per_batch):
+            batch.parts.append(Part())
+        return batch
 
 
 def main():
     system = System()
 
     parts_per_batch = 5
-    source_output = Batch()
-    for i in range(parts_per_batch):
-        source_output.parts.append(Part())
-    # Source will produce a batch of 2 parts every cycle.
-    source = Source(cycle_time = 1, sample_part = source_output)
+    # Source will produce a batch parts every cycle.
+    source = Source(cycle_time = 1, part_generator = CustomPartGenerator(parts_per_batch))
 
     # Path 1: Unbatch, process individually, and batch parts together again.
     M1 = PartBatcher('M1', upstream = [source], output_batch_size = None)

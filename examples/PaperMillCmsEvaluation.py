@@ -9,7 +9,7 @@ import random
 import sys
 
 from simprocesd.model import System
-from simprocesd.model.factory_floor import Source, Sink, Part, Maintainer
+from simprocesd.model.factory_floor import Source, Sink, PartGenerator, Maintainer
 from simprocesd.model.sensors import OutputPartSensor, AttributeProbe, Probe
 
 from .machine_with_faults import MachineWithFaults, CmsEmulator
@@ -58,8 +58,7 @@ class CustomCms(CmsEmulator):
 def sample(duration, with_cms):
     system = System()
 
-    part = Part(value = 0, quality = 1)
-    source = Source(sample_part = part)
+    source = Source(part_generator = PartGenerator('Raw', value = 0, quality = 1))
 
     M1 = MachineWithFaults('M1', upstream = [source], cycle_time = machine_cycle_time)
     M1.add_finish_processing_callback(default_part_processing)

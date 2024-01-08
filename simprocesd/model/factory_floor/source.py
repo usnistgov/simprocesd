@@ -1,31 +1,29 @@
 from ...utils import assert_is_instance
 from .part_handler import PartHandler
-from .part import Part
+from .part import PartGenerator
 
 
 class Source(PartHandler):
-    '''A Device that produces Part objects and supplies them to Devices
-    downstream. It is the start of a production line.
+    '''A device that produces Part objects and supplies them to
+    devices downstream. It is the start of a production line.
 
-    Source will not start producing a next Part until previous Part is
+    Source will not start producing next Part until previous Part is
     passed downstream.
-    All Parts produced by this Source are copies of the same Part.
 
     Note
     ----
-    Source value will decrease by sample_part.value every time a new
-    Part is created. This is how Source tracks the costs of producing
-    Parts.
+    Source value will decrease by the value of every Part that is
+    passed downstream. This is how Source tracks the costs of
+    producing Parts.
 
     Arguments
     ----------
     name: str, default=None
-        Name of the Source. If name is None then the Source's name will
-        be changed to Source_<id>
-    sample_part: Part, default=None
-        Source will produce copies of this Part and pass them
-        downstream, sample_part itself is never passed.
-        If sample_part is None then it will be set to Part()
+        Name of the Asset. If name is None then a default name will be
+        used: <class_name>_<asset_id>
+    part_generator: PartGenerator, default=None
+        Factory for generating Parts that the Source will supply.
+        If None then the a default PartGenerator() will be used.
     cycle_time: float, default=0
         How long it takes to produce a Part.
     starting_parts: int, optional
@@ -33,15 +31,15 @@ class Source(PartHandler):
         not set.
     '''
 
-    def __init__(self, name = None, sample_part = None, cycle_time = 0.0,
+    def __init__(self, name = None, part_generator = None, cycle_time = 0.0,
                  starting_parts = float('inf')):
         super().__init__(name, None, cycle_time, value = 0)
 
-        if sample_part == None:
-            sample_part = Part()
+        if part_generator == None:
+            self._part_generator = PartGenerator(name_prefix = f'Part_{self.id}')
         else:
-            assert_is_instance(sample_part, Part)
-        self._sample_part = sample_part
+            assert_is_instance(part_generator, PartGenerator)
+            self._part_generator = part_generator
 
         self._max_produced_parts = starting_parts
         self._cost_of_produced_parts = 0
@@ -49,7 +47,6 @@ class Source(PartHandler):
 
     def initialize(self, env):
         super().initialize(env)
-        self._sample_part.initialize(env)
         self._schedule_finish_cycle()
 
     def set_upstream(self, new_upstream_list):
@@ -85,7 +82,7 @@ class Source(PartHandler):
 
     def _finish_cycle(self):
         if self._output == None:
-            self._output = self._sample_part.make_copy()
+            self._output = self._part_generator.generate_part()
             self._output.initialize(self._env)
             self._output.add_routing_history(self)
 
@@ -95,12 +92,13 @@ class Source(PartHandler):
         if self.remaining_parts < 1 or self._output == None:
             return
         supplied_part_value = self._output.value
+        supplied_part_id = self._output.id
         super()._pass_part_downstream()
         if self._output == None:  # Part was passed downstream.
             self._produced_parts += 1
             self.add_cost('supplied_part', supplied_part_value)
             self._cost_of_produced_parts += supplied_part_value
-            self._env.add_datapoint('supplied_new_part', self.name, (self._env.now,))
+            self._env.add_datapoint('supplied_new_part', self.name, (self._env.now, supplied_part_id))
             self._schedule_finish_cycle()
 
     def adjust_part_count(self, value):
