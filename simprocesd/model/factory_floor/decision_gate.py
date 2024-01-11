@@ -4,10 +4,20 @@ from .part_flow_controller import PartFlowController
 
 
 class DecisionGate(PartFlowController):
-    '''PartFlowController that can conditionally prevent Parts from
-    passing between upstream and downstream Devices.
+    '''Device that can prevent certain Parts from passing between
+    upstream and downstream devices.
 
     DecisionGate does not hold/buffer any parts.
+
+    Warning
+    -------
+    DecisionGate should ONLY use the state of the Part being passed
+    to determine if the Part should pass. This means the same Part
+    will either always pass or never pass unless its state changes.
+    If DecisionGate blocks a Part from upstream and later it would
+    allow the same Part to pass, there is no guarantee that another
+    attempt to pass the Part is going to be made causing the Part to
+    get stuck.
 
     Arguments
     ---------
@@ -40,5 +50,31 @@ class DecisionGate(PartFlowController):
         return super().give_part(part)
 
     def part_pass_decider(self, part):
+        '''Decider for whether a Part is allowed to pass through this
+        device.
+
+        This decider will not be used if the DecisionGate was provided
+        a <decider_override> on creation.
+
+        Warning
+        -------
+        DecisionGate should ONLY use the state of the Part being passed
+        to determine if the Part should pass. This means the same Part
+        will either always pass or never pass unless its state changes.
+        If DecisionGate blocks a Part from upstream and later it would
+        allow the same Part to pass, there is no guarantee that another
+        attempt to pass the Part is going to be made causing the Part to
+        get stuck.
+
+        Arguments
+        ---------
+        part: Part
+            Part the upstream is trying to pass.
+
+        Returns
+        -------
+        bool
+            Whether the <part> should be allowed to pass.
+        '''
         raise NotImplementedError('DecisionGate does not have a default decider implementations.')
 
