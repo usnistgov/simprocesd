@@ -116,7 +116,7 @@ class System:
         stop = time.time()
         if print_summary:
             print(f'Simulation finished in {stop-start:.2f}s')
-            print(f'Parts received by sink/s: {produced_parts_after - produced_parts_before}')
+            print(f'Parts received by sink(s): {produced_parts_after - produced_parts_before}')
 
     def _initialize_assets(self):
         for asset in self._assets:
