@@ -96,13 +96,13 @@ class PartGenerator():
             New uninitialized Part.
         '''
         self._generated_part_counter += 1
-        return self._generate_part_helper(f'{self.name_prefix}_{self._generated_part_counter}',
+        return self.generate_part_helper(f'{self.name_prefix}_{self._generated_part_counter}',
                                           self._generated_part_counter)
 
-    def _generate_part_helper(self, part_name, part_counter):
-        '''Helper method that for generating a new Part.
+    def generate_part_helper(self, part_name, part_counter):
+        '''Helper method for generating a new Part.
 
-        Made for ease of extending the class.
+        Provides additional arguments to make part generation easier.
 
         Arguments
         ---------

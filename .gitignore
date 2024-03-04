@@ -1,15 +1,14 @@
 **/.idea/
 **/__pycache__/
 **/.ipynb_checkpoints
+*.egg-info/
 *.vscode/
+.settings/
 build/
 dist/
 logs/
 simenv/
 validation/
-*.egg-info/
-
-setup.py
 
 *.ipynb
 *.csv

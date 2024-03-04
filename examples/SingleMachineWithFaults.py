@@ -1,12 +1,13 @@
-'''
-An example of Markovian degradation of a single machine. Once the
-machine reaches the zero health it will shut down and stop receiving
-and processing parts until maintained. Machine degradation is simulated
-by a periodic fault.
+'''An example with a custom PartProcessor that can exhibit recurring
+faults (MachineWithFaults).
+Once the machine experiences a fault it will shut down and stop
+receiving and processing parts until maintained.
+
 Expected to produce about 4000-4200 parts.
 Expected uptime %: ~80%
     - average time to break 40, average maintenance duration 10
 Expected productive %: slightly above 50%
+    - source cycle time is 2 and processor cycle time is 1
 '''
 
 from simprocesd.model import System

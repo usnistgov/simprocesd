@@ -19,17 +19,18 @@ class CustomPart(Part):
 class CustomPartGenerator(PartGenerator):
 
     def __init__(self, name_prefix, quality, weight):
-        super().__init__(name_prefix, 0, quality)
+        super().__init__(name_prefix, quality = quality)
         self.weight = weight
 
-    def _generate_part_helper(self, part_name, part_counter):
+    # Override for PartGenerator.generate_part_helper
+    def generate_part_helper(self, part_name, part_counter):
         return CustomPart(part_name, self.quality, self.weight)
 
 
-def process_part(part, min_, max_):
-    diff = max_ - min_
+def process_part(part, minQualityChange, maxQualityChange):
+    diff = maxQualityChange - minQualityChange
     # Quality is increased.
-    part.quality += max_ - diff * random.random()
+    part.quality += maxQualityChange - diff * random.random()
     # Weight is decreased.
     part.weight *= 0.75 + 0.2 * random.random()
 

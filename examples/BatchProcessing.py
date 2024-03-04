@@ -12,7 +12,8 @@ class CustomPartGenerator(PartGenerator):
         super().__init__('CustomBatch')
         self.parts_per_batch = parts_per_batch
 
-    def _generate_part_helper(self, part_name, part_counter):
+    # Override for PartGenerator.generate_part_helper
+    def generate_part_helper(self, part_name, part_counter):
         batch = Batch(name = part_name)
         for i in range(self.parts_per_batch):
             batch.parts.append(Part())

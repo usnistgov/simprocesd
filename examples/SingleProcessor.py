@@ -14,8 +14,8 @@ def main():
     # Source will create a new Part every 1 time unit.
     source = Source(part_generator = PartGenerator(name_prefix = 'DefaultPart'),
                     cycle_time = 1)
-    # Create machine that gets parts from source and takes 1 time unit
-    # to process the part.
+    # Create a part processor that gets parts from source and takes
+    # 1 time unit to process the part.
     M1 = PartProcessor(upstream = [source], cycle_time = 1)
     sink = Sink(upstream = [M1])
 

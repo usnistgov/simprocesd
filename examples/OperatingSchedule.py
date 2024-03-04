@@ -9,12 +9,14 @@ from simprocesd.model.factory_floor import ActionScheduler, PartProcessor, Sink,
 
 class MachineSchedule(ActionScheduler):
 
+    # Override for ActionScheduler.default_action
     def default_action(self, machine, time, is_working):
         machine.block_input = not is_working
 
 
 def main():
     system = System()
+    # Time for this example is measured in hours.
     # 4 hours on, 0.5 hours off, 4 hours on, and 15.5 hours off.
     schedule = MachineSchedule([(4, True), (0.5, False), (4, True), (15.5, False)])
 
