@@ -8,9 +8,9 @@ The software is available for public use through a publicly available GitHub rep
 
 **NOTE:** SimPROCESD project is in early development and may receive updates that are not backwards compatible.
 
-## GitHub Pages
+## Online Documentation
 
-Additional documentation, including API, is available at: [https://usnistgov.github.io/simprocesd/](https://usnistgov.github.io/simprocesd/)
+Additional documentation, including API, is available at: [usnistgov.github.io/simprocesd](https://usnistgov.github.io/simprocesd/)
 
 ## Installation
 
@@ -28,36 +28,20 @@ pip install simprocesd[examples]
 
 
 ### Installation Requirements
-Using SimPROCESD requires Python ≥ 3.7
+Using SimPROCESD requires Python3, version ≥ 3.7
 
-Other python package dependencies:
+Dependencies (will be automatically installed by pip):
 - numpy ≥ 1.21
 - matplotlib ≥ 3.5
 - dill
-- [optional] scipy ≥ 1.5.2 for running certain examples.
-
-## Quickstart
-
-The package provides following objects for modeling a manufacturing process:
-- **Source**: Introduces new parts to the system.
-- **PartProcessor**: Retrieves, processes, and relinquishes parts. Can be subject to degradation, failures, and repairs.
-- **Buffer**: Retrieves, stores, and relinquishes parts.
-- **DecisionGate**: Conditionally allow parts to pass between its upstream and downstream.
-- **Sink**: Collects finished parts that exit the system.
-- **Maintainer**: Performs requested maintenance as soon as possible. Has a configurable capacity.
-- **Probes & Sensors**: Take periodic or on-demand readings and record them. The recorded data is accessible during the simulation and after.
+- scipy ≥ 1.5.2 (only installed with simprocesd[examples])
 
 #### Examples
 
-A collection of examples is available at [examples](/examples).
+A collection of examples can be found in the [examples folder](/examples).
 
-- Basic example: [SingleProcessor.py](/examples/SingleProcessor.py)  
-- Parallel processing: [ParallelStations.py](/examples/ParallelStations.py)  
-- Utilizing Part quality: [PartQuality.py](/examples/PartQuality.py)  
-- Machine with configurable fault rates: [SingleMachineWithFaults.py](/examples/SingleMachineWithFaults.py)   
-- Machine with a health tracker: [ConditionBasedMaintenance.py](/examples/ConditionBasedMaintenance.py)  
-- Maintenance policy testing: [MaintenanceOptimization.py](/examples/MaintenanceOptimization.py)  
-- and more
+Notes on each example are available at [usnistgov.github.io/simprocesd/examples](https://usnistgov.github.io/simprocesd/examples.html)
+
 
 ## Simantha
 SimPROCESD was forked from the original Simantha project which can be found [here](https://github.com/m-hoff/simantha). Another iteration of [Simantha](https://github.com/usnistgov/simantha) extends a few capabilities and examples to prepare it for the modeling of condition monitoring systems and prognostics and health management tools.
