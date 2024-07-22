@@ -63,6 +63,13 @@ class Buffer(PartHandler):
         '''
         return self._capacity
 
+    @property
+    def minimum_delay(self):
+        '''Minimum time between any one Part being passed to the Buffer
+        and that same Part being passed to downstream Devices
+        '''
+        return self._minimum_delay
+
     def level(self):
         '''Returns
         -------

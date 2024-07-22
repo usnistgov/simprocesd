@@ -37,6 +37,13 @@ class PartBatcher(PartHandler):
         self._output_batch_size = output_batch_size
         self._in_progress_batch = None
 
+    @property
+    def output_batch_size(self):
+        '''Output Batch size. If None then the output will be individual
+        Parts instead of Batches.
+        '''
+        return self._output_batch_size
+
     def _try_move_part_to_output(self):
         if not self.is_operational() or self._part == None or self._output != None:
             return
@@ -74,4 +81,9 @@ class PartBatcher(PartHandler):
             if len(self._in_progress_batch.parts) >= self._output_batch_size:
                 self._output = self._in_progress_batch
                 self._in_progress_batch = None
+
+    def _pass_part_downstream(self):
+        super()._pass_part_downstream()
+        if self._output == None:
+            self._try_move_part_to_output()
 

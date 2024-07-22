@@ -147,7 +147,7 @@ class GroupOutput(PartFlowController):
         for gp in self._group._group_paths:
             for d in gp.downstream:
                 if d not in all_downstreams:
-                    all_downstreams.extend(d)
+                    all_downstreams.append(d)
         return all_downstreams
 
     def space_available_downstream(self):

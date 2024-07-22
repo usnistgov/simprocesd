@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ....model import Environment, System, EventType
-from ....model.factory_floor import Part, PartProcessor, PartBatcher, Batch
+from ....model.factory_floor import Part, PartFlowController, PartProcessor, PartBatcher, Batch
 
 
 class PartBatcherTestCase(TestCase):
@@ -13,9 +13,9 @@ class PartBatcherTestCase(TestCase):
         self.env = MagicMock(spec = Environment)
         self.env.now = 1
         self.upstream = [MagicMock(spec = PartProcessor)]
-        self.downstream = [MagicMock(spec = PartProcessor), MagicMock(spec = PartProcessor)]
-        for d in self.downstream:
-            d.give_part.return_value = True
+        downstream = MagicMock(spec = PartProcessor)
+        downstream.give_part.return_value = True
+        self.downstream = [downstream]
 
     def assert_last_scheduled_event(self, time, id_, action, event_type, message = None):
         args, kwargs = self.env.schedule_event.call_args_list[-1]
@@ -40,6 +40,7 @@ class PartBatcherTestCase(TestCase):
         for d in self.downstream:
             pb._add_downstream(d)
         pb.initialize(self.env)
+        self.assertEqual(pb.output_batch_size, None)
 
         for i in range(5):
             part = Part()
@@ -76,6 +77,7 @@ class PartBatcherTestCase(TestCase):
         for d in self.downstream:
             pb._add_downstream(d)
         pb.initialize(self.env)
+        self.assertEqual(pb.output_batch_size, 2)
 
         for i in range(5):
             part1, part2 = Part(), Part()
@@ -112,6 +114,29 @@ class PartBatcherTestCase(TestCase):
             self.env.now += 1
             # Ensure there are no extra Parts.
             pb._try_move_part_to_output()
+            self.assertEqual(pb._output, None)
+
+    def test_batch_to_single(self):
+        pb = PartBatcher(None)
+        for d in self.downstream:
+            pb._add_downstream(d)
+        pb.initialize(self.env)
+
+        for i in range(3):
+            part1, part2 = Part(), Part()
+            batch = Batch(parts = [part1, part2])
+            batch.initialize(self.env)
+            pb.give_part(batch)
+            pb._try_move_part_to_output()
+            self.assert_last_scheduled_event(self.env.now, pb.id, pb._pass_part_downstream,
+                                             EventType.PASS_PART)
+            self.env.now += 1
+            pb._pass_part_downstream()
+            # Ensure next part is scheduled to pass
+            self.assert_last_scheduled_event(self.env.now, pb.id, pb._pass_part_downstream,
+                                             EventType.PASS_PART)
+            pb._pass_part_downstream()
+            self.env.now += 1
             self.assertEqual(pb._output, None)
 
 
