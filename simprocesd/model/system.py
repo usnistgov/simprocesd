@@ -67,6 +67,12 @@ class System:
         System._instance = self
 
     @property
+    def env(self):
+        '''Simulation's Environment instance.
+        '''
+        return self._env
+
+    @property
     def simulation_data(self):
         '''Stored datapoints added with
         Environment.add_datapoint(list_label, sub_label, datapoint)

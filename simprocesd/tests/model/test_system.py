@@ -28,7 +28,7 @@ class SystemTestCase(TestCase):
         assets = [Asset()]  # Adds to System automatically.
 
         self.assertEqual(sys._assets, assets)
-        self.assertEqual(sys._env.resource_manager, res_manager)
+        self.assertEqual(sys.env.resource_manager, res_manager)
 
     def test_simulation_data(self):
         self.env_mock.simulation_data = {'label': {'asset_name': [1, 5, 9]}}
