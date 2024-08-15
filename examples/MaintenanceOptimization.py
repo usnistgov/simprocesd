@@ -14,7 +14,7 @@ from matplotlib import pyplot
 from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Sink, Maintainer
 
-from .machine_with_damage import MachineWithDamage
+from machine_with_damage import MachineWithDamage
 
 # Setup parameters
 capacity_to_repair = 1

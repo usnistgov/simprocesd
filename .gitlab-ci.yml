@@ -11,9 +11,8 @@ testing:
            for f in examples/*.py             # List all example. f=examples/Test.py
              do h="${f##*/}"                  # Remove last / and everything before. h=Test.py
              if [[ $h = [A-Z]* ]]             # Check if name starts with a capital letter.
-               then g="${h%.*}"               # Remove file extension. g=Test
                # Run example with 'testing' flag. If test exits with non-zero value then raise an error.
-               echo python -m examples.$g testing
-               python -m examples.$g testing || exit 1
+               then echo python $f testing
+               python $f testing || exit 1
              fi
            done

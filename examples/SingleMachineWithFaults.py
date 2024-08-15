@@ -14,7 +14,7 @@ from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Sink, Maintainer
 from simprocesd.utils import geometric_distribution_sample
 
-from .machine_with_faults import MachineWithFaults
+from machine_with_faults import MachineWithFaults
 
 
 def main():

@@ -1,7 +1,7 @@
 ''' Time units are seconds and value is in dollars.
 Machine produces 10 items per second but we will have each Part
 represent 50 items in order to speed up the simulation.
-Expected parts produced: 75005
+Expected parts produced: 750005
 Expected yearly operational profit of using a CMS is: about $130,000
 '''
 
@@ -12,7 +12,7 @@ from simprocesd.model import System
 from simprocesd.model.factory_floor import Source, Sink, PartGenerator, Maintainer
 from simprocesd.model.sensors import OutputPartSensor, AttributeProbe, Probe
 
-from .machine_with_faults import MachineWithFaults, CmsEmulator
+from machine_with_faults import MachineWithFaults, CmsEmulator
 
 count_per_part = 50  # set to 1 for more accurate results
 processing_rate = 10

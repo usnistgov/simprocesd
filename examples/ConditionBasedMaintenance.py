@@ -11,7 +11,7 @@ from simprocesd.model.factory_floor import Source, Buffer, Sink, Maintainer
 from simprocesd.model.sensors import PeriodicSensor, AttributeProbe
 from simprocesd.utils import geometric_distribution_sample, print_finished_work_order_counts
 
-from .machine_with_damage import MachineWithDamage
+from machine_with_damage import MachineWithDamage
 
 
 def time_to_maintain(machine, tag):

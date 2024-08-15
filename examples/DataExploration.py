@@ -11,7 +11,7 @@ from simprocesd.model.sensors import PeriodicSensor, Probe
 from simprocesd.utils import geometric_distribution_sample, plot_throughput, \
     plot_damage, plot_value, print_produced_parts_and_average_quality, simple_plot
 
-from .machine_with_damage import MachineWithDamage
+from machine_with_damage import MachineWithDamage
 
 
 def process_part(machine, part):

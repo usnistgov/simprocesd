@@ -8,7 +8,6 @@ from unittest.mock import MagicMock, patch
 from .. import add_side_effect_to_class_method
 from ...model import Environment, System, ResourceManager
 from ...model.factory_floor import Asset, PartHandler, PartProcessor, Sink
-from dataclasses import replace
 
 
 class SystemTestCase(TestCase):

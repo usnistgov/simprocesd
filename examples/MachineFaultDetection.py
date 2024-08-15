@@ -17,7 +17,7 @@ from simprocesd.model.factory_floor import Source, Buffer, Sink, PartGenerator, 
 from simprocesd.utils import geometric_distribution_sample, \
     print_produced_parts_and_average_quality
 
-from .machine_with_damage import MachineWithDamage
+from machine_with_damage import MachineWithDamage
 
 
 def process_part(machine, part, quality_distribution):
