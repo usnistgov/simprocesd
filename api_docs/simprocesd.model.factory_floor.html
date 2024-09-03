@@ -511,6 +511,21 @@ maximum if not set.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.initialize" title="Link to this definition"></a></dt>
+<dd><p>Prepare Asset for simulation and reset attributes to
+starting values.</p>
+<p>In most cases this is called automatically by the System. Needs
+to be called manually if the Asset was initialized with
+is_transitory set to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<a class="reference internal" href="simprocesd.model.html#simprocesd.model.simulation.Environment" title="simprocesd.model.simulation.Environment"><em>Environment</em></a>) – Environment used by the simulating System.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="simprocesd.model.factory_floor.buffer.Buffer.level">
 <span class="sig-name descname"><span class="pre">level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simprocesd.model.factory_floor.buffer.Buffer.level" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">

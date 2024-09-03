@@ -15,7 +15,7 @@ Parts and part handlers:
 - **Part**: Represents a discrete item/part moving through the manufacturing process. Part may represent anything from raw material to finished product and it has a persistent state that can change as the part is processed.
 - **Source**: Generates and outputs new parts.
 - **Sink**: Receives parts and stores them.
-- **ParProcessor**: Processes received parts.
+- **PartProcessor**: Processes received parts.
 - **Buffer**: Stores received parts and passes them downstream when possible. Has an optional minimum storage time.
 - **DecisionGate**: Conditionally allows parts to pass between its upstream and downstream.
 - **PartBatcher**: Enforces output to be batches of set size or individual parts.
