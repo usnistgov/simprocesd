@@ -52,9 +52,9 @@ SimPROCESD was forked from the original Simantha project which can be found [her
 This tool is part of the Smart Manufacturing Industrial AI Management & Metrology project in the Smart Connected Systems Division (Communications Technology Laboratory) at NIST.
 
 Contacts:
-- [Mehdi Dadfarnia](https://www.nist.gov/people/mehdi-dadfarnia), Maintenance & Development
-- [Serghei Drozdov](https://www.nist.gov/people/serghei-drozdov), Lead Developer
-- [Michael Sharp](https://www.nist.gov/people/michael-sharp), Project Leader
+- [Mehdi Dadfarnia](https://www.nist.gov/people/mehdi-dadfarnia), Project Lead, Maintenance & Development
+- [Serghei Drozdov](https://www.nist.gov/people/serghei-drozdov), Software Developer
+- [Michael Sharp](https://www.nist.gov/people/michael-sharp), Project Advisor
 
 
 ## License
